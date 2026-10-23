@@ -112,6 +112,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
+  container: filesmain / inline-size;
 }
 
 .files-toolbar {
@@ -140,17 +141,27 @@
   flex: 1;
   min-width: 150px;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
+  overflow-x: auto;
   padding: 3px 8px;
   border-radius: 14px;
   background: var(--cloud);
   font-weight: 800;
+  white-space: nowrap;
+  scrollbar-width: none;
 }
 
 .files-crumb {
   display: inline-flex;
+  flex: none;
   align-items: center;
+}
+
+/* Wird es eng, bekommen die Knöpfe eine eigene Reihe – der Pfad bleibt lesbar. */
+@container filesmain (width < 1000px) {
+  .files-actions {
+    flex-basis: 100%;
+  }
 }
 
 .files-crumb button {

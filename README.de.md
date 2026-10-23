@@ -13,9 +13,32 @@ einen Computer bedient, und daran Mathe, Lesen und mehr üben.
 
 **→ [technikweber.github.io/Computerfuchs](https://technikweber.github.io/Computerfuchs/)**
 
+![Der Desktop von Computerfuchs mit Symbolen, Stickern, Taskleiste und dem Maustraining](docs/images/hero-desktop.jpg)
+
 > Früher Prototyp (v0.2). Maustraining, Tastatur, Rechnen, Dateien und der
 > App-Laden sind spielbar. „Was ist das Internet?“, ein Malkasten und mehr stehen
 > im Fahrplan (siehe [Konzept](docs/CONCEPT.de.md)).
+
+## So sieht es aus
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/images/login.jpg" alt="Anmeldebildschirm mit drei Kinderprofilen, eines mit Schloss"><br><b>Anmeldung:</b> Jedes Kind hat ein Profil – auf Wunsch mit Geheimcode.</td>
+    <td width="50%"><img src="docs/images/desktop-age-5.jpg" alt="Desktop mit großen Symbolen auf einem Unterwasser-Hintergrund"><br><b>Mit 5 Jahren:</b> große Symbole, ein Klick genügt. Den Rest schaltet das Maustraining frei.</td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/mouse-course.jpg" alt="Ein Bild mit Haus, Sonne und Baum, daneben ein Rechtsklick-Menü mit Farben"><br><b>Maustraining:</b> Im Farbenzauber malt der Rechtsklick.</td>
+    <td width="50%"><img src="docs/images/maths.jpg" alt="Die Aufgabe 19 minus 17 mit Zwanzigerfeld und Zahlenfeld"><br><b>Rechnen:</b> Plus und Minus bis 20, das Zwanzigerfeld hilft.</td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/keyboard-zoo.jpg" alt="Eine Tulpe mit dem Buchstaben T, darunter eine Bildschirmtastatur mit leuchtender T-Taste"><br><b>Tastatur:</b> Im Tastenzoo leuchtet die gesuchte Taste – T wie Tulpe.</td>
+    <td width="50%"><img src="docs/images/keyboard-ten-fingers.jpg" alt="Zwei Hände und eine Tastatur, jede Taste in der Farbe ihres Fingers"><br><b>Zehn Finger:</b> Jeder Finger hat seine Farbe.</td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/files.jpg" alt="Der Datei-Explorer mit dem Ordner Bilder und Flinns Aufgaben"><br><b>Dateien:</b> Ordner, Ziehen und Ablegen, Papierkorb – mit Flinns Aufgaben.</td>
+    <td width="50%"><img src="docs/images/app-store.jpg" alt="Der App-Laden mit vier Hintergrundbildern und Preisen in Bytes"><br><b>App-Laden:</b> Bytes gegen Hintergründe, Mauszeiger, Sticker und Lieder.</td>
+  </tr>
+</table>
 
 ## Was es kann
 
@@ -112,6 +135,7 @@ npm run lint       # oxlint
 npm run build      # Typprüfung + Produktions-Build nach dist/
 npm run preview    # dist/ unter http://localhost:4173 ausliefern
 npm run e2e        # Durchlauf im Browser gegen die Vorschau (nutzt einen installierten Chrome/Edge)
+npm run screenshots  # die Bilder fürs README neu aufnehmen (docs/images/), ebenfalls gegen die Vorschau
 ```
 
 `npm run e2e` spielt in einem unsichtbaren Chrome die ganze App durch: alle acht
@@ -135,7 +159,7 @@ Aufbau:
 - `src/core/`: Profile, Belohnung, Spielstand, Dateisystem, App-Laden, Geheimcode, Lieder, Ton, Sprache, kleine Hooks
 - `src/os/`: der simulierte Computer mit Start, Anmeldung, Desktop, Fenstern, Taskleiste, Stickern und Mauszeigern
 - `src/apps/`: die Apps. `registry.ts` listet sie auf; Apps mit „bald“ stehen schon im Start-Menü.
-- `tools/`: der Offline-Speicher (Service Worker), der beim Bauen entsteht
+- `tools/`: der Offline-Speicher (Service Worker), der beim Bauen entsteht, und das Skript für die README-Bilder
 - `kiosk/`: die Kiosk-Skripte für Linux und Windows
 
 ## Lizenz

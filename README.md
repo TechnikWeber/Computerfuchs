@@ -13,9 +13,34 @@ use a computer, and learn maths, reading and more on it.
 
 **→ [technikweber.github.io/Computerfuchs](https://technikweber.github.io/Computerfuchs/)**
 
+![The Computerfuchs desktop with icons, stickers, the taskbar and the mouse course](docs/images/hero-desktop.jpg)
+
 > Early prototype (v0.2). The mouse course, keyboard, maths, files and the app
 > store are playable. "What is the internet?", a paint box and more are on the
 > roadmap (see the [concept](docs/CONCEPT.md)).
+
+## Screenshots
+
+The interface is in German.
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/images/login.jpg" alt="Login screen with three child profiles, one with a padlock"><br><b>Login:</b> every child has a profile, optionally with a secret code.</td>
+    <td width="50%"><img src="docs/images/desktop-age-5.jpg" alt="Desktop with big icons on an underwater wallpaper"><br><b>Age 5:</b> big icons, one click opens. The mouse course unlocks the rest.</td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/mouse-course.jpg" alt="A picture with a house, sun and tree, next to a right-click menu with colours"><br><b>Mouse course:</b> in Colour magic, the right-click paints.</td>
+    <td width="50%"><img src="docs/images/maths.jpg" alt="The task 19 minus 17 with a 20-frame and a number pad"><br><b>Maths:</b> plus and minus to 20, with the 20-frame as help.</td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/keyboard-zoo.jpg" alt="A tulip with the letter T above an on-screen keyboard where the T key lights up"><br><b>Keyboard:</b> in the key zoo the key you need lights up – T for Tulpe (tulip).</td>
+    <td width="50%"><img src="docs/images/keyboard-ten-fingers.jpg" alt="Two hands and a keyboard, every key in the colour of its finger"><br><b>Ten fingers:</b> every finger has its own colour.</td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/files.jpg" alt="The file explorer with the Bilder folder and Flinn's tasks"><br><b>Files:</b> folders, drag and drop, recycle bin – with Flinn's tasks.</td>
+    <td width="50%"><img src="docs/images/app-store.jpg" alt="The app store with four wallpapers and prices in Bytes"><br><b>App store:</b> Bytes buy wallpapers, mouse pointers, stickers and songs.</td>
+  </tr>
+</table>
 
 ## What it does
 
@@ -107,6 +132,7 @@ npm run lint       # oxlint
 npm run build      # type-check + production build into dist/
 npm run preview    # serve dist/ at http://localhost:4173
 npm run e2e        # browser walkthrough against the preview (uses an installed Chrome/Edge)
+npm run screenshots  # retake the README images (docs/images/), also against the preview
 ```
 
 `npm run e2e` plays through the whole app in headless Chrome: all eight mouse
@@ -129,7 +155,7 @@ Layout:
 - `src/core/` — profiles, rewards, save files, file system, app store, secret code, songs, sound, speech, small hooks
 - `src/os/` — the simulated computer: boot, login, desktop, windows, taskbar, stickers, mouse pointers
 - `src/apps/` — the apps; `registry.ts` lists them (apps marked "soon" are already in the start menu)
-- `tools/` — the offline storage (service worker) generated at build time
+- `tools/` — the offline storage (service worker) generated at build time, and the script for the README images
 - `kiosk/` — the kiosk scripts for Linux and Windows
 
 ## Licence
