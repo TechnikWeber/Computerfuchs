@@ -34,6 +34,9 @@ benutzt. Genau dort setzt Computerfuchs an.
    | Verkleinern, Vergrößern, Größe ziehen | Level 8 „Fenster-Profi“ | 10 Jahren |
 
    Eltern können jede Funktion im Erwachsenen-Bereich einzeln an- und ausschalten.
+   Auch das Alter stellen dort nur Erwachsene um. Es bestimmt Symbolgröße, offene
+   Level und die Funktionen zu Beginn. Könnte ein Kind es selbst ändern, ließe
+   sich das Mitwachsen einfach überspringen.
 
 2. **Echte Begriffe, aber keine Kopie.** Computerfuchs sieht weder wie Windows
    noch wie macOS aus. Er hat aber alles, was überall gleich funktioniert:
@@ -72,9 +75,9 @@ benutzt. Genau dort setzt Computerfuchs an.
 - **Rechnen:** 6 Level vom Zählen bis zum Kopfrechnen bis 100, jede Runde neu
   erzeugt
 - **Einstellungen:** Hintergrund, Ton und Lautstärke, Vorlesen, Zeigergröße,
-  Doppelklick-Tempo mit Testfeld (wie an einem echten Computer), Profil und ein
-  Erwachsenen-Bereich (Spielstand-Datei, Funktionen, Kiosk-Hinweis, Profil
-  löschen)
+  Doppelklick-Tempo mit Testfeld (wie an einem echten Computer), Profil (Name
+  und Tier) und ein Erwachsenen-Bereich (Spielstand-Datei, Alter, Funktionen,
+  Kiosk-Hinweis, Profil löschen)
 - **Papierkorb:** noch leer. Er erklärt schon, wofür er da ist.
 - **11 weitere Apps** stehen als „Bald da“ im Start-Menü. Flinn erzählt, was
   dort kommen wird.

@@ -33,7 +33,10 @@ exactly where Computerfuchs starts.
    | Right-click menu on the desktop | level 6 "Colour magic" | age 10 |
    | Minimise, maximise, resize | level 8 "Window pro" | age 10 |
 
-   Parents can switch each feature on or off in the grown-ups' area.
+   Parents can switch each feature on or off in the grown-ups' area. The age is
+   changed there too, by grown-ups only. It decides the icon size, the open
+   levels and the starting features. If a child could change it, the whole
+   growing-up could simply be skipped.
 
 2. **Real concepts, not a copy.** Computerfuchs looks neither like Windows nor
    like macOS. It does have everything that works the same everywhere: windows
@@ -71,8 +74,9 @@ exactly where Computerfuchs starts.
 - **Maths:** 6 levels from counting to mental arithmetic up to 100, each round
   generated anew
 - **Settings:** wallpaper, sound and volume, reading aloud, pointer size,
-  double-click speed with a test area (like on a real computer), profile, and a
-  grown-ups' area (save file, features, kiosk note, delete profile)
+  double-click speed with a test area (like on a real computer), profile (name
+  and animal), and a grown-ups' area (save file, age, features, kiosk note,
+  delete profile)
 - **Recycle bin:** empty for now. It already explains what it is for.
 - **11 more apps** are listed as "coming soon" in the start menu. Flinn tells
   what each one will do.

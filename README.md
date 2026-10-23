@@ -51,7 +51,8 @@ how to use a computer, and learn maths, reading and more on it.
   come, and the Bytes will pay for wallpapers, pointers and stickers in the
   app store later.
 - **Profiles on a login screen.** Each child picks an animal, a name and their
-  age. That is the first lesson about user accounts.
+  age. That is the first lesson about user accounts. Later, only grown-ups can
+  change the age, because it decides how much the desktop can do.
 - **Saved in the browser, backed up as a file.** Progress is stored locally. A
   grown-ups' area behind a small arithmetic gate exports all profiles as a JSON
   file and imports them again, by button or by dropping the file on the login

@@ -5,7 +5,7 @@ import { createDoubleClick } from '../../core/dblclick';
 import { downloadText } from '../../core/download';
 import type { EmojiName } from '../../core/emoji';
 import {
-  CURSOR_SIZES, FEATURES, MAX_NAME, clampAge, rankFor,
+  CURSOR_SIZES, FEATURES, MAX_NAME, rankFor, withAge,
   type CursorSize, type Feature, type ProfileSettings,
 } from '../../core/profile';
 import { useSave } from '../../core/saveContext';
@@ -311,19 +311,6 @@ function MePage() {
           </button>
         ))}
       </div>
-      <h3>Alter</h3>
-      <div className="me-ages">
-        {AGES.map((age) => (
-          <button
-            key={age}
-            type="button"
-            className={p.age === age || (age === 15 && p.age > 15) ? 'me-age is-active' : 'me-age'}
-            onClick={() => os.update((q) => ({ ...q, age: clampAge(age) }))}
-          >
-            {age === 15 ? '15+' : age}
-          </button>
-        ))}
-      </div>
     </Page>
   );
 }
@@ -422,6 +409,29 @@ function GrownUpPage() {
           Achtung: Dieser Browser speichert gerade nichts dauerhaft (privater Modus oder Kiosk mit InPrivate). Bitte als Datei sichern.
         </p>
       )}
+
+      <h3>Alter von {p.name}</h3>
+      <p className="settings-intro">
+        Das Alter bestimmt, wie groß die Symbole sind, welche Level schon offen sind und was der Desktop am Anfang kann –
+        deshalb stellen es nur Erwachsene um. Wird ein Kind älter eingestellt, kommen die passenden Desktop-Funktionen dazu;
+        vorhandene bleiben.
+      </p>
+      <div className="me-ages" role="group" aria-label={`Alter von ${p.name}`}>
+        {AGES.map((age) => (
+          <button
+            key={age}
+            type="button"
+            className={p.age === age || (age === 15 && p.age > 15) ? 'me-age is-active' : 'me-age'}
+            aria-pressed={p.age === age}
+            onClick={() => {
+              sfx.tap();
+              os.update((q) => withAge(q, age));
+            }}
+          >
+            {age === 15 ? '15+' : age}
+          </button>
+        ))}
+      </div>
 
       <h3>Was der Desktop von {p.name} kann</h3>
       <p className="settings-intro">Normalerweise schaltet das Kind diese Funktionen im Maustraining selbst frei.</p>

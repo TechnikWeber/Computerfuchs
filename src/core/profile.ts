@@ -222,6 +222,16 @@ export function applyLevelResult(
   };
 }
 
+/**
+ * Alter ändern – nur im Erwachsenen-Bereich, denn das Alter bestimmt, wie viel
+ * der Desktop kann. Wer älter eingestellt wird, bekommt die passenden
+ * Funktionen dazu; schon vorhandene bleiben (abschalten geht einzeln).
+ */
+export function withAge(profile: Profile, age: number): Profile {
+  const next = clampAge(age);
+  return { ...profile, age: next, features: [...new Set([...profile.features, ...defaultFeatures(next)])] };
+}
+
 export function withFeature(profile: Profile, feature: Feature): Profile {
   if (hasFeature(profile, feature)) return profile;
   return { ...profile, features: [...profile.features, feature] };

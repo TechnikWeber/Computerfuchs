@@ -503,6 +503,16 @@ await step('Erwachsenen-Bereich: Spielstand als Datei', async () => {
   results.push(`     Datei: ${download.suggestedFilename()} (${fs.statSync(file).size} Bytes)`);
 });
 
+await step('Alter stellen nur Erwachsene um', async () => {
+  await page.click('.me-age >> text="8"');
+  await wait(500);
+  const age = await page.evaluate(() => JSON.parse(localStorage.getItem('computerfuchs.save')).profiles[0].age);
+  if (age !== 8) throw new Error(`Alter nicht geändert: ${age}`);
+  await page.click('.settings-tab >> text="Ich"');
+  await page.waitForSelector('.me-card');
+  if (await page.$('.me-age')) throw new Error('Unter „Ich" lässt sich das Alter noch ändern');
+});
+
 await step('Neu laden: Spielstand bleibt', async () => {
   await page.reload();
   await page.click('.power-btn');

@@ -1,7 +1,7 @@
 {
   "name": "computerfuchs",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "A learning computer for kids in the browser: a playful desktop that grows with the child, with apps for mouse, keyboard, maths and more. German first, private by design.",
   "license": "MIT",

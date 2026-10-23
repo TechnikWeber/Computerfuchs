@@ -54,7 +54,8 @@ Laptop: lernen, wie man einen Computer bedient, und daran Mathe, Lesen und mehr
   ist. Später kann man mit den Bytes im App-Laden Hintergründe, Mauszeiger und
   Sticker kaufen.
 - **Profile auf dem Anmeldebildschirm.** Jedes Kind wählt ein Tier, einen Namen
-  und sein Alter. Das ist die erste Lektion über Benutzerkonten.
+  und sein Alter. Das ist die erste Lektion über Benutzerkonten. Später ändern
+  nur Erwachsene das Alter, denn es bestimmt, wie viel der Desktop kann.
 - **Gespeichert im Browser, gesichert als Datei.** Der Fortschritt liegt lokal.
   Ein Erwachsenen-Bereich hinter einer kleinen Rechenaufgabe sichert alle Profile
   als JSON-Datei und lädt sie wieder, per Knopf oder per Ziehen auf den

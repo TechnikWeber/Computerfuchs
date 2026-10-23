@@ -5,7 +5,7 @@ import { catmullRom, dist, nearestIndex, polylineLength, resample } from './geom
 import { scatter } from './layout';
 import {
   RANKS, REPLAY_REWARD, STAR_REWARD, ageGroup, applyLevelResult, createProfile, defaultFeatures, nextRank, rankFor,
-  rewardFor,
+  rewardFor, withAge,
 } from './profile';
 import { seeded, shuffle } from './random';
 
@@ -71,6 +71,17 @@ describe('Profil', () => {
     const r = applyLevelResult(p0, 'maus', 'weg', 1, 'now');
     expect(r.outcome.rankUp).toBe(true);
     expect(r.outcome.rankAfter.name).toBe('Jungfuchs');
+  });
+
+  it('ergänzt beim Ändern des Alters passende Funktionen, nimmt aber keine weg', () => {
+    const p = createProfile({ name: 'A', avatar: 'fox', age: 5 }, 'id', 'now');
+    const older = withAge(p, 12);
+    expect(older.age).toBe(12);
+    expect([...older.features].sort()).toEqual(['doubleClick', 'moveWindows', 'rightClick', 'windowControls']);
+    const younger = withAge(older, 4);
+    expect(younger.age).toBe(4);
+    expect(younger.features).toHaveLength(4);
+    expect(withAge(p, 99).age).toBe(18);
   });
 
   it('kennt Ränge und den nächsten Rang', () => {
