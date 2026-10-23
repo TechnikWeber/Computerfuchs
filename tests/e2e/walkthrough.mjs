@@ -9,8 +9,8 @@
  * Anderer Pfad: Umgebungsvariable CHROME_PATH. Screenshots landen in test-results/e2e.
  * Spielt alle 8 Maus-Level, Rechnen, Einstellungen, Spielstand-Datei, Neuladen,
  * ein zweites Profil, alle 7 Tastatur-Level, die Dateien-Aufgaben, den App-Laden,
- * Sticker, ein Lied, den Geheimcode, den Kiosk-Modus und einen Neustart ohne Internet
- * durch und meldet Konsolenfehler.
+ * Sticker, ein Lied, den Geheimcode, alle 15 Stufen von „Was ist das Internet?“, den
+ * Kiosk-Modus und einen Neustart ohne Internet durch und meldet Konsolenfehler.
  */
 import { chromium } from 'playwright-core';
 import fs from 'node:fs';
@@ -62,7 +62,8 @@ const step = async (name, fn) => {
     results.push(`OK   ${name} (${Date.now() - t0} ms)`);
   } catch (e) {
     results.push(`FAIL ${name}: ${e.message.split('\n')[0]}`);
-    await shot(`FAIL-${name}`);
+    // Ohne Doppelpunkt & Co. – unter Windows würde daraus sonst ein versteckter Datenstrom statt einer Datei.
+    await shot(`FAIL-${name.replace(/[\\/:*?"<>|]+/g, '-')}`);
   }
 };
 const wait = (ms) => page.waitForTimeout(ms);
@@ -977,6 +978,327 @@ await step('Geheimcode mit Bildern', async () => {
   await page.waitForSelector('.desktop', { timeout: 5000 });
 });
 
+// --- Version 0.3: Was ist das Internet? ---
+
+const textOf = async (sel) => (await (await page.$(sel))?.textContent())?.trim() ?? null;
+async function waitStory(re, timeout = 10000) {
+  await page.waitForFunction(
+    (src) => new RegExp(src).test(document.querySelector('.net-story p')?.textContent ?? ''),
+    re.source,
+    { timeout },
+  );
+}
+const nodePos = (id) => center(page.locator(`[data-node="${id}"] .nm-node-bg`));
+/** Ein Kabel von Knoten zu Knoten ziehen. */
+async function dragNode(a, b) {
+  const p = await nodePos(a);
+  const q = await nodePos(b);
+  await page.mouse.move(p.x, p.y);
+  await page.mouse.down();
+  await page.mouse.move(q.x, q.y, { steps: 12 });
+  await page.mouse.up();
+  await wait(250);
+}
+async function clickNode(id) {
+  const p = await nodePos(id);
+  await page.mouse.click(p.x, p.y);
+  await wait(150);
+}
+/** Mitten auf ein Kabel klicken – auch wenn es eine Kurve ist. */
+async function clickEdge(selector) {
+  const pt = await page.$eval(selector, (el) => {
+    const p = el.getPointAtLength(el.getTotalLength() / 2);
+    const m = el.getScreenCTM();
+    return { x: p.x * m.a + p.y * m.c + m.e, y: p.x * m.b + p.y * m.d + m.f };
+  });
+  await page.mouse.click(pt.x, pt.y);
+  await wait(200);
+}
+async function internetMap() {
+  if (await page.$('.level-map')) return;
+  await closeWindows();
+  await openDesk('internet');
+  await page.waitForSelector('.level-map');
+}
+async function startNet(chapter, tier) {
+  await internetMap();
+  await page.locator('.level-card').nth(chapter).click();
+  await page.waitForSelector('.level-intro');
+  await wait(250);
+  await page.locator('.tier-chip').nth(tier - 1).click();
+  await page.click('.level-intro .btn-leaf');
+  await page.waitForSelector('.net-level');
+  await wait(400);
+}
+/** Vom Ergebnis direkt in die nächste Stufe. */
+async function nextTier(tier) {
+  await page.click(`.result-actions >> text=Stufe ${tier}`);
+  await page.waitForSelector('.net-level');
+  await wait(400);
+}
+
+await step('Internet 1: Das Netz (Geräte, Weg zu Oma, Netz das hält)', async () => {
+  await dismissNotices();
+  await closeWindows();
+  await openDesk('internet');
+  await page.waitForSelector('.level-map');
+  await shot('internet-karte');
+  // Stufe 1: Geräte am Router einstecken – zuerst absichtlich ans Internet
+  await startNet(0, 1);
+  await dragNode('laptop', 'internet');
+  await waitStory(/über den Router/);
+  for (const id of ['laptop', 'pc', 'handy', 'tv']) await dragNode(id, 'router');
+  await waitStory(/alle Geräte im Netz/);
+  await shot('internet-netz-1');
+  await waitResult(10000);
+  // Stufe 2: Kabel bis zu Omas Router – zuerst ein zu langes
+  await nextTier(2);
+  await dragNode('routerA', 'routerB');
+  await waitStory(/So lang ist kein Kabel/);
+  for (const [a, b] of [['routerA', 'provA'], ['provA', 'internet'], ['internet', 'provB'], ['provB', 'routerB']]) await dragNode(a, b);
+  await waitStory(/reist deine Nachricht los/);
+  await shot('internet-netz-2');
+  await waitResult(15000);
+  // Stufe 3: Eine Kette reicht nicht – der Traktor findet das schwache Kabel
+  await nextTier(3);
+  const ring = ['hamburg', 'berlin', 'dresden', 'muenchen', 'frankfurt', 'koeln'];
+  for (let i = 0; i < ring.length - 1; i++) await dragNode(ring[i], ring[i + 1]);
+  await page.click('.net-controls >> text=Netz prüfen');
+  await waitStory(/Hamburg abgeschnitten/);
+  await shot('internet-netz-3-traktor');
+  await page.waitForSelector('.net-controls button:has-text("Netz prüfen"):not([disabled])', { timeout: 6000 });
+  // Ein Kabel zu viel – ein Klick nimmt es wieder weg
+  await dragNode('hamburg', 'frankfurt');
+  if ((await textOf('.net-budget b')) !== '6') throw new Error('Kabel nicht gezählt');
+  await clickEdge('[data-edge="frankfurt|hamburg"]');
+  if ((await textOf('.net-budget b')) !== '5') throw new Error('Kabel nicht entfernt');
+  await dragNode('koeln', 'hamburg');
+  await page.click('.net-controls >> text=Netz prüfen');
+  await waitStory(/Dein Netz hält/, 15000);
+  await shot('internet-netz-3');
+  await waitResult(10000);
+  await backToMap();
+});
+
+await step('Internet 2: Bilder-Post (Pakete, Wegweiser, Reihenfolge)', async () => {
+  await startNet(1, 1);
+  await page.waitForSelector('[data-node="paket-0"]', { timeout: 6000 });
+  for (let i = 0; i < 4; i++) await clickNode(`paket-${i}`);
+  await waitStory(/Alle Pakete sind da/, 10000);
+  await shot('internet-post-1');
+  await waitResult(10000);
+  // Stufe 2: Dem Wegweiser folgen – einmal absichtlich falsch abbiegen
+  await nextTier(2);
+  let wrongTried = false;
+  const t0 = Date.now();
+  while (!(await page.$('.result')) && Date.now() - t0 < 45000) {
+    const to = (await page.$('.nm-node.tone-pick')) ? await textOf('.net-sign-row.is-current b') : null;
+    if (!to) {
+      await wait(150);
+      continue;
+    }
+    const id = to.startsWith('direkt zu ') ? { Oma: 'oma', Zoo: 'zoo', Schule: 'schule' }[to.slice(10)] : to.replace('Router ', '');
+    if (!wrongTried) {
+      const picks = await page.$$eval('.nm-node.tone-pick', (els) => els.map((e) => e.getAttribute('data-node')));
+      const other = picks.find((x) => x !== id);
+      if (other) {
+        await clickNode(other);
+        await page.waitForSelector('.net-sign-row.is-hint', { timeout: 2000 });
+        await shot('internet-post-2-hinweis');
+        wrongTried = true;
+      }
+    }
+    await clickNode(id);
+    await wait(1000);
+  }
+  if (!wrongTried) throw new Error('Kein falscher Weg probiert');
+  await waitResult(5000);
+  // Stufe 3: Pakete ordnen, das verlorene nachfordern
+  await nextTier(3);
+  const packet = (num) => page.locator(`.tcp-packet:has(b:text-is("${num}"))`);
+  await packet(3).waitFor({ timeout: 8000 });
+  await packet(3).click();
+  await waitStory(/Erst Paket 1/);
+  for (let i = 1; i <= 6; i++) {
+    await packet(i).waitFor({ timeout: 8000 });
+    await packet(i).click();
+    await wait(150);
+  }
+  await waitStory(/Paket 7 fehlt/);
+  await shot('internet-post-3-fehlt');
+  await page.click('.tcp-tray >> text=Paket 7 nochmal anfordern', { timeout: 8000 });
+  await packet(7).waitFor({ timeout: 6000 });
+  await packet(7).click();
+  await wait(150);
+  await packet(8).click();
+  await waitStory(/HALLO OMA/);
+  await waitResult(8000);
+  await backToMap();
+});
+
+await step('Internet 3: Kabel im Meer (Umweg, Wettrennen, echter Ping)', async () => {
+  await startNet(2, 1);
+  for (let round = 0; round < 3; round++) {
+    await page.click('.net-controls button:has-text("Losschicken"):not([disabled])', { timeout: 8000 });
+    await page.waitForSelector('.nm-edge.tone-pick [data-edge]', { timeout: 6000 });
+    if (round === 0) await shot('internet-meer-1-kaputt');
+    await clickEdge('.nm-edge.tone-pick [data-edge]');
+    await waitStory(/Angekommen/, 6000);
+  }
+  await waitResult(12000);
+  // Stufe 2: Wettrennen – immer auf A tippen, richtig oder falsch
+  await nextTier(2);
+  for (let round = 0; round < 3; round++) {
+    await page.click('.race-pick.is-a');
+    const next = page.locator('.net-controls .btn-leaf');
+    await next.waitFor({ timeout: 10000 });
+    if (round === 0) await shot('internet-meer-2');
+    await next.click();
+    await wait(300);
+  }
+  await waitResult(8000);
+  // Stufe 3: Ein echter Ping zum Server
+  await nextTier(3);
+  await page.click('.ping-btn');
+  await page.waitForSelector('.net-question', { timeout: 15000 });
+  const pings = await page.$$eval('.ping-list li b', (els) => els.map((e) => e.textContent));
+  if (!pings.every((p) => /^[\d.]+ ms$/.test(p))) throw new Error(`Ping: ${pings.join(', ')}`);
+  await shot('internet-meer-3-ping');
+  await page.click('.net-controls >> text=nach Paris');
+  await waitStory(/Nicht ganz/);
+  await page.click('.net-controls >> text=zum Mond');
+  await waitResult(8000);
+  await backToMap();
+});
+
+await step('Internet 4: Telefonbuch (Bilder, Adresse tippen, wem gehört sie?)', async () => {
+  await startNet(3, 1);
+  let wrong = false;
+  for (let round = 0; round < 4; round++) {
+    await page.waitForSelector('.wish img', { timeout: 6000 });
+    const want = await page.getAttribute('.wish img', 'src');
+    const srcs = await page.$$eval('.phonebook-entry img', (els) => els.map((e) => e.getAttribute('src')));
+    const right = srcs.indexOf(want);
+    if (right < 0) throw new Error('Gesuchtes Bild fehlt im Telefonbuch');
+    const entries = page.locator('.phonebook-entry');
+    if (!wrong) {
+      await entries.nth((right + 1) % srcs.length).click();
+      await page.waitForSelector('.phonebook-entry.is-wrong');
+      wrong = true;
+    }
+    await entries.nth(right).click();
+    await page.waitForSelector('.site-page');
+    if (round === 0) await shot('internet-telefonbuch-1');
+  }
+  await waitResult(10000);
+  // Stufe 2: Adresse eintippen – erst mit Tippfehler
+  await nextTier(2);
+  for (let round = 0; round < 4; round++) {
+    const input = page.locator('.mock-address input');
+    await input.waitFor({ timeout: 8000 });
+    const name = await textOf('.dns-target b');
+    if (round === 0) {
+      await input.click();
+      await page.keyboard.type(name.replace('.de', '.dee'), { delay: 30 });
+      await page.keyboard.press('Enter');
+      await waitStory(/Tippfehler/, 5000);
+      await shot('internet-telefonbuch-2-tippfehler');
+      await input.fill('');
+    }
+    await input.click();
+    await page.keyboard.type(name, { delay: 30 });
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('.site-page', { timeout: 10000 });
+    if (round === 0) await shot('internet-telefonbuch-2');
+  }
+  await waitResult(10000);
+  // Stufe 3: Wem gehört die Adresse? Einmal absichtlich daneben
+  await nextTier(3);
+  for (let round = 0; round < 6; round++) {
+    const host = new URL(await textOf('.mock-url')).hostname;
+    const options = await page.$$eval('.owner-options .btn', (els) => els.map((e) => e.textContent.trim()));
+    const owner = options.find((o) => host === o || host.endsWith(`.${o}`));
+    if (!owner) throw new Error(`Kein Besitzer für ${host}`);
+    const pick = round === 1 ? options.find((o) => o !== owner) : owner;
+    await page.click(`.owner-options .btn:text-is("${pick}")`);
+    await waitStory(round === 1 ? /Nicht ganz/ : /Richtig/);
+    if (round === 1) await shot('internet-telefonbuch-3');
+    await page.click('.net-controls .btn-leaf');
+    await wait(250);
+  }
+  await waitResult(8000);
+  await backToMap();
+});
+
+await step('Internet 5: Das Schloss (Schatzkiste, Geheimschrift, Passwort)', async () => {
+  await startNet(4, 1);
+  for (let i = 0; i < 6; i++) {
+    await page.waitForSelector('.message-actions .btn:not([disabled])', { timeout: 10000 });
+    const text = await textOf('.message-card p');
+    // Die ersten beiden als Postkarte: Einmal ist das in Ordnung, einmal liest der Waschbär ein Geheimnis.
+    await page.click(`.message-actions >> text=${i < 2 ? 'Postkarte' : 'Schatzkiste'}`);
+    if (i < 2) {
+      await page.waitForSelector('.raccoon-bubble', { timeout: 4000 });
+      if (/Probier es nochmal/.test(await textOf('.net-story p'))) {
+        await shot('internet-schloss-1-waschbaer');
+        await page.waitForSelector('.message-actions .btn:not([disabled])', { timeout: 5000 });
+        await page.click('.message-actions >> text=Schatzkiste');
+      }
+    }
+    await page.waitForFunction((t) => document.querySelector('.message-card p')?.textContent !== t, text, { timeout: 12000 });
+  }
+  await waitResult(12000);
+  // Stufe 2: Geheimschrift – erst getippt (mit einem Fehler), dann geklickt
+  await nextTier(2);
+  const shift = Number((await textOf('.cipher-key')).match(/(\d+) Stellen/)[1]);
+  const move = (ch, by) => String.fromCharCode(((ch.charCodeAt(0) - 65 + by + 26) % 26) + 65);
+  for (let round = 0; round < 3; round++) {
+    await page.waitForSelector('.cipher-tile.is-current', { timeout: 6000 });
+    const decode = (await page.$$('.cipher-row.is-plain .cipher-cell.is-pick')).length > 0;
+    const shown = await page.$$eval('.cipher-tile small', (els) => els.map((e) => e.textContent).join(''));
+    const wanted = [...shown].map((ch) => move(ch, decode ? -shift : shift)).join('');
+    if (round === 0) {
+      await typeKeys(wanted[0] === 'X' ? 'Y' : 'X');
+      await page.waitForSelector('.cipher-cell.is-wrong', { timeout: 2000 });
+      await typeKeys(wanted, 120);
+    } else {
+      const row = decode ? '.cipher-row.is-plain' : '.cipher-row.is-secret';
+      for (const ch of wanted) {
+        await page.click(`${row} .cipher-cell:text-is("${ch}")`);
+        await wait(120);
+      }
+    }
+    await waitStory(/Geknackt|Fertig!/, 4000);
+    if (round === 2) await shot('internet-schloss-2');
+    if (round < 2) {
+      await page.waitForFunction(
+        (s) => [...document.querySelectorAll('.cipher-tile small')].map((e) => e.textContent).join('') !== s,
+        shown,
+        { timeout: 6000 },
+      );
+    }
+  }
+  await waitResult(8000);
+  // Stufe 3: Wo darf das Passwort hin?
+  await nextTier(3);
+  for (let round = 0; round < 6; round++) {
+    await page.waitForSelector('.owner-options .btn:not([disabled])', { timeout: 6000 });
+    await page.click(`.owner-options >> text=${round === 0 ? 'Ja, hier schon' : 'Nein, lieber nicht'}`);
+    await waitStory(/Richtig|Aufgepasst/);
+    if (round === 1) await shot('internet-schloss-3');
+    await page.click('.net-controls .btn-leaf');
+    await wait(250);
+  }
+  await waitResult(8000);
+  await wait(600);
+  const stars = await page.evaluate(() =>
+    Object.values(JSON.parse(localStorage.getItem('computerfuchs.save')).profiles.find((p) => p.progress?.internet).progress.internet).map(
+      (x) => x.stars,
+    ),
+  );
+  if (stars.length !== 5 || stars.some((s) => s !== 3)) throw new Error(`Sterne im Internet-Kurs: ${stars.join(', ')}`);
+  await closeWindows();
+});
 
 await step('Kiosk-Modus ohne Vollbild-Knopf', async () => {
   await page.goto(`${BASE}?kiosk`);
