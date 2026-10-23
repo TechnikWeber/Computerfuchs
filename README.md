@@ -15,9 +15,9 @@ use a computer, and learn maths, reading and more on it.
 
 ![The Computerfuchs desktop with icons, stickers, the taskbar and the mouse course](docs/images/hero-desktop.jpg)
 
-> Early prototype (v0.2). The mouse course, keyboard, maths, files and the app
-> store are playable. "What is the internet?", a paint box and more are on the
-> roadmap (see the [concept](docs/CONCEPT.md)).
+> Early prototype, version 0.3 in progress. The mouse course, keyboard, maths,
+> "What is the internet?", files and the app store are playable. A paint box,
+> letters and more are on the roadmap (see the [concept](docs/CONCEPT.md)).
 
 ## Screenshots
 
@@ -35,6 +35,10 @@ The interface is in German.
   <tr>
     <td width="50%"><img src="docs/images/keyboard-zoo.jpg" alt="A tulip with the letter T above an on-screen keyboard where the T key lights up"><br><b>Keyboard:</b> in the key zoo the key you need lights up – T for Tulpe (tulip).</td>
     <td width="50%"><img src="docs/images/keyboard-ten-fingers.jpg" alt="Two hands and a keyboard, every key in the colour of its finger"><br><b>Ten fingers:</b> every finger has its own colour.</td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/internet-packets.jpg" alt="A cat photo cut into four parts; two envelopes fly from a laptop over three routers to Grandma"><br><b>What is the internet?</b> A photo travels to Grandma in four packets, from router to router.</td>
+    <td width="50%"><img src="docs/images/internet-sea-cable.jpg" alt="A world map with two sea cables to New York; a shark sits at the broken one, the other cable via Portugal is highlighted"><br><b>Cables in the sea:</b> a shark has bitten the cable, so the photo needs another way.</td>
   </tr>
   <tr>
     <td width="50%"><img src="docs/images/files.jpg" alt="The file explorer with the Bilder folder and Flinn's tasks"><br><b>Files:</b> folders, drag and drop, recycle bin – with Flinn's tasks.</td>
@@ -78,6 +82,24 @@ The interface is in German.
   are grouped in fives, as in German primary schools. Answers go in with an
   on-screen number pad or the real keyboard. A wrong answer gets a second try
   plus a picture of the task.
+- **"What is the internet?", 5 chapters × 3 tiers,** one tier each for ages 5–7,
+  8–10 and 11 and up. Children build and use a network instead of reading about
+  it:
+  - The network: plug the laptop, computer and TV into the router (the phone
+    uses Wi-Fi), lay the cables to Grandma via both internet providers, and
+    connect six German cities so that no city is cut off when a single cable
+    breaks. A tractor tests every cable.
+  - Picture post: a photo travels in four packets. Routers read the address and
+    pass each packet on, following their signposts. Numbered packets arrive in
+    the wrong order, and a lost one is simply requested again.
+  - Cables in the sea: a shark bites through a sea cable and the photo takes
+    another way. Two routes race at the speed of light in fibre. A real ping to
+    the server, compared with Paris, Tokyo and the Moon.
+  - The phone book: names become numbers (DNS). Find the right picture, type an
+    address (a typo gets explained), and work out who really owns an address.
+  - The lock: postcard or treasure chest, past a nosy raccoon; a secret code
+    with a Caesar strip; and would you type your password here – is there a
+    padlock, and whose address is it?
 - **Files with a recycle bin.** Every child has a small file system of their own
   with pictures, music, documents and downloads. They create folders, rename
   them (with the same rules as on Windows), drag files into folders, copy and
@@ -106,8 +128,10 @@ The interface is in German.
   file and imports them again, by button or by dropping the file on the login
   screen. Damaged or foreign files are rejected with an explanation instead of
   crashing.
-- **Works offline.** After the first visit, Computerfuchs lives in the browser's
-  offline storage and starts without internet too.
+- **Works offline, installs as an app.** After the first visit, Computerfuchs
+  lives in the browser's offline storage and starts without internet too. Chrome
+  and Edge install it as an app with its own icon and window (there is a button
+  for that in the grown-ups' area).
 - **Kiosk-friendly.** Add `?kiosk` to the URL and the fullscreen toggle
   disappears; "shut down" returns to the power button. Two scripts turn a
   computer into a dedicated learning computer: one for Linux with Cage (Raspberry
@@ -127,7 +151,7 @@ to watch for, and has an observation sheet to print.
 ```sh
 npm ci
 npm run dev        # http://localhost:5173
-npm test           # Vitest (logic: profiles, rewards, save files, windows, maths, files, keyboard)
+npm test           # Vitest (logic: profiles, rewards, save files, windows, maths, files, keyboard, networks)
 npm run lint       # oxlint
 npm run build      # type-check + production build into dist/
 npm run preview    # serve dist/ at http://localhost:4173
@@ -136,12 +160,12 @@ npm run screenshots  # retake the README images (docs/images/), also against the
 ```
 
 `npm run e2e` plays through the whole app in headless Chrome: all eight mouse
-levels and all seven keyboard levels, maths, Flinn's file tasks, an app store
-purchase, stickers, a song, the secret code, settings, the save file, a reload,
-a second profile, kiosk mode and a restart without internet. It fails on any
-console error. Pass a URL to test the live site:
-`npm run e2e -- https://technikweber.github.io/Computerfuchs/`. Screenshots go
-to `test-results/e2e/`.
+levels, all seven keyboard levels and all 15 stages of "What is the internet?",
+maths, Flinn's file tasks, an app store purchase, stickers, a song, the secret
+code, settings, the save file, a reload, a second profile, kiosk mode and a
+restart without internet. It fails on any console error. Pass a URL to test the
+live site: `npm run e2e -- https://technikweber.github.io/Computerfuchs/`.
+Screenshots go to `test-results/e2e/`.
 
 Stack: React 19, TypeScript 7, Vite 8, Vitest, oxlint — the same as
 [LinuxKompass](https://github.com/TechnikWeber/LinuxKompass) and

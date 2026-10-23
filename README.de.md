@@ -15,9 +15,10 @@ einen Computer bedient, und daran Mathe, Lesen und mehr üben.
 
 ![Der Desktop von Computerfuchs mit Symbolen, Stickern, Taskleiste und dem Maustraining](docs/images/hero-desktop.jpg)
 
-> Früher Prototyp (v0.2). Maustraining, Tastatur, Rechnen, Dateien und der
-> App-Laden sind spielbar. „Was ist das Internet?“, ein Malkasten und mehr stehen
-> im Fahrplan (siehe [Konzept](docs/CONCEPT.de.md)).
+> Früher Prototyp, Version 0.3 entsteht gerade. Maustraining, Tastatur,
+> Rechnen, „Was ist das Internet?“, Dateien und der App-Laden sind spielbar. Ein
+> Malkasten, Buchstaben und mehr stehen im Fahrplan (siehe
+> [Konzept](docs/CONCEPT.de.md)).
 
 ## So sieht es aus
 
@@ -33,6 +34,10 @@ einen Computer bedient, und daran Mathe, Lesen und mehr üben.
   <tr>
     <td width="50%"><img src="docs/images/keyboard-zoo.jpg" alt="Eine Tulpe mit dem Buchstaben T, darunter eine Bildschirmtastatur mit leuchtender T-Taste"><br><b>Tastatur:</b> Im Tastenzoo leuchtet die gesuchte Taste – T wie Tulpe.</td>
     <td width="50%"><img src="docs/images/keyboard-ten-fingers.jpg" alt="Zwei Hände und eine Tastatur, jede Taste in der Farbe ihres Fingers"><br><b>Zehn Finger:</b> Jeder Finger hat seine Farbe.</td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/internet-packets.jpg" alt="Ein Katzenfoto in vier Teilen; zwei Briefumschläge fliegen vom Laptop über drei Router zu Oma"><br><b>Was ist das Internet?</b> Ein Foto reist in vier Paketen zu Oma, von Router zu Router.</td>
+    <td width="50%"><img src="docs/images/internet-sea-cable.jpg" alt="Eine Weltkarte mit zwei Seekabeln nach New York; ein Hai sitzt am kaputten, das andere Kabel über Portugal leuchtet"><br><b>Kabel im Meer:</b> Ein Hai hat ins Kabel gebissen – das Foto braucht einen anderen Weg.</td>
   </tr>
   <tr>
     <td width="50%"><img src="docs/images/files.jpg" alt="Der Datei-Explorer mit dem Ordner Bilder und Flinns Aufgaben"><br><b>Dateien:</b> Ordner, Ziehen und Ablegen, Papierkorb – mit Flinns Aufgaben.</td>
@@ -78,6 +83,26 @@ einen Computer bedient, und daran Mathe, Lesen und mehr üben.
   Fünferreihen, wie in der Grundschule. Die Antwort geht über ein Zahlenfeld oder
   die echte Tastatur. Nach einem Fehler gibt es einen zweiten Versuch und ein
   Bild zur Aufgabe.
+- **„Was ist das Internet?“, 5 Kapitel × 3 Stufen,** je eine für 5 bis 7, 8 bis
+  10 und ab 11 Jahren. Die Kinder bauen und benutzen ein Netz, statt darüber zu
+  lesen:
+  - Das Netz: Laptop, Computer und Fernseher am Router einstecken (das Handy
+    funkt per WLAN), die Kabel bis zu Oma über beide Internetanbieter ziehen und
+    sechs Städte so verbinden, dass kein gerissenes Kabel eine Stadt
+    abschneidet. Ein Traktor prüft jedes Kabel.
+  - Bilder-Post: Ein Foto reist in vier Paketen. Router lesen die Adresse und
+    geben jedes Paket weiter, so wie es ihr Wegweiser sagt. Nummerierte Pakete
+    kommen durcheinander an, und ein verlorenes wird einfach nachgefordert.
+  - Kabel im Meer: Ein Hai beißt ein Seekabel durch, und das Foto nimmt einen
+    anderen Weg. Zwei Wege liefern sich ein Rennen mit Lichtgeschwindigkeit im
+    Glasfaserkabel. Ein echter Ping zum Server, verglichen mit Paris, Tokio und
+    dem Mond.
+  - Das Telefonbuch: Namen werden zu Nummern (DNS). Das Bild im Telefonbuch
+    finden, eine Adresse eintippen (ein Tippfehler wird erklärt) und
+    herausfinden, wem eine Adresse wirklich gehört.
+  - Das Schloss: Postkarte oder Schatzkiste, vorbei an einem neugierigen
+    Waschbären; eine Geheimschrift mit dem Caesar-Streifen; und würdest du hier
+    dein Passwort eingeben – ist das Schloss da, und wem gehört die Adresse?
 - **Dateien mit Papierkorb.** Jedes Kind hat ein eigenes kleines Dateisystem mit
   Bildern, Musik, Dokumenten und Downloads. Es legt Ordner an, benennt um (mit
   denselben Regeln wie unter Windows), zieht Dateien in Ordner, kopiert und fügt
@@ -107,8 +132,10 @@ einen Computer bedient, und daran Mathe, Lesen und mehr üben.
   als JSON-Datei und lädt sie wieder, per Knopf oder per Ziehen auf den
   Anmeldebildschirm. Kaputte oder fremde Dateien werden mit einer Erklärung
   abgelehnt, statt die Seite abstürzen zu lassen.
-- **Läuft auch offline.** Nach dem ersten Besuch liegt Computerfuchs im
-  Offline-Speicher des Browsers und startet auch ohne Internet.
+- **Läuft auch offline und als App.** Nach dem ersten Besuch liegt Computerfuchs
+  im Offline-Speicher des Browsers und startet auch ohne Internet. Chrome und
+  Edge installieren es als App mit eigenem Symbol und Fenster (ein Knopf dafür
+  steht im Erwachsenen-Bereich).
 - **Kiosk-tauglich.** Mit `?kiosk` am Ende der Adresse verschwindet der
   Vollbild-Knopf, und „Ausschalten“ führt zurück zum Einschaltknopf. Zwei
   Skripte machen einen Rechner zum festen Lerncomputer: eines für Linux mit Cage
@@ -130,7 +157,7 @@ Ausdrucken.
 ```sh
 npm ci
 npm run dev        # http://localhost:5173
-npm test           # Vitest (Logik: Profile, Belohnung, Spielstand, Fenster, Rechnen, Dateien, Tastatur)
+npm test           # Vitest (Logik: Profile, Belohnung, Spielstand, Fenster, Rechnen, Dateien, Tastatur, Netze)
 npm run lint       # oxlint
 npm run build      # Typprüfung + Produktions-Build nach dist/
 npm run preview    # dist/ unter http://localhost:4173 ausliefern
@@ -139,13 +166,13 @@ npm run screenshots  # die Bilder fürs README neu aufnehmen (docs/images/), ebe
 ```
 
 `npm run e2e` spielt in einem unsichtbaren Chrome die ganze App durch: alle acht
-Maus-Level und alle sieben Tastatur-Level, Rechnen, Flinns Dateien-Aufgaben,
-einen Kauf im App-Laden, Sticker, ein Lied, den Geheimcode, die Einstellungen,
-die Spielstand-Datei, ein Neuladen, ein zweites Profil, den Kiosk-Modus und
-einen Neustart ohne Internet. Er schlägt fehl, sobald in der Konsole ein Fehler
-auftaucht. Mit einer Adresse prüft er die Live-Seite:
-`npm run e2e -- https://technikweber.github.io/Computerfuchs/`. Screenshots
-landen in `test-results/e2e/`.
+Maus-Level, alle sieben Tastatur-Level und alle 15 Stufen von „Was ist das
+Internet?“, Rechnen, Flinns Dateien-Aufgaben, einen Kauf im App-Laden, Sticker,
+ein Lied, den Geheimcode, die Einstellungen, die Spielstand-Datei, ein Neuladen,
+ein zweites Profil, den Kiosk-Modus und einen Neustart ohne Internet. Er schlägt
+fehl, sobald in der Konsole ein Fehler auftaucht. Mit einer Adresse prüft er die
+Live-Seite: `npm run e2e -- https://technikweber.github.io/Computerfuchs/`.
+Screenshots landen in `test-results/e2e/`.
 
 Stack: React 19, TypeScript 7, Vite 8, Vitest und oxlint, genau wie
 [LinuxKompass](https://github.com/TechnikWeber/LinuxKompass) und

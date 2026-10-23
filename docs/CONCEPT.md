@@ -63,7 +63,10 @@ exactly where Computerfuchs starts.
 7. **Open.** The code is MIT-licensed. New apps and content can be added without
    restructuring.
 
-## What version 0.2 can do
+## What Computerfuchs can do today
+
+Version 0.2, plus "What is the internet?" from 0.3 and installing as an app from
+0.4.
 
 - Power on (with fullscreen), a login screen with profiles, the profile wizard
   (animal, name, age), a secret code made of pictures or digits, and shutting
@@ -76,6 +79,9 @@ exactly where Computerfuchs starts.
   Flinn. The lists are in the [README](../README.md).
 - **Maths:** 6 levels from counting to mental arithmetic up to 100, each round
   generated anew
+- **What is the internet?:** 5 chapters with 3 tiers each (the network, picture
+  post, cables in the sea, the phone book, the lock). How they work is
+  [further down](#how-what-is-the-internet-works).
 - **Files:** a file system of its own for every child, with a recycle bin, drag
   and drop, renaming, copy and paste, keyboard shortcuts and six tasks from
   Flinn. A **viewer** opens pictures, wallpapers, mouse pointers, stickers, songs
@@ -86,9 +92,10 @@ exactly where Computerfuchs starts.
   colour, double-click speed with a test area (like on a real computer), profile
   (name, animal, secret code), and a grown-ups' area (save file, age, features,
   remove the secret code, kiosk note, delete profile)
-- **Offline:** after the first visit, Computerfuchs starts without internet too.
+- **Offline and as an app:** after the first visit, Computerfuchs starts
+  without internet too. Chrome and Edge install it as an app with its own icon.
 - **Kiosk scripts** for Linux with Cage, the Raspberry Pi and Windows
-- **8 more apps** are listed as "coming soon" in the start menu. Flinn tells
+- **7 more apps** are listed as "coming soon" in the start menu. Flinn tells
   what each one will do.
 
 ## App catalogue
@@ -104,7 +111,7 @@ Status: ✅ done · 🔜 next · 💡 planned
 | Keyboard (continued) | 9+ | shortcuts such as Ctrl+Z, longer texts, a personal record list | 💡 |
 | Files | 6+ | folders, dragging, renaming, copy and paste, recycle bin and restore, file extensions | ✅ |
 | Files (continued) | 9+ | searching, sorting, comparing file sizes, saving a picture from the paint box | 💡 |
-| What is the internet? | 5–7 / 8–10 / 11+ | a letter character travels to grandma's tablet; data packets, addresses, routers and sea cables (re-route around a broken one); IP, DNS as a phone book, the HTTPS padlock, data centres, a real ping test | 💡 |
+| What is the internet? | 5–7 / 8–10 / 11+ | devices on the router and Wi-Fi, the way to grandma via the internet providers, a network that holds; a photo in packets, routers with signposts, sorting packets and asking for a lost one; sea cables (if one breaks, take another way), a race at the speed of light, a real ping; DNS as a phone book, typing addresses, who owns an address; postcard or treasure chest, a secret code, where a password may go | ✅ |
 | Net detective | 8+ | a play internet with a search engine: ads, fake news, "you have won!" traps, cookie banners | 💡 |
 | Mailbox | 8+ | e-mail with an attachment (e.g. your own drawing), replying, spotting spam and phishing | 💡 |
 | Password fortress | 8+ | strong passwords and passphrases, "how long would a hacker need?", never sharing | 💡 |
@@ -158,6 +165,31 @@ learning apps share the same building blocks:
   profile's age unlocks suitable levels.
 - **Later:** adaptive difficulty. Confident children get harder tasks, children
   who are stuck get more help.
+
+## How "What is the internet?" works
+
+You cannot touch the internet. So children build and use a toy network instead
+of reading explanations.
+
+- **Five chapters, three tiers each.** Tier 1 is for ages 5 to 7, tier 2 for 8
+  to 10, tier 3 for 11 and up. Every child starts on the tier for their age, and
+  the easier ones stay open. Finishing a tier opens the next one. From age 10
+  all chapters are open; younger children play them in order.
+- **Hands on:** lay cables, send packets, re-route and sort them, type
+  addresses, encrypt. Flinn narrates every step and reads it aloud, including
+  the messages a child has to decide about.
+- **One key sentence per tier** sits on the result screen at the end, for
+  example "Dein Internetanbieter verbindet dein Haus mit dem Rest der Welt"
+  (your internet provider connects your home with the rest of the world).
+- **Real numbers:** distances are calculated on the globe, and light covers
+  200,000 km per second in fibre. The ping really measures how long a tiny
+  packet takes to the Computerfuchs server and back.
+- **Nothing real is touched:** the pages in the toy browser are made up. The IP
+  addresses come from the ranges reserved for documentation (192.0.2.x,
+  198.51.100.x and 203.0.113.x). The ping only asks Computerfuchs' own server.
+- **Safety without fear:** the last chapter explains what the padlock in the
+  address bar means (nobody reads along on the way) and what it does not: only
+  the address tells whether a site is genuine.
 
 ## Rewards
 
@@ -266,17 +298,17 @@ own web server works too.
   layouts; Chrome and Edge detect a non-German keyboard and show a hint.
 - **Tests:** Vitest for the logic (profiles, rewards, save files, windows, maths
   tasks, geometry, file system, app store, secret code, keyboard layout, typing,
-  mazes). On top comes `npm run e2e`, an automated walkthrough of the whole app
-  in headless Chrome, with screenshots.
+  mazes, networks and routes). On top comes `npm run e2e`, an automated
+  walkthrough of the whole app in headless Chrome, with screenshots.
 
 ## Roadmap
 
 | Version | Content |
 |---|---|
 | **0.1** | a desktop that grows with the child; mouse course (8 × 3); maths (6 levels); settings; save file; kiosk switch |
-| **0.2** (now) | keyboard (7 × 3); files with recycle bin and Flinn's tasks; app store; secret code; works offline; kiosk scripts for Linux, Raspberry Pi and Windows |
-| **0.3** | "What is the internet?" in 3 tiers; paint box (pictures land in "Bilder"); letters |
-| **0.4** | printable licences; parents' corner with progress and break reminder; installable as an app; English interface |
+| **0.2** | keyboard (7 × 3); files with recycle bin and Flinn's tasks; app store; secret code; works offline; kiosk scripts for Linux, Raspberry Pi and Windows |
+| **0.3** (now) | "What is the internet?" in 5 chapters × 3 tiers ✅; paint box (pictures land in "Bilder"); letters |
+| **0.4** | printable licences; parents' corner with progress and break reminder; installable as an app ✅; English interface |
 | later | more school apps; material for teachers; magic code/QR |
 
 ## Open questions

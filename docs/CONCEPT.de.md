@@ -64,7 +64,10 @@ benutzt. Genau dort setzt Computerfuchs an.
 7. **Offen.** Der Code steht unter der MIT-Lizenz. Neue Apps und Inhalte lassen
    sich ohne Umbau ergänzen.
 
-## Was Version 0.2 kann
+## Was Computerfuchs heute kann
+
+Stand: Version 0.2, dazu „Was ist das Internet?“ aus 0.3 und die Installation
+als App aus 0.4.
 
 - Einschalten (mit Vollbild), ein Anmeldebildschirm mit Profilen, der
   Profil-Assistent (Tier, Name, Alter), ein Geheimcode aus Bildern oder Zahlen
@@ -77,6 +80,9 @@ benutzt. Genau dort setzt Computerfuchs an.
   Flinn. Die Listen stehen in der [README](../README.de.md).
 - **Rechnen:** 6 Level vom Zählen bis zum Kopfrechnen bis 100, jede Runde neu
   erzeugt
+- **Was ist das Internet?:** 5 Kapitel mit je 3 Stufen (Das Netz, Bilder-Post,
+  Kabel im Meer, Das Telefonbuch, Das Schloss). Wie sie aufgebaut sind, steht
+  [weiter unten](#wie-was-ist-das-internet-funktioniert).
 - **Dateien:** ein eigenes Dateisystem pro Kind mit Papierkorb, Ziehen und
   Ablegen, Umbenennen, Kopieren und Einfügen, Tastenkürzeln und sechs Aufgaben
   von Flinn. Eine **Anzeige** öffnet Bilder, Hintergründe, Mauszeiger, Sticker,
@@ -87,9 +93,10 @@ benutzt. Genau dort setzt Computerfuchs an.
   -farbe, Doppelklick-Tempo mit Testfeld (wie an einem echten Computer), Profil
   (Name, Tier, Geheimcode) und ein Erwachsenen-Bereich (Spielstand-Datei, Alter,
   Funktionen, Geheimcode entfernen, Kiosk-Hinweis, Profil löschen)
-- **Offline:** Nach dem ersten Besuch startet Computerfuchs auch ohne Internet.
+- **Offline und als App:** Nach dem ersten Besuch startet Computerfuchs auch
+  ohne Internet. Chrome und Edge installieren es als App mit eigenem Symbol.
 - **Kiosk-Skripte** für Linux mit Cage, den Raspberry Pi und Windows
-- **8 weitere Apps** stehen als „Bald da“ im Start-Menü. Flinn erzählt, was
+- **7 weitere Apps** stehen als „Bald da“ im Start-Menü. Flinn erzählt, was
   dort kommen wird.
 
 ## App-Katalog
@@ -105,7 +112,7 @@ Status: ✅ fertig · 🔜 als Nächstes · 💡 geplant
 | Tastatur (weiter) | ab 9 | Tastenkürzel wie Strg+Z, längere Texte, eigene Rekordliste | 💡 |
 | Dateien | ab 6 | Ordner, Ziehen, Umbenennen, Kopieren und Einfügen, Papierkorb und Zurückholen, Dateiendungen | ✅ |
 | Dateien (weiter) | ab 9 | Suchen, Sortieren, Dateigrößen vergleichen, ein Bild aus dem Malkasten speichern | 💡 |
-| Was ist das Internet? | 5–7 / 8–10 / ab 11 | Ein Brief-Männchen reist zu Omas Tablet; Datenpakete, Adressen, Router und Seekabel (reißt ein Kabel, leitet man um); IP, DNS als Telefonbuch, das HTTPS-Schloss, Rechenzentren, ein echter Ping-Test | 💡 |
+| Was ist das Internet? | 5–7 / 8–10 / ab 11 | Geräte am Router und WLAN, der Weg zu Oma über die Internetanbieter, ein Netz, das hält; ein Foto in Paketen, Router mit Wegweisern, Pakete ordnen und nachfordern; Seekabel (reißt eins, nimmt man einen anderen Weg), ein Rennen mit Lichtgeschwindigkeit, ein echter Ping; DNS als Telefonbuch, Adressen tippen, wem eine Adresse gehört; Postkarte oder Schatzkiste, Geheimschrift, wo das Passwort hin darf | ✅ |
 | Netz-Detektiv | ab 8 | ein Spiel-Internet mit Suchmaschine: Werbung, Fake-News, „Du hast gewonnen!“-Fallen, Cookie-Banner | 💡 |
 | Postfach | ab 8 | E-Mail mit Anhang (z. B. das eigene Bild aus dem Malkasten), antworten, Spam und Phishing erkennen | 💡 |
 | Passwort-Festung | ab 8 | starke Passwörter und Passphrasen, „Wie lange bräuchte ein Hacker?“, nichts weitergeben | 💡 |
@@ -160,6 +167,32 @@ teilen sich alle Lern-Apps dieselben Bausteine:
   Alter des Profils schaltet passende Level frei.
 - **Später:** Die Schwierigkeit passt sich an. Wer sicher ist, bekommt Schwereres,
   wer hängt, bekommt Hilfen.
+
+## Wie „Was ist das Internet?“ funktioniert
+
+Das Internet kann man nicht anfassen. Darum bauen und benutzen die Kinder ein
+Spiel-Netz, statt Erklärungen zu lesen.
+
+- **Fünf Kapitel, je drei Stufen.** Stufe 1 ist für 5 bis 7 Jahre, Stufe 2 für 8
+  bis 10, Stufe 3 ab 11. Jedes Kind startet auf der Stufe seines Alters, die
+  leichteren bleiben offen. Wer eine Stufe schafft, darf die nächste probieren.
+  Ab 10 Jahren sind alle Kapitel offen, jüngere Kinder spielen sie der Reihe
+  nach.
+- **Selbst machen:** Kabel ziehen, Pakete losschicken, umleiten und ordnen,
+  Adressen eintippen, verschlüsseln. Flinn erzählt jeden Schritt und liest ihn
+  vor, auch die Nachrichten, über die ein Kind entscheiden soll.
+- **Ein Merksatz pro Stufe** steht am Ende auf dem Ergebnis-Bildschirm, etwa
+  „Dein Internetanbieter verbindet dein Haus mit dem Rest der Welt.“
+- **Echte Zahlen:** Entfernungen werden auf der Erdkugel gerechnet, und Licht
+  schafft im Glasfaserkabel 200.000 km pro Sekunde. Der Ping misst wirklich, wie
+  lange ein winziges Paket zum Server von Computerfuchs und zurück braucht.
+- **Nichts Echtes wird berührt:** Die Seiten im Spiel-Browser sind erfunden. Die
+  IP-Adressen stammen aus den Bereichen, die für Beispiele reserviert sind
+  (192.0.2.x, 198.51.100.x und 203.0.113.x). Der Ping fragt nur beim Server von
+  Computerfuchs selbst an.
+- **Sicherheit ohne Angst:** Das letzte Kapitel erklärt, was das Schloss in der
+  Adressleiste bedeutet (unterwegs liest niemand mit) und was nicht: Ob eine
+  Seite echt ist, verrät erst die Adresse.
 
 ## Belohnung
 
@@ -274,18 +307,18 @@ Danach startet Computerfuchs auch ganz ohne Internet. Eine lokale Kopie von
   zeigen einen Hinweis.
 - **Tests:** Vitest für die Logik (Profile, Belohnung, Spielstand-Dateien,
   Fenster, Rechenaufgaben, Geometrie, Dateisystem, App-Laden, Geheimcode,
-  Tastaturbelegung, Tippen, Labyrinthe). Dazu kommt `npm run e2e`, ein
-  automatischer Durchlauf in einem unsichtbaren Chrome durch die ganze App, mit
-  Screenshots.
+  Tastaturbelegung, Tippen, Labyrinthe, Netze und Wege). Dazu kommt
+  `npm run e2e`, ein automatischer Durchlauf in einem unsichtbaren Chrome durch
+  die ganze App, mit Screenshots.
 
 ## Fahrplan
 
 | Version | Inhalt |
 |---|---|
 | **0.1** | Desktop, der mitwächst; Maustraining (8 × 3); Rechnen (6 Level); Einstellungen; Spielstand-Datei; Kiosk-Schalter |
-| **0.2** (jetzt) | Tastatur (7 × 3); Dateien mit Papierkorb und Flinns Aufgaben; App-Laden; Geheimcode; offline nutzbar; Kiosk-Skripte für Linux, Raspberry Pi und Windows |
-| **0.3** | „Was ist das Internet?“ in 3 Stufen; Malkasten (Bilder landen in „Bilder“); Buchstaben |
-| **0.4** | Führerscheine zum Ausdrucken; Elternecke mit Fortschritt und Pausen-Erinnerung; als App installierbar; englische Oberfläche |
+| **0.2** | Tastatur (7 × 3); Dateien mit Papierkorb und Flinns Aufgaben; App-Laden; Geheimcode; offline nutzbar; Kiosk-Skripte für Linux, Raspberry Pi und Windows |
+| **0.3** (jetzt) | „Was ist das Internet?“ in 5 Kapiteln × 3 Stufen ✅; Malkasten (Bilder landen in „Bilder“); Buchstaben |
+| **0.4** | Führerscheine zum Ausdrucken; Elternecke mit Fortschritt und Pausen-Erinnerung; als App installierbar ✅; englische Oberfläche |
 | danach | weitere Schul-Apps; Material für Lehrkräfte; Zaubercode/QR |
 
 ## Offene Fragen

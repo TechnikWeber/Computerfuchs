@@ -301,6 +301,28 @@ const line = await page.getAttribute('.typing-line', 'aria-label');
 await typeKeys(line.slice(0, 3));
 await wait(300);
 await shot('keyboard-ten-fingers', { mouse: [1240, 40] });
+await closeWindows();
+
+// 10. Was ist das Internet?: Ein Foto reist in vier Paketen zu Oma …
+await openApp('internet');
+await startLevel(1, 1);
+await page.waitForSelector('[data-node="paket-0"]', { timeout: 6000 });
+for (const i of [0, 1]) {
+  const p = await center(page.locator(`[data-node="paket-${i}"] .nm-node-bg`));
+  await page.mouse.click(p.x, p.y);
+  await wait(450);
+}
+await wait(700);
+await shot('internet-packets', { mouse: [1240, 40] });
+
+// … und ein Hai beißt ins Seekabel.
+await page.click('.level-top .btn-ghost');
+await page.waitForSelector('.level-map');
+await startLevel(2, 1);
+await page.click('.net-controls >> text=Losschicken');
+await page.waitForSelector('.nm-edge.tone-pick', { timeout: 6000 });
+await wait(800);
+await shot('internet-sea-cable', { mouse: [1240, 40] });
 
 await browser.close();
 if (problems.length) {
