@@ -9,7 +9,8 @@
  * Anderer Pfad: Umgebungsvariable CHROME_PATH. Screenshots landen in test-results/e2e.
  * Spielt alle 8 Maus-Level, Rechnen, Einstellungen, Spielstand-Datei, Neuladen,
  * ein zweites Profil, alle 7 Tastatur-Level, die Dateien-Aufgaben, den App-Laden,
- * Sticker, ein Lied, den Geheimcode und den Kiosk-Modus durch und meldet Konsolenfehler.
+ * Sticker, ein Lied, den Geheimcode, den Kiosk-Modus und einen Neustart ohne Internet
+ * durch und meldet Konsolenfehler.
  */
 import { chromium } from 'playwright-core';
 import fs from 'node:fs';
@@ -986,6 +987,27 @@ await step('Kiosk-Modus ohne Vollbild-Knopf', async () => {
   await wait(300);
   const fsButtons = await page.$$('.tray-btn');
   if (fsButtons.length !== 1) throw new Error(`erwartet nur den Ton-Knopf, gefunden ${fsButtons.length}`);
+});
+
+await step('Ohne Internet: Neustart aus dem Offline-Speicher', async () => {
+  if (BASE.startsWith('file:')) return;
+  await page.evaluate(async () => {
+    await navigator.serviceWorker.ready;
+    for (let i = 0; i < 50 && !navigator.serviceWorker.controller; i++) await new Promise((r) => setTimeout(r, 100));
+  });
+  await ctx.setOffline(true);
+  try {
+    await page.reload();
+    await page.click('.power-btn', { timeout: 8000 });
+    await page.waitForSelector('.profile-card', { timeout: 8000 });
+    await page.locator('.profile-card').first().click();
+    await page.waitForSelector('.taskbar');
+    await openDesk('dateien');
+    await page.waitForSelector('.files', { timeout: 8000 });
+    await shot('offline-dateien');
+  } finally {
+    await ctx.setOffline(false);
+  }
 });
 
 await step('Kleines Fenster (1024×600)', async () => {

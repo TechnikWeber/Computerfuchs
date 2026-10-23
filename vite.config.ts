@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { offline } from './tools/offline.ts';
 
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as { version: string };
 
@@ -8,7 +9,7 @@ const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 
 // aber genauso auf einem Schulserver oder als lokale Kopie auf einem Kiosk-Laptop.
 export default defineConfig({
   base: './',
-  plugins: [react()],
+  plugins: [react(), offline()],
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
   },

@@ -8,6 +8,7 @@ import './styles/apps.css';
 import './styles/files.css';
 import './styles/keyboard.css';
 import App from './App';
+import { registerOffline } from './core/offline';
 import { SaveProvider } from './core/SaveProvider';
 
 const container = document.getElementById('root');
@@ -20,3 +21,5 @@ createRoot(container).render(
     </SaveProvider>
   </StrictMode>,
 );
+
+registerOffline();
