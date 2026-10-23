@@ -8,6 +8,7 @@ import './styles/apps.css';
 import './styles/files.css';
 import './styles/keyboard.css';
 import App from './App';
+import { initInstall } from './core/install';
 import { registerOffline } from './core/offline';
 import { SaveProvider } from './core/SaveProvider';
 
@@ -23,3 +24,4 @@ createRoot(container).render(
 );
 
 registerOffline();
+initInstall();

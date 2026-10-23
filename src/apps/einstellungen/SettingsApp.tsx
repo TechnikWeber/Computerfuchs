@@ -3,6 +3,7 @@ import { AVATARS, WALLPAPERS } from '../../core/catalog';
 import { formatBytes } from '../../core/bytes';
 import { createDoubleClick } from '../../core/dblclick';
 import { downloadText } from '../../core/download';
+import { promptInstall, useInstallState } from '../../core/install';
 import type { EmojiName } from '../../core/emoji';
 import {
   CURSOR_SIZES, FEATURES, MAX_NAME, rankFor, withAge,
@@ -407,6 +408,7 @@ function GrownUpPage() {
   const fileInput = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const install = useInstallState();
 
   const load = async (file: File) => {
     const result = parseSaveFile(await file.text());
@@ -514,6 +516,25 @@ function GrownUpPage() {
             <Icon name="lock" size={22} /> Geheimcode entfernen
           </button>
         </>
+      )}
+
+      <h3>Als App installieren</h3>
+      <p className="settings-intro">
+        Installiert startet Computerfuchs wie ein eigenes Programm: im Vollbild, ohne Browserleiste und auch ohne Internet.
+      </p>
+      {install === 'installed' && <p className="settings-note">Computerfuchs ist auf diesem Gerät als App installiert.</p>}
+      {install === 'possible' && (
+        <div className="settings-buttons">
+          <button type="button" className="btn btn-sky" onClick={() => void promptInstall()}>
+            <Icon name="download" size={22} /> Als App installieren
+          </button>
+        </div>
+      )}
+      {install === 'unavailable' && (
+        <p className="settings-note">
+          In Chrome und Edge geht das über das Menü („App installieren“). Auf dem iPad: Teilen → „Zum Home-Bildschirm“.
+          Firefox kann es (noch) nicht.
+        </p>
       )}
 
       <h3>Kiosk-Modus</h3>

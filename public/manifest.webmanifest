@@ -1,0 +1,20 @@
+{
+  "name": "Computerfuchs – der Lerncomputer",
+  "short_name": "Computerfuchs",
+  "description": "Ein Lerncomputer für Kinder von 5 bis 15: Maus, Tastatur, Rechnen, Dateien und mehr – ohne Anmeldung, alles bleibt auf dem Gerät.",
+  "lang": "de",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "landscape",
+  "background_color": "#151a45",
+  "theme_color": "#151a45",
+  "categories": ["education", "kids"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
