@@ -20,6 +20,15 @@ optimised with SVGO. They are used unchanged in appearance.
 The font files are served from the same origin as the app. No request goes to
 Google Fonts or any other third-party server.
 
+## Songs
+
+The melodies in `src/core/songs.ts` – *Alle meine Entchen*, *Hänschen klein*,
+*Bruder Jakob*, the melody known as *Morgen kommt der Weihnachtsmann* (*Ah !
+vous dirai-je, maman*) and *Zum Geburtstag viel Glück* (*Good Morning to All* by
+Mildred and Patty Hill, 1893) – are traditional or long in the public domain.
+They were written down as note sequences for this project and are played with
+Web Audio; no recordings are included.
+
 ## Runtime libraries
 
 - [React](https://react.dev) and React DOM — MIT License

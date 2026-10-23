@@ -2,7 +2,7 @@
 
 # Computerfuchs – Konzept
 
-Stand: 23. Oktober 2026 · Version 0.1
+Stand: 23. Oktober 2026 · Version 0.2
 
 ## Die Idee
 
@@ -54,8 +54,8 @@ benutzt. Genau dort setzt Computerfuchs an.
    wo Tempo das Lernziel ist. Jede geschaffte Runde bringt mindestens einen Stern.
 
 5. **Belohnungen mit Sinn.** Die Währung heißt *Bytes*. Ab 1.000 zählt sie in
-   Kilobyte, und so lernen Kinder nebenbei, was die Einheiten bedeuten. Später
-   werden Belohnungen echte Dateien (siehe [App-Laden](#belohnung)).
+   Kilobyte, und so lernen Kinder nebenbei, was die Einheiten bedeuten. Im
+   App-Laden werden Belohnungen zu echten Dateien (siehe [Belohnung](#belohnung)).
 
 6. **Datenschutz von Anfang an.** Es gibt keinen Server, kein Konto, keine
    Cookies, keine Analyse und keine fremden Anfragen. Alle Daten bleiben auf dem
@@ -64,35 +64,47 @@ benutzt. Genau dort setzt Computerfuchs an.
 7. **Offen.** Der Code steht unter der MIT-Lizenz. Neue Apps und Inhalte lassen
    sich ohne Umbau ergänzen.
 
-## Was Version 0.1 kann
+## Was Version 0.2 kann
 
 - Einschalten (mit Vollbild), ein Anmeldebildschirm mit Profilen, der
-  Profil-Assistent (Tier, Name, Alter) und Ausschalten
-- ein Desktop mit sechs Hintergründen, Fenstern, Taskleiste, Start-Menü,
-  Rechtsklick-Menü, Meldungen, Rängen und Konfetti
-- **Maustraining:** 8 Level mit je 3 Stufen. Die Liste steht in der
-  [README](../README.de.md).
+  Profil-Assistent (Tier, Name, Alter), ein Geheimcode aus Bildern oder Zahlen
+  und Ausschalten
+- ein Desktop mit zehn Hintergründen (vier davon aus dem App-Laden), Fenstern,
+  Taskleiste, Start-Menü, Rechtsklick-Menü, Stickern, Meldungen, Rängen und
+  Konfetti
+- **Maustraining:** 8 Level mit je 3 Stufen
+- **Tastatur:** 7 Level mit je 3 Stufen, vom Tastenzoo bis zum Wettrennen gegen
+  Flinn. Die Listen stehen in der [README](../README.de.md).
 - **Rechnen:** 6 Level vom Zählen bis zum Kopfrechnen bis 100, jede Runde neu
   erzeugt
-- **Einstellungen:** Hintergrund, Ton und Lautstärke, Vorlesen, Zeigergröße,
-  Doppelklick-Tempo mit Testfeld (wie an einem echten Computer), Profil (Name
-  und Tier) und ein Erwachsenen-Bereich (Spielstand-Datei, Alter, Funktionen,
-  Kiosk-Hinweis, Profil löschen)
-- **Papierkorb:** noch leer. Er erklärt schon, wofür er da ist.
-- **11 weitere Apps** stehen als „Bald da“ im Start-Menü. Flinn erzählt, was
+- **Dateien:** ein eigenes Dateisystem pro Kind mit Papierkorb, Ziehen und
+  Ablegen, Umbenennen, Kopieren und Einfügen, Tastenkürzeln und sechs Aufgaben
+  von Flinn. Eine **Anzeige** öffnet Bilder, Hintergründe, Mauszeiger, Sticker,
+  Lieder und Texte.
+- **App-Laden:** 19 Dinge zum Kaufen in vier Abteilungen; alles landet in
+  „Downloads“
+- **Einstellungen:** Hintergrund, Ton und Lautstärke, Vorlesen, Zeigergröße und
+  -farbe, Doppelklick-Tempo mit Testfeld (wie an einem echten Computer), Profil
+  (Name, Tier, Geheimcode) und ein Erwachsenen-Bereich (Spielstand-Datei, Alter,
+  Funktionen, Geheimcode entfernen, Kiosk-Hinweis, Profil löschen)
+- **Offline:** Nach dem ersten Besuch startet Computerfuchs auch ohne Internet.
+- **Kiosk-Skripte** für Linux mit Cage, den Raspberry Pi und Windows
+- **8 weitere Apps** stehen als „Bald da“ im Start-Menü. Flinn erzählt, was
   dort kommen wird.
 
 ## App-Katalog
 
-Status: ✅ fertig in v0.1 · 🔜 als Nächstes · 💡 geplant
+Status: ✅ fertig · 🔜 als Nächstes · 💡 geplant
 
 ### Computer lernen
 
 | App | Alter | Was man lernt | Status |
 |---|---|---|---|
 | Maustraining | ab 4 | Bewegen, Klicken, Doppelklick, Ziehen, genau Führen, Rechtsklick, Scrollen, Fenster | ✅ |
-| Tastatur | 5+ / 8+ / 10+ | Tasten mit Anlaut-Bildern finden („A wie Affe“), Buchstabenregen, Wörter zu Bildern, Großbuchstaben, Umlaute und @ (AltGr+Q), 10-Finger-System auf QWERTZ, Tipp-Rennen gegen den eigenen Rekord, Tastenkürzel | 🔜 |
-| Dateien | ab 6 | Ordner, Ziehen, Umbenennen, Suchen, Papierkorb und Zurückholen, Dateitypen | 🔜 |
+| Tastatur | 5+ / 8+ / 10+ | Tasten mit Anlaut-Bildern finden („A wie Affe“), Leertaste, Pfeiltasten, Buchstabenregen, Wörter zu Bildern, Rücktaste, Großbuchstaben, Satzzeichen und @ (AltGr+Q), 10-Finger-System auf QWERTZ, Tipp-Rennen gegen Flinn mit Rekord | ✅ |
+| Tastatur (weiter) | ab 9 | Tastenkürzel wie Strg+Z, längere Texte, eigene Rekordliste | 💡 |
+| Dateien | ab 6 | Ordner, Ziehen, Umbenennen, Kopieren und Einfügen, Papierkorb und Zurückholen, Dateiendungen | ✅ |
+| Dateien (weiter) | ab 9 | Suchen, Sortieren, Dateigrößen vergleichen, ein Bild aus dem Malkasten speichern | 💡 |
 | Was ist das Internet? | 5–7 / 8–10 / ab 11 | Ein Brief-Männchen reist zu Omas Tablet; Datenpakete, Adressen, Router und Seekabel (reißt ein Kabel, leitet man um); IP, DNS als Telefonbuch, das HTTPS-Schloss, Rechenzentren, ein echter Ping-Test | 💡 |
 | Netz-Detektiv | ab 8 | ein Spiel-Internet mit Suchmaschine: Werbung, Fake-News, „Du hast gewonnen!“-Fallen, Cookie-Banner | 💡 |
 | Postfach | ab 8 | E-Mail mit Anhang (z. B. das eigene Bild aus dem Malkasten), antworten, Spam und Phishing erkennen | 💡 |
@@ -128,8 +140,8 @@ Status: ✅ fertig in v0.1 · 🔜 als Nächstes · 💡 geplant
 | App | Was sie zeigt | Status |
 |---|---|---|
 | Einstellungen | Ein Computer lässt sich einstellen: Hintergrund, Ton, Maus | ✅ |
-| Papierkorb | Löschen heißt erst einmal Wegräumen | ✅ (bekommt mit der Dateien-App Inhalt) |
-| App-Laden | Bytes ausgeben; „Installieren“ mit Fortschrittsbalken | 🔜 |
+| Papierkorb | Löschen heißt erst einmal Wegräumen – und Zurückholen geht | ✅ |
+| App-Laden | Bytes ausgeben; Herunterladen mit Fortschrittsbalken; Gekauftes landet als Datei in „Downloads“ | ✅ |
 
 ## Wie die Schul-Apps wachsen
 
@@ -153,7 +165,8 @@ teilen sich alle Lern-Apps dieselben Bausteine:
 
 - **Bytes:** Der erste, zweite und dritte Stern eines Levels bringen 16, 32 und
   64 Bytes. Eine Wiederholung ohne neuen Stern bringt 4 Bytes. Ein Level ist
-  also 112 Bytes wert, und alle 14 Level von v0.1 zusammen etwa 1,5 KB.
+  also 112 Bytes wert, und alle 21 Level mit Sternen zusammen etwa 2,3 KB. Jede
+  der sechs Dateien-Aufgaben bringt noch einmal 16 Bytes.
 - **Ränge** nach allen jemals verdienten Bytes:
 
   | Rang | ab |
@@ -166,9 +179,11 @@ teilen sich alle Lern-Apps dieselben Bausteine:
 
 - **Führerscheine** 💡 für Maus, Tastatur und Internet zum Ausdrucken, mit Namen
   und Datum
-- **App-Laden** 🔜: Gekauftes (Hintergründe, Mauszeiger, Sticker, ein
-  Desktop-Haustier) landet als Datei im Ordner „Downloads“. Wer es dort öffnet,
-  verschiebt und als Hintergrund einstellt, übt nebenbei den Umgang mit Dateien.
+- **App-Laden** ✅: Hintergründe (120 bis 200 Bytes), Mauszeiger (60 bis 100),
+  Sticker (30) und Lieder (40 bis 60). Gekauftes landet als Datei im Ordner
+  „Downloads“. Wer es dort öffnet, verschiebt und als Hintergrund einstellt, übt
+  nebenbei den Umgang mit Dateien. Noch einmal herunterladen kostet nichts, und
+  Ausgeben senkt den Rang nicht. Später 💡 kommt ein Desktop-Haustier dazu.
 
 ## Speichern
 
@@ -183,8 +198,12 @@ teilen sich alle Lern-Apps dieselben Bausteine:
 **Warum kein 4-stelliger Code?** Ohne Server gibt es keinen Ort, auf den ein Code
 zeigen könnte, also müsste der ganze Spielstand im Code stecken. Dafür sind
 10.000 Möglichkeiten viel zu wenig. Mit Server könnten Fremde fremde Codes
-erraten. Die 4 Ziffern bekommen stattdessen eine andere Aufgabe 💡: als PIN fürs
-Profil, für die Kleinen als Bilder-PIN. Das wird ihr erstes Passwort.
+erraten. Die 4 Ziffern haben stattdessen eine andere Aufgabe bekommen ✅: als
+**Geheimcode** fürs Profil – vier Zahlen oder, für die Kleinen, vier aus neun
+Bildern. Das ist ihr erstes Passwort. Gespeichert wird nur eine Prüfsumme, nicht
+der Code selbst. Ein Tresor ist das nicht: Er hält Geschwister fern und übt, ein
+Passwort für sich zu behalten. Nach zwei Fehlversuchen können Erwachsene ihn
+hinter der Rechenaufgabe zurücksetzen.
 
 ## Kiosk-Betrieb
 
@@ -200,58 +219,28 @@ Strg+Alt+Entf gehören dem Betriebssystem. Das Abschließen muss deshalb der
 - „Ausschalten“ führt zurück zum Einschaltknopf.
 - Im Vollbild werden in Chromium auch Tasten wie Esc abgefangen.
 
-> ⚠️ Die folgenden Anleitungen sind noch nicht auf echter Hardware getestet.
-> Ein Einrichtungsskript für Linux folgt, sobald es auf einem Test-Laptop läuft.
+Für das Betriebssystem gibt es zwei Skripte und eine
+[Anleitung mit drei Wegen](KIOSK.de.md):
 
-### Linux (Empfehlung für alte Laptops)
+1. **Linux mit Cage** (Empfehlung für alte Laptops): Debian ohne Desktop, dazu
+   Cage, das genau ein Programm im Vollbild zeigt, und Chromium. Ein Konto
+   `kind` meldet sich automatisch an; stürzt etwas ab, startet es neu.
+   Chromium-Richtlinien sperren alle anderen Seiten, die Entwicklerwerkzeuge und
+   private Fenster.
+2. **Raspberry Pi** mit Raspberry Pi OS Lite und demselben Skript – ein
+   günstiger eigener Lerncomputer.
+3. **Windows 10 und 11** (auch Home): Ein Standardkonto „Kind“ ohne Passwort
+   bekommt statt des Explorers nur den Browser mit Computerfuchs. Chrome und
+   Firefox behalten im Kiosk-Modus ein normales Profil; Edge startet als
+   App-Fenster, denn Edges eigener Kiosk-Modus läuft immer InPrivate und würde
+   die Spielstände löschen.
 
-Viele ältere Laptops schaffen Windows 11 nicht. Mit einem schlanken Linux werden
-sie zum Lerncomputer. Die Grundidee: Debian ohne Desktop, dazu **Cage** (zeigt
-genau ein Programm im Vollbild, sonst nichts) und Chromium.
+Damit ein Kiosk-Laptop, der schneller hochfährt als sein WLAN, nicht auf einer
+Fehlerseite hängt, speichert ein Service Worker die ganze Seite im Browser.
+Danach startet Computerfuchs auch ganz ohne Internet. Eine lokale Kopie von
+`dist/` hinter einem eigenen Webserver geht ebenfalls.
 
-```sh
-sudo apt install cage chromium
-sudo useradd -m kind
-
-# Automatisch als „kind“ anmelden (tty1)
-sudo mkdir -p /etc/systemd/system/getty@tty1.service.d
-printf '[Service]\nExecStart=\nExecStart=-/sbin/agetty --autologin kind --noclear %%I $TERM\n' \
-  | sudo tee /etc/systemd/system/getty@tty1.service.d/autologin.conf
-
-# Beim Anmelden auf tty1 direkt Computerfuchs starten
-echo 'if [ "$(tty)" = "/dev/tty1" ]; then exec cage -- chromium --ozone-platform=wayland --kiosk --noerrdialogs "https://technikweber.github.io/Computerfuchs/?kiosk"; fi' \
-  | sudo tee -a /home/kind/.bash_profile
-```
-
-Wird der Browser geschlossen, endet die Sitzung, die automatische Anmeldung
-startet neu, und Computerfuchs ist wieder da. Chromium im Kiosk-Modus behält ein
-normales Profil, die Spielstände bleiben also erhalten.
-
-### Windows 10/11 Pro
-
-- Unter *Einstellungen › Konten › Andere Benutzer › Kiosk einrichten*
-  („zugewiesener Zugriff“) Microsoft Edge wählen und die Adresse mit `?kiosk`
-  eintragen.
-- **Achtung:** Edge läuft im Kiosk-Modus standardmäßig *InPrivate*. Beim Beenden
-  löscht er alle Browserdaten, also auch die Spielstände. Abhilfe schafft die
-  Edge-Richtlinie *Configure kiosk mode* („Kioskmodus konfigurieren“), die auf
-  normales Browsen gestellt wird. Bitte in der aktuellen Microsoft-Dokumentation
-  prüfen. Sonst regelmäßig die Spielstand-Datei sichern. Computerfuchs warnt
-  selbst, wenn der Browser nicht speichern kann.
-- Windows Home hat keinen zugewiesenen Zugriff. Dort bleibt nur ein Autostart
-  von Chrome oder Edge mit `--kiosk`. Das ist weniger dicht, weil Alt+F4 das
-  Fenster schließt.
-
-### Raspberry Pi
-
-Raspberry Pi OS mit Chromium im Kiosk-Modus im Autostart (labwc oder Wayfire).
-Ein Pi mit Bildschirm, Maus und Tastatur wird so zum günstigen Lerncomputer.
-
-### Ohne Internet 💡
-
-Mit einer installierbaren Web-App (PWA) lädt sich Computerfuchs einmal und läuft
-danach offline. Bis dahin funktioniert auch eine lokale Kopie von `dist/` hinter
-einem kleinen Webserver, zum Beispiel `python3 -m http.server`.
+> ⚠️ Die Skripte sind noch nicht auf echter Hardware getestet.
 
 ## Technik
 
@@ -262,7 +251,9 @@ einem kleinen Webserver, zum Beispiel `python3 -m http.server`.
   `main` wird geprüft, gebaut und veröffentlicht.
 - **Aufbau:**
   - `src/core/`: Profile, Belohnungen, Spielstand (mit Prüfung und Reparatur),
-    Ton (Web Audio, ohne Tondateien), Sprache, Doppelklick-Erkennung, Geometrie
+    das Dateisystem und die Aufgaben dazu, App-Laden, Geheimcode, Lieder als
+    Notenfolgen, Ton (Web Audio, ohne Tondateien), Sprache,
+    Doppelklick-Erkennung, Geometrie
   - `src/os/`: der simulierte Computer. Die Fensterverwaltung ist eine reine,
     getestete Funktion (`windows.ts`).
   - `src/apps/`: die Apps. Sie bekommen über `useOs()` das Profil, Belohnungen,
@@ -274,21 +265,28 @@ einem kleinen Webserver, zum Beispiel `python3 -m http.server`.
   Öffnen geladen.
 - **Bilder:** Fluent Emoji (MIT) als SVG in `public/emoji/`. Sie sehen auf jedem
   Gerät gleich aus, auch auf einem Linux-Kiosk ohne Emoji-Schrift.
+- **Offline:** `tools/offline.ts` erzeugt beim Bauen `dist/sw.js` mit der Liste
+  aller Dateien. Die Seite kommt zuerst aus dem Netz (damit Updates ankommen),
+  alles andere aus dem Speicher.
+- **Tastatur:** Die Bildschirmtastatur kennt die Tasten nach ihrem Ort
+  (`e.code`), die Spiele prüfen das Zeichen (`e.key`). So funktionieren sie auch
+  mit anderen Layouts; Chrome und Edge erkennen eine nicht deutsche Tastatur und
+  zeigen einen Hinweis.
 - **Tests:** Vitest für die Logik (Profile, Belohnung, Spielstand-Dateien,
-  Fenster, Rechenaufgaben, Geometrie). Dazu kommt `npm run e2e`, ein
-  automatischer Durchlauf in einem unsichtbaren Chrome: alle 8 Maus-Level,
-  Rechnen, Einstellungen, Spielstand-Datei, Neuladen, zwei Profile und der
-  Kiosk-Modus, mit Screenshots.
+  Fenster, Rechenaufgaben, Geometrie, Dateisystem, App-Laden, Geheimcode,
+  Tastaturbelegung, Tippen, Labyrinthe). Dazu kommt `npm run e2e`, ein
+  automatischer Durchlauf in einem unsichtbaren Chrome durch die ganze App, mit
+  Screenshots.
 
 ## Fahrplan
 
 | Version | Inhalt |
 |---|---|
-| **0.1** (jetzt) | Desktop, der mitwächst; Maustraining (8 × 3); Rechnen (6 Level); Einstellungen; Spielstand-Datei; Kiosk-Schalter |
-| **0.2** | Tastatur (3 Altersstufen); Dateien mit Papierkorb; App-Laden mit ersten Belohnungen; Bilder-PIN fürs Profil |
-| **0.3** | „Was ist das Internet?“ in 3 Stufen; Malkasten; Buchstaben; Missionen mit Flinn („Finde das Hundefoto …“) |
-| **0.4** | Führerscheine zum Ausdrucken; Elternecke mit Fortschritt und Pausen-Erinnerung; offline als PWA; englische Oberfläche |
-| danach | Kiosk-Skript für Linux; weitere Schul-Apps; Material für Lehrkräfte; Zaubercode/QR |
+| **0.1** | Desktop, der mitwächst; Maustraining (8 × 3); Rechnen (6 Level); Einstellungen; Spielstand-Datei; Kiosk-Schalter |
+| **0.2** (jetzt) | Tastatur (7 × 3); Dateien mit Papierkorb und Flinns Aufgaben; App-Laden; Geheimcode; offline nutzbar; Kiosk-Skripte für Linux, Raspberry Pi und Windows |
+| **0.3** | „Was ist das Internet?“ in 3 Stufen; Malkasten (Bilder landen in „Bilder“); Buchstaben |
+| **0.4** | Führerscheine zum Ausdrucken; Elternecke mit Fortschritt und Pausen-Erinnerung; als App installierbar; englische Oberfläche |
+| danach | weitere Schul-Apps; Material für Lehrkräfte; Zaubercode/QR |
 
 ## Offene Fragen
 
@@ -300,3 +298,5 @@ einem kleinen Webserver, zum Beispiel `python3 -m http.server`.
   einsammelt.
 - Wann kommt die englische Oberfläche? Die Texte liegen heute noch direkt in den
   Komponenten.
+- Wie gut laufen die Kiosk-Skripte auf echten Geräten? Rückmeldungen dazu und zu
+  Tests mit Kindern ([Testanleitung](TESTING.de.md)) helfen am meisten.

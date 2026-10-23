@@ -2,7 +2,7 @@
 
 # Computerfuchs – Concept
 
-As of 23 October 2026 · version 0.1
+As of 23 October 2026 · version 0.2
 
 ## The idea
 
@@ -53,8 +53,8 @@ exactly where Computerfuchs starts.
    skill. Every finished round earns at least one star.
 
 5. **Rewards that teach.** The currency is called *Bytes*. From 1,000 on it
-   counts in kilobytes, so children pick up the units on the way. Later, rewards
-   become real files (see [the app store](#rewards)).
+   counts in kilobytes, so children pick up the units on the way. In the app
+   store, rewards become real files (see [rewards](#rewards)).
 
 6. **Privacy from the start.** There is no server, no account, no cookies, no
    analytics and no third-party requests. All data stays on the device. Schools
@@ -63,35 +63,47 @@ exactly where Computerfuchs starts.
 7. **Open.** The code is MIT-licensed. New apps and content can be added without
    restructuring.
 
-## What version 0.1 can do
+## What version 0.2 can do
 
 - Power on (with fullscreen), a login screen with profiles, the profile wizard
-  (animal, name, age) and shutting down
-- a desktop with six wallpapers, windows, taskbar, start menu, right-click menu,
-  notifications, ranks and confetti
-- **Mouse course:** 8 levels with 3 tiers each. The list is in the
-  [README](../README.md).
+  (animal, name, age), a secret code made of pictures or digits, and shutting
+  down
+- a desktop with ten wallpapers (four of them from the app store), windows,
+  taskbar, start menu, right-click menu, stickers, notifications, ranks and
+  confetti
+- **Mouse course:** 8 levels with 3 tiers each
+- **Keyboard:** 7 levels with 3 tiers each, from the key zoo to a race against
+  Flinn. The lists are in the [README](../README.md).
 - **Maths:** 6 levels from counting to mental arithmetic up to 100, each round
   generated anew
-- **Settings:** wallpaper, sound and volume, reading aloud, pointer size,
-  double-click speed with a test area (like on a real computer), profile (name
-  and animal), and a grown-ups' area (save file, age, features, kiosk note,
-  delete profile)
-- **Recycle bin:** empty for now. It already explains what it is for.
-- **11 more apps** are listed as "coming soon" in the start menu. Flinn tells
+- **Files:** a file system of its own for every child, with a recycle bin, drag
+  and drop, renaming, copy and paste, keyboard shortcuts and six tasks from
+  Flinn. A **viewer** opens pictures, wallpapers, mouse pointers, stickers, songs
+  and texts.
+- **App store:** 19 things to buy in four departments; everything lands in
+  "Downloads"
+- **Settings:** wallpaper, sound and volume, reading aloud, pointer size and
+  colour, double-click speed with a test area (like on a real computer), profile
+  (name, animal, secret code), and a grown-ups' area (save file, age, features,
+  remove the secret code, kiosk note, delete profile)
+- **Offline:** after the first visit, Computerfuchs starts without internet too.
+- **Kiosk scripts** for Linux with Cage, the Raspberry Pi and Windows
+- **8 more apps** are listed as "coming soon" in the start menu. Flinn tells
   what each one will do.
 
 ## App catalogue
 
-Status: ✅ done in v0.1 · 🔜 next · 💡 planned
+Status: ✅ done · 🔜 next · 💡 planned
 
 ### Learning the computer
 
 | App | Age | What you learn | Status |
 |---|---|---|---|
 | Mouse course | 4+ | moving, clicking, double-clicking, dragging, precise guiding, right-click, scrolling, windows | ✅ |
-| Keyboard | 5+ / 8+ / 10+ | finding keys with initial-sound pictures, letter rain, words for pictures, capitals, umlauts and @ (AltGr+Q), touch typing on QWERTZ, races against your own record, shortcuts | 🔜 |
-| Files | 6+ | folders, dragging, renaming, searching, recycle bin and restore, file types | 🔜 |
+| Keyboard | 5+ / 8+ / 10+ | finding keys with initial-sound pictures, space bar, arrow keys, letter rain, words for pictures, backspace, capitals, punctuation and @ (AltGr+Q), touch typing on QWERTZ, races against Flinn with a record | ✅ |
+| Keyboard (continued) | 9+ | shortcuts such as Ctrl+Z, longer texts, a personal record list | 💡 |
+| Files | 6+ | folders, dragging, renaming, copy and paste, recycle bin and restore, file extensions | ✅ |
+| Files (continued) | 9+ | searching, sorting, comparing file sizes, saving a picture from the paint box | 💡 |
 | What is the internet? | 5–7 / 8–10 / 11+ | a letter character travels to grandma's tablet; data packets, addresses, routers and sea cables (re-route around a broken one); IP, DNS as a phone book, the HTTPS padlock, data centres, a real ping test | 💡 |
 | Net detective | 8+ | a play internet with a search engine: ads, fake news, "you have won!" traps, cookie banners | 💡 |
 | Mailbox | 8+ | e-mail with an attachment (e.g. your own drawing), replying, spotting spam and phishing | 💡 |
@@ -127,8 +139,8 @@ Status: ✅ done in v0.1 · 🔜 next · 💡 planned
 | App | What it teaches | Status |
 |---|---|---|
 | Settings | A computer can be set up: wallpaper, sound, mouse | ✅ |
-| Recycle bin | Deleting first means putting away | ✅ (gets content with the files app) |
-| App store | spending Bytes; "installing" with a progress bar | 🔜 |
+| Recycle bin | Deleting first means putting away – and restoring works | ✅ |
+| App store | spending Bytes; downloading with a progress bar; purchases land as files in "Downloads" | ✅ |
 
 ## How the school apps scale
 
@@ -151,7 +163,8 @@ learning apps share the same building blocks:
 
 - **Bytes:** the first, second and third star of a level earn 16, 32 and
   64 Bytes. A replay without a new star earns 4 Bytes. One level is therefore
-  worth 112 Bytes, and all 14 levels of v0.1 together about 1.5 KB.
+  worth 112 Bytes, and all 21 levels with stars together about 2.3 KB. Each of
+  the six file tasks adds another 16 Bytes.
 - **Ranks** by Bytes earned over all time:
 
   | Rank | from |
@@ -164,9 +177,11 @@ learning apps share the same building blocks:
 
 - **Licences** 💡 for mouse, keyboard and internet to print out, with name and
   date
-- **App store** 🔜: whatever you buy (wallpapers, pointers, stickers, a desktop
-  pet) lands as a file in the "Downloads" folder. Opening it there, moving it and
-  setting it as wallpaper is file-management practice.
+- **App store** ✅: wallpapers (120 to 200 Bytes), mouse pointers (60 to 100),
+  stickers (30) and songs (40 to 60). Purchases land as files in the "Downloads"
+  folder. Opening them there, moving them and setting one as wallpaper is
+  file-management practice. Downloading again is free, and spending never lowers
+  the rank. A desktop pet 💡 comes later.
 
 ## Saving
 
@@ -181,8 +196,11 @@ learning apps share the same building blocks:
 **Why not a 4-digit code?** Without a server there is nothing for a code to point
 to, so the whole progress would have to fit into the code itself, and
 10,000 combinations are far too few. With a server, strangers could guess other
-children's codes. The 4 digits get a different job instead 💡: a PIN for the
-profile, or a picture PIN for the youngest. That becomes their first password.
+children's codes. The 4 digits got a different job instead ✅: a **secret code**
+for the profile – four digits or, for the youngest, four of nine pictures. That
+is their first password. Only a checksum is stored, not the code itself. It is
+not a safe: it keeps siblings out and practises keeping a password to yourself.
+After two wrong tries, a grown-up can reset it behind the arithmetic gate.
 
 ## Kiosk operation
 
@@ -196,56 +214,28 @@ system's kiosk mode**. The page helps with `?kiosk` at the end of the URL:
 - "Shut down" returns to the power button.
 - In fullscreen, Chromium also captures keys such as Esc.
 
-> ⚠️ The following instructions have not been tested on real hardware yet. A
-> Linux setup script will follow once it runs on a test laptop.
+For the operating system there are two scripts and a
+[guide with three ways](KIOSK.md):
 
-### Linux (recommended for old laptops)
+1. **Linux with Cage** (recommended for old laptops): Debian without a desktop,
+   plus Cage, which shows exactly one program full screen, and Chromium. A `kind`
+   account signs in automatically; if anything crashes, it starts again.
+   Chromium policies block every other site, the developer tools and private
+   windows.
+2. **Raspberry Pi** with Raspberry Pi OS Lite and the same script – a cheap
+   dedicated learning computer.
+3. **Windows 10 and 11** (Home included): a standard account "Kind" without a
+   password gets only the browser with Computerfuchs instead of Explorer. Chrome
+   and Firefox keep a normal profile in kiosk mode; Edge starts as an app window,
+   because Edge's own kiosk mode always runs InPrivate and would delete the
+   progress.
 
-Many older laptops cannot run Windows 11. With a lean Linux they become learning
-computers. The basic idea: Debian without a desktop, plus **Cage** (shows exactly
-one program fullscreen and nothing else) and Chromium.
+So that a kiosk laptop that boots faster than its Wi-Fi does not hang on an
+error page, a service worker stores the whole site in the browser. After that,
+Computerfuchs starts without any internet. A local copy of `dist/` behind your
+own web server works too.
 
-```sh
-sudo apt install cage chromium
-sudo useradd -m kind
-
-# Log in automatically as "kind" (tty1)
-sudo mkdir -p /etc/systemd/system/getty@tty1.service.d
-printf '[Service]\nExecStart=\nExecStart=-/sbin/agetty --autologin kind --noclear %%I $TERM\n' \
-  | sudo tee /etc/systemd/system/getty@tty1.service.d/autologin.conf
-
-# On login at tty1, start Computerfuchs directly
-echo 'if [ "$(tty)" = "/dev/tty1" ]; then exec cage -- chromium --ozone-platform=wayland --kiosk --noerrdialogs "https://technikweber.github.io/Computerfuchs/?kiosk"; fi' \
-  | sudo tee -a /home/kind/.bash_profile
-```
-
-If the browser is closed, the session ends, auto-login starts again and
-Computerfuchs is back. Chromium in kiosk mode keeps a normal profile, so the
-saved progress survives.
-
-### Windows 10/11 Pro
-
-- Under *Settings › Accounts › Other users › Set up a kiosk* ("assigned
-  access"), choose Microsoft Edge and enter the URL with `?kiosk`.
-- **Caution:** Edge's kiosk mode runs *InPrivate* by default and deletes all
-  browser data when it closes, saved progress included. The fix is the Edge
-  policy *Configure kiosk mode* set to normal browsing. Please check the current
-  Microsoft documentation. Otherwise, back up the save file regularly.
-  Computerfuchs warns by itself when the browser cannot save.
-- Windows Home has no assigned access. All that is left there is autostarting
-  Chrome or Edge with `--kiosk`. That is less tight, because Alt+F4 closes the
-  window.
-
-### Raspberry Pi
-
-Raspberry Pi OS with Chromium in kiosk mode in the autostart (labwc or Wayfire).
-A Pi with a screen, mouse and keyboard becomes a cheap learning computer.
-
-### Without internet 💡
-
-As an installable web app (PWA), Computerfuchs loads once and then works
-offline. Until then, a local copy of `dist/` behind a small web server, such as
-`python3 -m http.server`, also works.
+> ⚠️ The scripts have not been tested on real hardware yet.
 
 ## Technology
 
@@ -254,7 +244,8 @@ offline. Until then, a local copy of `dist/` behind a small web server, such as
 - **No backend.** GitHub Pages serves built files. Every push to `main` is
   tested, built and published.
 - **Layout:**
-  - `src/core/`: profiles, rewards, save data (with validation and repair),
+  - `src/core/`: profiles, rewards, save data (with validation and repair), the
+    file system and its tasks, app store, secret code, songs as note sequences,
     sound (Web Audio, no sound files), speech, double-click detection, geometry
   - `src/os/`: the simulated computer. The window manager is a pure, tested
     function (`windows.ts`).
@@ -267,20 +258,26 @@ offline. Until then, a local copy of `dist/` behind a small web server, such as
   opened.
 - **Images:** Fluent Emoji (MIT) as SVG in `public/emoji/`. They look the same
   on every device, including a Linux kiosk without an emoji font.
+- **Offline:** `tools/offline.ts` generates `dist/sw.js` at build time with the
+  list of all files. The page comes from the network first (so updates arrive),
+  everything else from storage.
+- **Keyboard:** the on-screen keyboard knows keys by position (`e.code`), the
+  games check the character (`e.key`). That way they also work with other
+  layouts; Chrome and Edge detect a non-German keyboard and show a hint.
 - **Tests:** Vitest for the logic (profiles, rewards, save files, windows, maths
-  tasks, geometry). On top comes `npm run e2e`, an automated walkthrough in
-  headless Chrome: all 8 mouse levels, maths, settings, the save file, a reload,
-  two profiles and the kiosk mode, with screenshots.
+  tasks, geometry, file system, app store, secret code, keyboard layout, typing,
+  mazes). On top comes `npm run e2e`, an automated walkthrough of the whole app
+  in headless Chrome, with screenshots.
 
 ## Roadmap
 
 | Version | Content |
 |---|---|
-| **0.1** (now) | a desktop that grows with the child; mouse course (8 × 3); maths (6 levels); settings; save file; kiosk switch |
-| **0.2** | keyboard (3 age groups); files with recycle bin; app store with the first rewards; picture PIN for profiles |
-| **0.3** | "What is the internet?" in 3 tiers; paint box; letters; missions with Flinn ("find the dog photo …") |
-| **0.4** | printable licences; parents' corner with progress and break reminder; offline as a PWA; English interface |
-| later | Linux kiosk script; more school apps; material for teachers; magic code/QR |
+| **0.1** | a desktop that grows with the child; mouse course (8 × 3); maths (6 levels); settings; save file; kiosk switch |
+| **0.2** (now) | keyboard (7 × 3); files with recycle bin and Flinn's tasks; app store; secret code; works offline; kiosk scripts for Linux, Raspberry Pi and Windows |
+| **0.3** | "What is the internet?" in 3 tiers; paint box (pictures land in "Bilder"); letters |
+| **0.4** | printable licences; parents' corner with progress and break reminder; installable as an app; English interface |
+| later | more school apps; material for teachers; magic code/QR |
 
 ## Open questions
 
@@ -291,3 +288,5 @@ offline. Until then, a local copy of `dist/` behind a small web server, such as
   children's data? One idea is save files that a teacher collects.
 - When does the English interface come? The texts still live directly in the
   components.
+- How well do the kiosk scripts work on real devices? Feedback on that, and on
+  tests with children ([testing guide](TESTING.md)), helps most.
