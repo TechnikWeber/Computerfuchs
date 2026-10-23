@@ -1,0 +1,576 @@
+/*
+ * Automatischer Durchlauf durch Computerfuchs, mit Screenshots.
+ *
+ *   npm run build && npm run preview      # in einem zweiten Terminal
+ *   npm run e2e                           # gegen http://localhost:4173/
+ *   npm run e2e -- https://technikweber.github.io/Computerfuchs/
+ *
+ * Nutzt einen installierten Chrome, Chromium oder Edge (kein Browser-Download).
+ * Anderer Pfad: Umgebungsvariable CHROME_PATH. Screenshots landen in test-results/e2e.
+ * Spielt alle 8 Maus-Level, Rechnen, Einstellungen, Spielstand-Datei, Neuladen,
+ * ein zweites Profil und den Kiosk-Modus durch und meldet Konsolenfehler.
+ */
+import { chromium } from 'playwright-core';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const BASE = process.argv[2] ?? 'http://localhost:4173/';
+const OUT = process.argv[3] ?? path.resolve('test-results', 'e2e');
+fs.rmSync(OUT, { recursive: true, force: true });
+fs.mkdirSync(OUT, { recursive: true });
+
+const CANDIDATES = [
+  process.env.CHROME_PATH,
+  'C:/Program Files/Google/Chrome/Application/chrome.exe',
+  'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
+  '/usr/bin/google-chrome',
+  '/usr/bin/chromium',
+  '/usr/bin/chromium-browser',
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+].filter(Boolean);
+const executablePath = CANDIDATES.find((p) => fs.existsSync(p));
+if (!executablePath) {
+  console.error('Kein Chrome/Chromium/Edge gefunden. Bitte CHROME_PATH setzen.');
+  process.exit(2);
+}
+
+const browser = await chromium.launch({
+  executablePath,
+  headless: true,
+  args: ['--autoplay-policy=no-user-gesture-required'],
+});
+const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 }, acceptDownloads: true });
+const page = await ctx.newPage();
+const problems = [];
+page.on('console', (m) => {
+  if (m.type() === 'error' || m.type() === 'warning') problems.push(`[console.${m.type()}] ${m.text()}`);
+});
+page.on('pageerror', (e) => problems.push(`[pageerror] ${e.message}`));
+
+let n = 0;
+const shot = async (name) => {
+  n++;
+  await page.screenshot({ path: path.join(OUT, `${String(n).padStart(2, '0')}-${name}.png`) });
+};
+const results = [];
+const step = async (name, fn) => {
+  const t0 = Date.now();
+  try {
+    await fn();
+    results.push(`OK   ${name} (${Date.now() - t0} ms)`);
+  } catch (e) {
+    results.push(`FAIL ${name}: ${e.message.split('\n')[0]}`);
+    await shot(`FAIL-${name}`);
+  }
+};
+const wait = (ms) => page.waitForTimeout(ms);
+const center = async (handle) => {
+  const b = await handle.boundingBox();
+  return { x: b.x + b.width / 2, y: b.y + b.height / 2, b };
+};
+
+/** Hinweise von Flinn (Freischaltungen, Rang) wegklicken. */
+async function dismissNotices() {
+  for (let i = 0; i < 4; i++) {
+    const btn = await page.$('.notice .fox-bubble-actions .btn');
+    if (!btn) return;
+    await wait(250);
+    await btn.click();
+    await wait(350);
+  }
+}
+
+async function waitResult(timeout = 30000) {
+  await page.waitForSelector('.result', { timeout });
+  // Freischalt- und Rang-Hinweise kommen kurz nach dem Ergebnis.
+  await wait(1100);
+  await dismissNotices();
+}
+
+async function backToMap() {
+  await page.click('.result-actions >> text=Karte');
+  await page.waitForSelector('.level-map');
+  await wait(200);
+}
+
+async function startLevel(index) {
+  await page.locator('.level-card').nth(index).click();
+  await page.waitForSelector('.level-intro');
+  await wait(250);
+  await page.click('.level-intro .btn-leaf');
+  await page.waitForSelector('.level-stage');
+  await wait(400);
+}
+
+// ---------------------------------------------------------------------------
+
+await step('Startbildschirm', async () => {
+  await page.goto(BASE);
+  await page.waitForSelector('.power-btn');
+  await shot('boot');
+  await page.click('.power-btn');
+  await page.waitForSelector('.boot-splash');
+  await wait(900);
+  await shot('boot-splash');
+  await page.waitForSelector('.wizard', { timeout: 8000 });
+});
+
+await step('Profil anlegen (5 Jahre)', async () => {
+  await wait(300);
+  await shot('wizard-avatar');
+  await page.locator('.avatar-pick').nth(6).click();
+  await page.waitForSelector('.name-input');
+  await page.fill('.name-input', 'Mia');
+  await shot('wizard-name');
+  await page.click('.name-form button[type=submit]');
+  await page.waitForSelector('.age-grid');
+  await shot('wizard-age');
+  await page.click('.age-pick >> text="5"');
+  await page.waitForSelector('.desktop');
+  await wait(700);
+  await shot('desktop-welcome');
+  await page.click('.notice .btn-leaf');
+  await wait(400);
+  await shot('desktop-klein');
+});
+
+await step('Maustraining öffnen (ein Klick)', async () => {
+  await page.locator('.desk-icon').first().click();
+  await page.waitForSelector('.level-map', { timeout: 8000 });
+  await wait(500);
+  await shot('maus-karte');
+});
+
+await step('Level 1 Taschenlampe', async () => {
+  await page.locator('.level-card').nth(0).click();
+  await page.waitForSelector('.level-intro');
+  await wait(400);
+  await shot('maus-intro');
+  await page.click('.level-intro .btn-leaf');
+  await page.waitForSelector('.lamp-friend');
+  await wait(300);
+  await page.mouse.move(500, 420);
+  await wait(200);
+  await shot('lamp-dunkel');
+  const friends = await page.$$('.lamp-friend');
+  for (const [i, f] of friends.entries()) {
+    const c = await center(f);
+    await page.mouse.move(c.x, c.y, { steps: 6 });
+    await wait(650);
+    if (i === 1) await shot('lamp-gefunden');
+  }
+  await waitResult();
+  await shot('ergebnis');
+  await backToMap();
+});
+
+await step('Level 2 Ballons', async () => {
+  await startLevel(1);
+  await wait(800);
+  await shot('ballons');
+  const t0 = Date.now();
+  while (!(await page.$('.result')) && Date.now() - t0 < 45000) {
+    const balloons = await page.$$('.balloon');
+    for (const b of balloons) {
+      const box = await b.boundingBox();
+      if (box && box.y > 150 && box.y + box.height < 740) {
+        await page.mouse.click(box.x + box.width / 2, box.y + box.height * 0.35);
+        break;
+      }
+    }
+    await wait(200);
+  }
+  await waitResult(5000);
+  await backToMap();
+});
+
+await step('Level 3 Geschenke (Doppelklick)', async () => {
+  await startLevel(2);
+  await shot('geschenke');
+  // Erst ein einzelner Klick: Es soll der Tipp kommen.
+  const first = (await page.$$('.gift'))[0];
+  const c0 = await center(first);
+  await page.mouse.click(c0.x, c0.y);
+  await wait(1300);
+  await shot('geschenke-tipp');
+  for (let i = 0; i < 4; i++) {
+    const gift = (await page.$$('.gift:not(.is-open)'))[0];
+    if (!gift) break;
+    const c = await center(gift);
+    await page.mouse.dblclick(c.x, c.y, { delay: 60 });
+    await wait(500);
+  }
+  await shot('geschenke-offen');
+  await page.waitForSelector('.result', { timeout: 10000 });
+  await wait(1100);
+  await shot('freischaltung-doppelklick');
+  await dismissNotices();
+  await backToMap();
+});
+
+await step('Doppelklick ist freigeschaltet', async () => {
+  const features = await page.evaluate(() => JSON.parse(localStorage.getItem('computerfuchs.save')).profiles[0].features);
+  if (!features.includes('doubleClick')) throw new Error(`features: ${features}`);
+});
+
+const FOOD_FOR = {
+  carrot: 'rabbit-face',
+  bone: 'dog-face',
+  banana: 'monkey-face',
+  'cheese-wedge': 'mouse-face',
+  fish: 'cat-face',
+  'honey-pot': 'bear',
+  chestnut: 'chipmunk',
+};
+
+await step('Level 4 Tiere füttern (Ziehen)', async () => {
+  await startLevel(3);
+  await shot('fuettern');
+  // Absichtlich zuerst zum falschen Tier ziehen.
+  for (let round = 0; round < 3; round++) {
+    const foods = await page.$$('.feed-food');
+    if (foods.length === 0) break;
+    const food = foods[0];
+    const src = await food.$eval('img', (img) => img.getAttribute('src'));
+    const name = src.split('/').pop().replace('.svg', '');
+    const animals = await page.$$('.feed-animal:not(.is-fed)');
+    let right = null;
+    let wrong = null;
+    for (const a of animals) {
+      const aSrc = await a.$eval('img', (img) => img.getAttribute('src'));
+      if (aSrc.endsWith(`${FOOD_FOR[name]}.svg`)) right = a;
+      else wrong = a;
+    }
+    const from = await center(food);
+    if (round === 0 && wrong) {
+      const to = await center(wrong);
+      await page.mouse.move(from.x, from.y);
+      await page.mouse.down();
+      await page.mouse.move(to.x, to.y, { steps: 12 });
+      await shot('fuettern-ziehen');
+      await page.mouse.up();
+      await wait(600);
+    }
+    const from2 = await center((await page.$$('.feed-food'))[0]);
+    const to2 = await center(right);
+    await page.mouse.move(from2.x, from2.y);
+    await page.mouse.down();
+    await page.mouse.move(to2.x, to2.y, { steps: 15 });
+    await page.mouse.up();
+    await wait(700);
+  }
+  await waitResult();
+  await backToMap();
+  await dismissNotices();
+});
+
+await step('Level 5 Bienenweg', async () => {
+  await startLevel(4);
+  await wait(300);
+  await shot('bienenweg');
+  const pts = await page.evaluate(() => {
+    const svg = document.querySelector('.path-svg');
+    const r = svg.getBoundingClientRect();
+    return document
+      .querySelector('.path-road')
+      .getAttribute('points')
+      .split(' ')
+      .map((p) => p.split(',').map(Number))
+      .map(([x, y]) => ({ x: x + r.left, y: y + r.top }));
+  });
+  await page.mouse.move(pts[0].x, pts[0].y, { steps: 4 });
+  await wait(200);
+  for (let i = 2; i < pts.length; i += 3) {
+    await page.mouse.move(pts[i].x, pts[i].y);
+    if (i % 60 === 2) await wait(16);
+    if (i === 152) await shot('bienenweg-unterwegs');
+  }
+  await page.mouse.move(pts[pts.length - 1].x, pts[pts.length - 1].y);
+  await waitResult();
+  await backToMap();
+});
+
+await step('Level 6 Farbenzauber (Rechtsklick)', async () => {
+  await startLevel(5);
+  await shot('farben');
+  // Linksklick zuerst: Hinweis auf die rechte Taste.
+  const spots = await page.evaluate(() => {
+    const out = [];
+    for (const g of document.querySelectorAll('.paint-field > .paint-scene .paint-part.is-paintable')) {
+      const r = g.getBoundingClientRect();
+      let found = null;
+      for (let fy = 0.2; fy <= 0.8 && !found; fy += 0.1) {
+        for (let fx = 0.2; fx <= 0.8 && !found; fx += 0.1) {
+          const x = r.left + r.width * fx;
+          const y = r.top + r.height * fy;
+          const hit = document.elementFromPoint(x, y);
+          if (hit && g.contains(hit)) found = { x, y };
+        }
+      }
+      out.push(found);
+    }
+    return out;
+  });
+  await page.mouse.click(spots[0].x, spots[0].y);
+  await wait(400);
+  await shot('farben-linksklick');
+  for (const [i, s] of spots.entries()) {
+    await page.mouse.click(s.x, s.y, { button: 'right' });
+    await page.waitForSelector('.paint-menu');
+    if (i === 0) await shot('farben-menu');
+    await page.locator('.paint-swatch').nth(i % 8).click();
+    await wait(300);
+  }
+  await shot('farben-bunt');
+  await waitResult();
+  await backToMap();
+  await dismissNotices();
+});
+
+await step('Level 7 Tauchgang (Scrollen)', async () => {
+  await startLevel(6);
+  await shot('tauchgang');
+  const scroller = await page.$('.dive-scroll');
+  const sc = await center(scroller);
+  await page.mouse.move(sc.x, sc.y);
+  for (let i = 0; i < 4; i++) {
+    await page.mouse.wheel(0, 250);
+    await wait(120);
+  }
+  await wait(300);
+  await shot('tauchgang-tiefer');
+  for (let i = 0; i < 3; i++) {
+    const animal = (await page.$$('.dive-animal:not(.is-found)'))[0];
+    if (!animal) break;
+    await animal.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+    await wait(250);
+    const c = await center(animal);
+    await page.mouse.click(c.x, c.y);
+    await wait(400);
+  }
+  await waitResult();
+  await backToMap();
+});
+
+await step('Level 8 Fenster-Profi', async () => {
+  await startLevel(7);
+  await shot('fenster');
+  const title = await center(await page.$('.winpro-title'));
+  const win = (await (await page.$('.winpro-win')).boundingBox());
+  const target = (await (await page.$('.winpro-target')).boundingBox());
+  await page.mouse.move(title.x - 40, title.y);
+  await page.mouse.down();
+  await page.mouse.move(title.x - 40 + (target.x - win.x), title.y + (target.y - win.y), { steps: 20 });
+  await page.mouse.up();
+  await waitResult();
+  await shot('fenster-geschafft');
+  await backToMap();
+  await dismissNotices();
+  await shot('maus-karte-fertig');
+});
+
+await step('Alle vier Desktop-Funktionen freigeschaltet', async () => {
+  const p = await page.evaluate(() => JSON.parse(localStorage.getItem('computerfuchs.save')).profiles[0]);
+  const need = ['doubleClick', 'moveWindows', 'rightClick', 'windowControls'];
+  const missing = need.filter((f) => !p.features.includes(f));
+  if (missing.length) throw new Error(`fehlt: ${missing}`);
+  results.push(`     Bytes nach 8 Leveln: ${p.bytes}, Rang-Bytes: ${p.bytesEarned}`);
+});
+
+await step('Fenster bedienen: verschieben, vergrößern, verkleinern, Taskleiste', async () => {
+  // Seit „Fenster verschieben" ist das Fenster normal groß und hat jetzt alle Knöpfe.
+  await shot('fenster-normal');
+  const before = await (await page.$('.win')).boundingBox();
+  const title = await center(await page.$('.win-title'));
+  await page.mouse.move(title.x - 200, title.y);
+  await page.mouse.down();
+  await page.mouse.move(title.x - 120, title.y + 60, { steps: 10 });
+  await page.mouse.up();
+  await wait(300);
+  const after = await (await page.$('.win')).boundingBox();
+  if (Math.abs(after.x - before.x - 80) > 6 || Math.abs(after.y - before.y - 60) > 6) {
+    throw new Error(`Fenster nicht verschoben: ${JSON.stringify(before)} → ${JSON.stringify(after)}`);
+  }
+  await page.click('.win-btn-max');
+  await wait(400);
+  if (!(await page.$('.win.win-max'))) throw new Error('Vergrößern ging nicht');
+  await page.click('.win-btn-min');
+  await wait(400);
+  if (!(await page.$('.task.is-min'))) throw new Error('Taskleisten-Knopf zeigt kein verkleinertes Fenster');
+  await shot('desktop-verkleinert');
+  await page.click('.task');
+  await wait(400);
+  if (await page.$('.task.is-min')) throw new Error('Fenster kam nicht zurück');
+  if (!(await page.$('.win.win-max'))) throw new Error('Fenster kam nicht groß zurück');
+});
+
+await step('Rechtsklick-Menü auf dem Desktop', async () => {
+  await page.click('.win-btn-close');
+  await wait(400);
+  await page.mouse.click(900, 300, { button: 'right' });
+  await page.waitForSelector('.ctx-menu');
+  await wait(350);
+  await shot('desktop-rechtsklick');
+  await page.click('.ctx-item >> text=Hintergrund ändern');
+  await page.waitForSelector('.wall-grid', { timeout: 8000 });
+  await wait(400);
+  await shot('einstellungen-hintergrund');
+  await page.click('.wall-pick >> text=Sternennacht');
+  await wait(400);
+});
+
+await step('Rechnen: Zählen bis 10', async () => {
+  await page.click('.win-btn-close');
+  await wait(300);
+  // Doppelklick ist jetzt Pflicht auf dem Desktop.
+  const icon = await center(page.locator('.desk-icon').nth(1));
+  await page.mouse.dblclick(icon.x, icon.y, { delay: 60 });
+  await page.waitForSelector('.level-map', { timeout: 8000 });
+  await wait(300);
+  await shot('rechnen-karte');
+  await page.locator('.level-card').nth(0).click();
+  await page.click('.level-intro .btn-leaf');
+  await page.waitForSelector('.math-choices');
+  await wait(300);
+  await shot('rechnen-zaehlen');
+  for (let i = 0; i < 10; i++) {
+    await page.waitForSelector('.math-choice:not([disabled])', { timeout: 5000 });
+    const count = await page.$$eval('.vis-obj', (els) => els.length);
+    // Einmal absichtlich falsch, um den zweiten Versuch zu sehen.
+    if (i === 2) {
+      const wrongBtn = page.locator('.math-choice').filter({ hasNotText: new RegExp(`^${count}$`) }).first();
+      await wrongBtn.click();
+      await wait(250);
+      await shot('rechnen-falsch');
+      await wait(1100);
+    }
+    await page.locator('.math-choice', { hasText: new RegExp(`^${count}$`) }).click();
+    await wait(1000);
+  }
+  await waitResult();
+  await shot('rechnen-ergebnis');
+});
+
+await step('Rechnen: Plus mit der Tastatur', async () => {
+  await page.click('.result-actions >> text=Plus');
+  await page.waitForSelector('.level-intro');
+  await page.click('.level-intro .btn-leaf');
+  await page.waitForSelector('.numpad');
+  for (let i = 0; i < 10; i++) {
+    await page.waitForSelector('.math-answer.is-none', { timeout: 5000 });
+    const [a, , b] = await page.$$eval('.math-eq > span', (s) => s.map((x) => x.textContent));
+    if (i === 0) {
+      await shot('rechnen-plus');
+      const top = await page.$eval('.math-card', (el) => el.getBoundingClientRect().top - el.closest('.math-play').getBoundingClientRect().top);
+      if (top < 0) throw new Error(`Aufgabe ragt oben hinaus (${top}px)`);
+    }
+    await page.keyboard.type(String(Number(a) + Number(b)));
+    await page.keyboard.press('Enter');
+    await wait(1000);
+  }
+  await waitResult();
+});
+
+await step('Einmaleins mit Hilfe-Bild', async () => {
+  await page.click('.result-actions >> text=Karte');
+  await page.waitForSelector('.level-map');
+  const cards = page.locator('.level-card');
+  // Einmaleins ist für eine Fünfjährige noch gesperrt.
+  const locked = await cards.nth(4).getAttribute('aria-disabled');
+  if (locked !== 'true') throw new Error('Einmaleins hätte gesperrt sein sollen');
+  await shot('rechnen-karte-2');
+});
+
+await step('Erwachsenen-Bereich: Spielstand als Datei', async () => {
+  await page.click('.start-btn');
+  await page.waitForSelector('.start-menu');
+  await wait(400);
+  await shot('startmenue');
+  await page.click('.start-tile >> text=Einstellungen');
+  await page.waitForSelector('.settings');
+  await page.click('.settings-tab >> text=Für Erwachsene');
+  await page.waitForSelector('.parent-gate');
+  const [a, b] = (await page.textContent('.parent-gate-task span')).match(/\d+/g).map(Number);
+  await page.fill('.parent-gate-task input', String(a * b));
+  await page.click('.parent-gate .btn');
+  await page.waitForSelector('text=Alle Profile als Datei sichern');
+  await shot('erwachsene');
+  const [download] = await Promise.all([page.waitForEvent('download'), page.click('text=Alle Profile als Datei sichern')]);
+  const file = path.join(OUT, download.suggestedFilename());
+  await download.saveAs(file);
+  const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+  if (data.format !== 'computerfuchs' || data.profiles.length !== 1) throw new Error('Datei unvollständig');
+  results.push(`     Datei: ${download.suggestedFilename()} (${fs.statSync(file).size} Bytes)`);
+});
+
+await step('Neu laden: Spielstand bleibt', async () => {
+  await page.reload();
+  await page.click('.power-btn');
+  await page.waitForSelector('.profile-card', { timeout: 8000 });
+  await wait(300);
+  await shot('login');
+  await page.locator('.profile-card').first().click();
+  await page.waitForSelector('.desktop');
+  await wait(500);
+  const wall = await page.$eval('.desktop > .wallpaper', (el) => el.innerHTML.includes('mask'));
+  if (!wall) throw new Error('Hintergrund „Sternennacht" nicht übernommen');
+  await shot('desktop-nacht');
+});
+
+await step('Zweites Profil: 12 Jahre, voller Desktop', async () => {
+  await page.click('.start-btn');
+  await page.click('.start-foot >> text=Abmelden');
+  await page.waitForSelector('.profile-new');
+  await page.click('.profile-new');
+  await page.locator('.avatar-pick').nth(11).click();
+  await page.fill('.name-input', 'Jonas');
+  await page.click('.name-form button[type=submit]');
+  await page.click('.age-pick >> text="12"');
+  await page.waitForSelector('.desktop');
+  await wait(500);
+  await page.click('.notice .btn-leaf');
+  const icon = await center(page.locator('.desk-icon').first());
+  // Ein Klick wählt nur aus …
+  await page.mouse.click(icon.x, icon.y);
+  await wait(300);
+  if (await page.$('.win')) throw new Error('Ein Klick hätte nichts öffnen dürfen');
+  // … erst der Doppelklick öffnet.
+  await page.mouse.dblclick(icon.x, icon.y, { delay: 60 });
+  await page.waitForSelector('.win.win-normal', { timeout: 8000 });
+  await wait(400);
+  await shot('gross-fenster');
+  // Größe am Rand ziehen
+  const se = await center(await page.$('.win-resize-se'));
+  await page.mouse.move(se.x, se.y);
+  await page.mouse.down();
+  await page.mouse.move(se.x - 150, se.y - 80, { steps: 10 });
+  await page.mouse.up();
+  await wait(300);
+  await shot('gross-kleiner');
+  const cards = await page.$$eval('.level-card', (els) => els.filter((e) => e.getAttribute('aria-disabled') === 'true').length);
+  if (cards !== 0) throw new Error('Große sollten alle Level offen haben');
+});
+
+await step('Kiosk-Modus ohne Vollbild-Knopf', async () => {
+  await page.goto(`${BASE}?kiosk`);
+  await page.click('.power-btn');
+  await page.waitForSelector('.profile-card', { timeout: 8000 });
+  await page.locator('.profile-card').first().click();
+  await page.waitForSelector('.taskbar');
+  await wait(300);
+  const fsButtons = await page.$$('.tray-btn');
+  if (fsButtons.length !== 1) throw new Error(`erwartet nur den Ton-Knopf, gefunden ${fsButtons.length}`);
+});
+
+await step('Kleines Fenster (1024×600)', async () => {
+  await page.setViewportSize({ width: 1024, height: 600 });
+  await wait(400);
+  await shot('klein-1024');
+});
+
+await browser.close();
+console.log(results.join('\n'));
+console.log(`\nProbleme in der Konsole: ${problems.length}`);
+for (const p of [...new Set(problems)].slice(0, 30)) console.log(p);
+console.log(`Screenshots: ${OUT}`);
+if (results.some((r) => r.startsWith('FAIL')) || problems.length > 0) process.exitCode = 1;

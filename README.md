@@ -72,7 +72,15 @@ npm run dev        # http://localhost:5173
 npm test           # Vitest (logic: profiles, rewards, save files, windows, maths)
 npm run lint       # oxlint
 npm run build      # type-check + production build into dist/
+npm run preview    # serve dist/ at http://localhost:4173
+npm run e2e        # browser walkthrough against the preview (uses an installed Chrome/Edge)
 ```
+
+`npm run e2e` plays all eight mouse levels, maths, settings, the save file, a
+reload, a second profile and kiosk mode in headless Chrome, and fails on any
+console error. Pass a URL to test the live site:
+`npm run e2e -- https://technikweber.github.io/Computerfuchs/`. Screenshots go
+to `test-results/e2e/`.
 
 Stack: React 19, TypeScript 7, Vite 8, Vitest, oxlint — the same as
 [LinuxKompass](https://github.com/TechnikWeber/LinuxKompass) and

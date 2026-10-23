@@ -76,7 +76,16 @@ npm run dev        # http://localhost:5173
 npm test           # Vitest (Logik: Profile, Belohnung, Spielstand, Fenster, Rechnen)
 npm run lint       # oxlint
 npm run build      # Typprüfung + Produktions-Build nach dist/
+npm run preview    # dist/ unter http://localhost:4173 ausliefern
+npm run e2e        # Durchlauf im Browser gegen die Vorschau (nutzt einen installierten Chrome/Edge)
 ```
+
+`npm run e2e` spielt in einem unsichtbaren Chrome alle acht Maus-Level,
+Rechnen, Einstellungen, die Spielstand-Datei, ein Neuladen, ein zweites Profil
+und den Kiosk-Modus durch. Er schlägt fehl, sobald in der Konsole ein Fehler
+auftaucht. Mit einer Adresse prüft er die Live-Seite:
+`npm run e2e -- https://technikweber.github.io/Computerfuchs/`. Screenshots
+landen in `test-results/e2e/`.
 
 Stack: React 19, TypeScript 7, Vite 8, Vitest und oxlint, genau wie
 [LinuxKompass](https://github.com/TechnikWeber/LinuxKompass) und

@@ -272,9 +272,10 @@ einem kleinen Webserver, zum Beispiel `python3 -m http.server`.
 - **Bilder:** Fluent Emoji (MIT) als SVG in `public/emoji/`. Sie sehen auf jedem
   Gerät gleich aus, auch auf einem Linux-Kiosk ohne Emoji-Schrift.
 - **Tests:** Vitest für die Logik (Profile, Belohnung, Spielstand-Dateien,
-  Fenster, Rechenaufgaben, Geometrie). Dazu kam beim Bau ein automatischer
-  Durchlauf im Browser: alle 8 Maus-Level, Rechnen, Einstellungen,
-  Spielstand-Datei, Neuladen, zwei Profile und der Kiosk-Modus.
+  Fenster, Rechenaufgaben, Geometrie). Dazu kommt `npm run e2e`, ein
+  automatischer Durchlauf in einem unsichtbaren Chrome: alle 8 Maus-Level,
+  Rechnen, Einstellungen, Spielstand-Datei, Neuladen, zwei Profile und der
+  Kiosk-Modus, mit Screenshots.
 
 ## Fahrplan
 

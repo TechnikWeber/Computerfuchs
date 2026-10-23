@@ -264,9 +264,9 @@ offline. Until then, a local copy of `dist/` behind a small web server, such as
 - **Images:** Fluent Emoji (MIT) as SVG in `public/emoji/`. They look the same
   on every device, including a Linux kiosk without an emoji font.
 - **Tests:** Vitest for the logic (profiles, rewards, save files, windows, maths
-  tasks, geometry). During development, an automated browser walkthrough also
-  played all 8 mouse levels, maths, settings, the save file, a reload, two
-  profiles and the kiosk mode.
+  tasks, geometry). On top comes `npm run e2e`, an automated walkthrough in
+  headless Chrome: all 8 mouse levels, maths, settings, the save file, a reload,
+  two profiles and the kiosk mode, with screenshots.
 
 ## Roadmap
 
