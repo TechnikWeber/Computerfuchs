@@ -103,3 +103,22 @@ export function prefersReducedMotion(): boolean {
     return false;
   }
 }
+
+/** Bildwiederholung für Spiele: ruft `tick(dt)` mit vergangenen Sekunden auf (höchstens 0,05 s am Stück). */
+export function useFrame(tick: (dt: number) => void, active: boolean): void {
+  const latest = useLatest(tick);
+  const last = useRef<number | null>(null);
+  useEffect(() => {
+    if (!active) return;
+    let id = 0;
+    last.current = null;
+    const loop = (t: number) => {
+      const dt = last.current === null ? 0 : Math.min(0.05, (t - last.current) / 1000);
+      last.current = t;
+      latest.current(dt);
+      id = requestAnimationFrame(loop);
+    };
+    id = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(id);
+  }, [active, latest]);
+}

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useTimeouts } from '../../core/hooks';
+import { useFrame, useTimeouts } from '../../core/hooks';
 import { defaultRng, pick, sample } from '../../core/random';
 import { sfx } from '../../core/sound';
 import { Fox } from '../../os/Fox';
@@ -11,7 +11,7 @@ import { Keyboard, type Flash } from './Keyboard';
 import { codesFor, howToType, sameLetter } from './layout';
 import { nextChar, perMinute, startTyping, typeKey, type TypingOptions } from './typing';
 import { TypingLine } from './TypingLine';
-import { useFrame, useKeys } from './useKeys';
+import { useKeys } from './useKeys';
 
 function pickTexts(tier: Tier): string[] {
   if (tier === 1) return sample(defaultRng, SHIFT_PHRASES, 4);

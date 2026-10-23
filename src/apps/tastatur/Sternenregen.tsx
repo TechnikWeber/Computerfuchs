@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useTimeouts } from '../../core/hooks';
+import { useFrame, useTimeouts } from '../../core/hooks';
 import { defaultRng, pick } from '../../core/random';
 import { sfx } from '../../core/sound';
 import { Emoji } from '../../os/Emoji';
@@ -8,7 +8,7 @@ import { LevelHint } from '../shared/LevelUi';
 import { useHint } from '../shared/useHint';
 import { Keyboard, type Flash } from './Keyboard';
 import { sameLetter, strokeFor } from './layout';
-import { useFrame, useKeys } from './useKeys';
+import { useKeys } from './useKeys';
 
 interface Config {
   goal: number;
