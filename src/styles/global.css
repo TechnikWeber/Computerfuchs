@@ -1,0 +1,407 @@
+/*
+ * Gestaltung: kräftige Farben, runde Formen, dicke „Knopf"-Kanten.
+ * Weder Windows noch macOS – aber mit allem, was Kinder dort wiederfinden.
+ */
+
+:root {
+  --font-ui: 'Nunito Variable', 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Fredoka Variable', 'Fredoka', 'Nunito Variable', system-ui, sans-serif;
+
+  --ink: #23263b;
+  --ink-soft: #5d6380;
+  --ink-faint: #9aa0b8;
+  --paper: #ffffff;
+  --cloud: #f3f5fb;
+  --line: #e2e6f1;
+
+  --fox: #ff7a2f;
+  --fox-dark: #d95a10;
+  --fox-light: #ffe1cc;
+  --sky: #2f9bff;
+  --sky-dark: #1673d6;
+  --sky-light: #d9ecff;
+  --leaf: #2fbf62;
+  --leaf-dark: #1d9548;
+  --leaf-light: #d4f5e0;
+  --sun: #ffc533;
+  --sun-dark: #d99a00;
+  --sun-light: #fff1c7;
+  --berry: #ff4f87;
+  --berry-dark: #d42c63;
+  --grape: #8a6bff;
+  --grape-dark: #6646e0;
+  --grape-light: #e9e3ff;
+  --mint: #22c7ad;
+  --danger: #ff4d5e;
+  --danger-dark: #d22f40;
+
+  --radius-s: 10px;
+  --radius-m: 16px;
+  --radius-l: 24px;
+  --radius-xl: 32px;
+
+  --shadow-1: 0 2px 6px rgb(20 24 60 / 12%);
+  --shadow-2: 0 10px 30px rgb(20 24 60 / 18%);
+  --shadow-3: 0 24px 60px rgb(20 24 60 / 30%);
+
+  --taskbar-h: 68px;
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--ink);
+  background: #10132e;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  /* Kein Markieren beim Herumklicken – außer in Eingabefeldern. */
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+input,
+textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+:focus-visible {
+  outline: 4px solid var(--sky);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Knöpfe
+ * ------------------------------------------------------------------------- */
+
+.btn {
+  --c: var(--fox);
+  --c-dark: var(--fox-dark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  min-height: 52px;
+  padding: 0.55em 1.35em;
+  border: none;
+  border-radius: 999px;
+  background: var(--c);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--c-dark);
+  transform: translateY(0);
+  transition: transform 0.08s, box-shadow 0.08s, filter 0.15s;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  filter: brightness(1.06);
+}
+
+.btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--c-dark);
+}
+
+.btn:disabled {
+  --c: #c9cedd;
+  --c-dark: #aab0c2;
+  cursor: not-allowed;
+  filter: none;
+}
+
+.btn-big {
+  min-height: 68px;
+  font-size: 1.5rem;
+  padding: 0.5em 1.6em;
+}
+
+.btn-small {
+  min-height: 40px;
+  font-size: 1rem;
+  padding: 0.35em 1em;
+  box-shadow: 0 4px 0 var(--c-dark);
+}
+
+.btn-sky {
+  --c: var(--sky);
+  --c-dark: var(--sky-dark);
+}
+
+.btn-leaf {
+  --c: var(--leaf);
+  --c-dark: var(--leaf-dark);
+}
+
+.btn-grape {
+  --c: var(--grape);
+  --c-dark: var(--grape-dark);
+}
+
+.btn-berry {
+  --c: var(--berry);
+  --c-dark: var(--berry-dark);
+}
+
+.btn-sun {
+  --c: var(--sun);
+  --c-dark: var(--sun-dark);
+  color: #4a3600;
+}
+
+.btn-ghost {
+  --c: #fff;
+  --c-dark: #d5dae8;
+  color: var(--ink);
+}
+
+.btn-danger {
+  --c: var(--danger);
+  --c-dark: var(--danger-dark);
+}
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  color: var(--ink);
+  transition: background 0.15s, transform 0.1s;
+}
+
+.icon-btn:hover {
+  background: rgb(35 38 59 / 8%);
+}
+
+.icon-btn:active {
+  transform: scale(0.92);
+}
+
+/* ---------------------------------------------------------------------------
+ * Bausteine
+ * ------------------------------------------------------------------------- */
+
+.emoji {
+  display: inline-block;
+  object-fit: contain;
+  pointer-events: none;
+  flex: none;
+}
+
+.card {
+  background: var(--paper);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-1);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  padding: 0.2em 0.75em;
+  border-radius: 999px;
+  background: var(--cloud);
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.stars {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.stars svg {
+  display: block;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+ * Bewegung
+ * ------------------------------------------------------------------------- */
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20% {
+    transform: rotate(-9deg);
+  }
+  40% {
+    transform: rotate(8deg);
+  }
+  60% {
+    transform: rotate(-5deg);
+  }
+  80% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-10px);
+  }
+  40%,
+  80% {
+    transform: translateX(10px);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-18px);
+  }
+  60% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgb(255 197 51 / 85%);
+  }
+  80%,
+  100% {
+    box-shadow: 0 0 0 22px rgb(255 197 51 / 0%);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translate3d(0, -20vh, 0) rotate(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--dx, 0), 110vh, 0) rotate(var(--rot, 720deg));
+    opacity: 1;
+  }
+}
+
+/* Weniger Bewegung, wenn das System darum bittet – außer bei Spielfiguren
+ * (.keep-motion), deren Bewegung selbst die Aufgabe ist. */
+@media (prefers-reduced-motion: reduce) {
+  *:not(.keep-motion),
+  *:not(.keep-motion)::before,
+  *:not(.keep-motion)::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
