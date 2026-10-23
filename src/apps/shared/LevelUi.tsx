@@ -85,7 +85,7 @@ interface IntroProps {
   /** Eigenes Bild statt der Maus, z. B. Tasten */
   illustration?: ReactNode;
   /** Stufen-Auswahl: höchste freie Stufe und Hinweise je Stufe */
-  tiers?: { hints: [string, string, string]; maxTier: Tier; stars: number };
+  tiers?: { hints: [string, string, string]; maxTier: Tier; stars: number; notes?: [string, string, string] };
   tier?: Tier;
   onTier?: (t: Tier) => void;
   onStart: () => void;
@@ -123,6 +123,7 @@ export function LevelIntro({ level, text, mouse, illustration, tiers, tier = 1, 
                 aria-pressed={t === tier}
               >
                 <span>Stufe {t}</span>
+                {tiers.notes && <small className="tier-note">{tiers.notes[t - 1]}</small>}
                 {open ? <Stars count={tiers.stars >= t ? t : 0} max={t} size={18} /> : <Icon name="lock" size={18} />}
               </button>
             );

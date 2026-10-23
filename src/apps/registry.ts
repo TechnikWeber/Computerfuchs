@@ -55,6 +55,17 @@ export const APPS: AppDef[] = [
     component: lazy(() => import('./tastatur/TastaturApp')),
   },
   {
+    id: 'internet',
+    name: 'Was ist das Internet?',
+    icon: 'globe-with-meridians',
+    color: '#14b0d4',
+    colorDark: '#0c8aa8',
+    category: 'computer',
+    size: { w: 1060, h: 720 },
+    desktop: true,
+    component: lazy(() => import('./internet/InternetApp')),
+  },
+  {
     id: 'rechnen',
     name: 'Rechnen',
     icon: 'abacus',
@@ -122,16 +133,6 @@ export const APPS: AppDef[] = [
   },
 
   // In Arbeit – sie stehen schon im Start-Menü, damit man sieht, wohin die Reise geht.
-  {
-    id: 'internet',
-    name: 'Was ist das Internet?',
-    icon: 'globe-with-meridians',
-    color: '#14b0d4',
-    colorDark: '#0c8aa8',
-    category: 'computer',
-    size: { w: 1000, h: 680 },
-    soon: 'Bald reist du hier als kleines Datenpaket um die ganze Welt – durch Kabel unter dem Meer bis zu einem Server!',
-  },
   {
     id: 'netzdetektiv',
     name: 'Netz-Detektiv',

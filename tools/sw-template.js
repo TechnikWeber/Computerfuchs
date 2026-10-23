@@ -86,5 +86,7 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin || !url.href.startsWith(self.registration.scope)) return;
+  // Ein Ping soll wirklich durchs Netz – nie aus dem Speicher.
+  if (url.searchParams.has('ping')) return;
   event.respondWith(request.mode === 'navigate' ? page(request) : file(request));
 });

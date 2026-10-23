@@ -7,6 +7,7 @@ import './styles/os.css';
 import './styles/apps.css';
 import './styles/files.css';
 import './styles/keyboard.css';
+import './styles/internet.css';
 import App from './App';
 import { initInstall } from './core/install';
 import { registerOffline } from './core/offline';
