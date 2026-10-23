@@ -1,0 +1,879 @@
+/* ===========================================================================
+ * Tastatur-Training
+ * ======================================================================== */
+
+.kb-level {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px 16px;
+  overflow: auto;
+  background: radial-gradient(circle at 50% 30%, #fff, var(--cloud) 75%);
+  container: kblevel / size;
+}
+
+.kb-level-top {
+  display: flex;
+  justify-content: center;
+  min-height: 20px;
+}
+
+.kb-level-keys {
+  margin-top: auto;
+}
+
+.kb-layout-note {
+  margin: 0 26px 26px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: var(--sun-light);
+  color: #6b4c00;
+  font-weight: 700;
+}
+
+/* Bildschirmtastatur -------------------------------------------------------- */
+
+.keyboard {
+  /* Eine Tastenbreite – passt sich Fenster und Platz an. */
+  --u: min(46px, calc((100cqw - 48px) / 16.6), calc(100cqh / 13));
+  --g: calc(var(--u) * 0.12);
+  flex: none;
+  display: flex;
+  gap: calc(var(--u) * 0.3);
+  padding: calc(var(--u) * 0.22);
+  border-radius: calc(var(--u) * 0.36);
+  background: #2b2f45;
+  box-shadow: 0 8px 0 #1b1e2e, var(--shadow-2);
+}
+
+.keyboard.is-compact {
+  --u: min(46px, calc((100cqw - 48px) / 16.6), calc(100cqh / 10.5));
+}
+
+.kb-main-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--g);
+}
+
+.kb-row {
+  display: flex;
+  gap: var(--g);
+}
+
+.kb-key {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  /* Breite Tasten schließen die Lücken mit ein – so enden alle Reihen gleich. */
+  width: calc(var(--u) * var(--w, 1) + var(--g) * (var(--w, 1) - 1));
+  height: var(--u);
+  border-radius: calc(var(--u) * 0.18);
+  background: linear-gradient(#fdfdff, #e6e9f3);
+  box-shadow: 0 calc(var(--u) * 0.08) 0 #a3a9bf;
+  font-family: var(--font-display);
+  font-size: calc(var(--u) * 0.42);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.kb-key.is-word {
+  font-family: var(--font-ui);
+  font-size: calc(var(--u) * 0.26);
+  font-weight: 800;
+}
+
+.kb-shift {
+  position: absolute;
+  top: 9%;
+  left: 14%;
+  font-size: calc(var(--u) * 0.26);
+  color: var(--ink-soft);
+}
+
+.kb-key:has(.kb-shift) .kb-main {
+  position: absolute;
+  bottom: 10%;
+  left: 14%;
+  font-size: calc(var(--u) * 0.32);
+}
+
+.kb-alt {
+  position: absolute;
+  right: 12%;
+  bottom: 9%;
+  font-size: calc(var(--u) * 0.24);
+  color: var(--grape-dark);
+}
+
+.kb-key.has-bump::after {
+  content: '';
+  position: absolute;
+  bottom: 16%;
+  width: 28%;
+  height: max(2px, 5%);
+  border-radius: 2px;
+  background: #9aa0b8;
+}
+
+/* Die große Enter-Taste reicht über zwei Reihen. */
+.kb-key.is-enter-top {
+  z-index: 1;
+  height: calc(var(--u) + var(--g) + 1px);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  box-shadow: none;
+}
+
+.kb-key.is-enter-bottom {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* Fingerfarben: kleiner Finger rosa, Ringfinger gelb, Mittelfinger grün, Zeigefinger blau, Daumen lila */
+.kb-key.f-lp,
+.kb-key.f-rp {
+  background: linear-gradient(#ffe6ee, #ffcadb);
+}
+
+.kb-key.f-lr,
+.kb-key.f-rr {
+  background: linear-gradient(#fff6d6, #ffe8a3);
+}
+
+.kb-key.f-lm,
+.kb-key.f-rm {
+  background: linear-gradient(#e3f9ea, #c5f0d5);
+}
+
+.kb-key.f-li,
+.kb-key.f-ri {
+  background: linear-gradient(#e6f2ff, #c9e3ff);
+}
+
+.kb-key.f-th {
+  background: linear-gradient(#f0ebff, #ddd3ff);
+}
+
+.kb-key.is-lit {
+  z-index: 2;
+  background: linear-gradient(#ffb067, var(--fox));
+  color: #fff;
+  box-shadow: 0 0 0 calc(var(--u) * 0.06) #fff, 0 0 calc(var(--u) * 0.4) var(--fox);
+  animation: key-glow 1.1s ease-in-out infinite;
+}
+
+.kb-key.is-lit .kb-shift,
+.kb-key.is-lit .kb-alt {
+  color: #fff;
+}
+
+.kb-key.is-ok {
+  animation: key-ok 0.35s ease-out;
+}
+
+.kb-key.is-wrong {
+  animation: key-wrong 0.45s ease-out;
+}
+
+.kb-arrows {
+  align-self: flex-end;
+  display: grid;
+  grid-template-columns: repeat(3, var(--u));
+  grid-template-rows: repeat(2, var(--u));
+  gap: var(--g);
+}
+
+.kb-ArrowUp {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.kb-ArrowLeft {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.kb-ArrowDown {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.kb-ArrowRight {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+@keyframes key-glow {
+  50% {
+    box-shadow: 0 0 0 calc(var(--u) * 0.06) #fff, 0 0 calc(var(--u) * 0.8) var(--fox);
+  }
+}
+
+@keyframes key-ok {
+  0% {
+    background: var(--leaf);
+    color: #fff;
+    transform: translateY(calc(var(--u) * 0.08));
+  }
+}
+
+@keyframes key-wrong {
+  0% {
+    background: var(--danger);
+    color: #fff;
+    transform: translateY(calc(var(--u) * 0.08));
+  }
+}
+
+/* Einzelne große Tasten ------------------------------------------------------ */
+
+.keycaps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 6px;
+}
+
+.keycap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 64px;
+  height: 64px;
+  padding: 0 14px;
+  border-radius: 14px;
+  background: linear-gradient(#fff, #e6e9f3);
+  box-shadow: 0 6px 0 #a3a9bf, var(--shadow-1);
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.keycap.is-wide {
+  min-width: 150px;
+  font-family: var(--font-ui);
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.keycap.has-bump::after {
+  content: '';
+  position: absolute;
+  bottom: 12px;
+  width: 18px;
+  height: 3px;
+  border-radius: 2px;
+  background: #9aa0b8;
+}
+
+.keycaps.is-arrows {
+  display: grid;
+  grid-template-columns: repeat(3, 64px);
+  grid-template-rows: repeat(2, 64px);
+  gap: 8px;
+}
+
+.keycaps.is-arrows .keycap {
+  min-width: 0;
+  padding: 0;
+}
+
+.keycap.is-ok {
+  animation: cap-ok 0.3s ease-out;
+}
+
+.keycap.is-wrong {
+  animation: cap-wrong 0.4s ease-out;
+}
+
+@keyframes cap-ok {
+  0% {
+    background: var(--leaf);
+    color: #fff;
+    transform: translateY(5px);
+  }
+}
+
+@keyframes cap-wrong {
+  0% {
+    background: var(--danger);
+    color: #fff;
+    transform: translateX(-6px);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+}
+
+/* Hände ------------------------------------------------------------------- */
+
+.hands {
+  flex: none;
+  /* Breite = 2,3 × Höhe (viewBox 300 × 130) – so bleibt Platz für Text und Tastatur. */
+  width: min(360px, 60cqw, calc(22cqh * 2.3));
+  height: auto;
+}
+
+.hand-palm,
+.hand-finger {
+  fill: #ffe1cc;
+  stroke: #d9a27c;
+  stroke-width: 2;
+}
+
+.hand-finger.f-lp,
+.hand-finger.f-rp {
+  fill: #ffcadb;
+}
+
+.hand-finger.f-lr,
+.hand-finger.f-rr {
+  fill: #ffe8a3;
+}
+
+.hand-finger.f-lm,
+.hand-finger.f-rm {
+  fill: #c5f0d5;
+}
+
+.hand-finger.f-li,
+.hand-finger.f-ri {
+  fill: #c9e3ff;
+}
+
+.hand-finger.f-th {
+  fill: #ddd3ff;
+}
+
+.hand-finger.is-active {
+  stroke: var(--fox-dark);
+  stroke-width: 4;
+  filter: drop-shadow(0 0 6px var(--fox));
+}
+
+/* Tastenzoo ----------------------------------------------------------------- */
+
+.zoo-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 18px 40px 18px 28px;
+  border-radius: 30px;
+  background: #fff;
+  box-shadow: var(--shadow-2);
+  animation: pop-in 0.35s var(--ease-bounce);
+}
+
+.zoo-card.is-solved {
+  box-shadow: 0 0 0 6px var(--leaf), var(--shadow-2);
+}
+
+.zoo-card.is-solved .zoo-pic {
+  animation: bounce 0.6s ease-out;
+}
+
+.zoo-word {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 140px;
+}
+
+.zoo-letter {
+  font-family: var(--font-display);
+  font-size: 6rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--fox);
+}
+
+.zoo-letter.is-hidden {
+  color: var(--ink-faint);
+}
+
+.zoo-rest {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--ink-soft);
+}
+
+.zoo-speak {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+
+/* Hüpfhase ------------------------------------------------------------------ */
+
+.hop-track {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: 170px;
+  overflow: hidden;
+  border-radius: 26px;
+  background: linear-gradient(#bfe6ff, #eaf7ff 70%);
+  box-shadow: inset 0 0 0 3px rgb(255 255 255 / 60%);
+}
+
+.hop-hills {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 18%;
+  height: 32%;
+  background:
+    radial-gradient(ellipse 34% 100% at 18% 100%, #a6e3ae 60%, transparent 61%),
+    radial-gradient(ellipse 46% 100% at 72% 100%, #91d99c 60%, transparent 61%);
+}
+
+.hop-ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 18%;
+  background: linear-gradient(#5cc46b, #3fa651);
+  box-shadow: inset 0 6px 0 #7fdc8c;
+}
+
+.hop-rabbit {
+  position: absolute;
+  z-index: 2;
+  width: clamp(54px, 9%, 116px);
+  aspect-ratio: 1;
+  translate: -50% 0;
+}
+
+.hop-rabbit.is-ouch {
+  animation: wiggle 0.5s;
+}
+
+.hop-hedgehog {
+  position: absolute;
+  bottom: 18%;
+  z-index: 1;
+  display: flex;
+  translate: -50% 0;
+}
+
+.hop-hedgehog > .emoji {
+  width: clamp(40px, 6cqw, 76px) !important;
+  height: clamp(40px, 6cqw, 76px) !important;
+}
+
+.hop-hedgehog.is-hit {
+  filter: grayscale(0.7);
+}
+
+.hop-start {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  padding: 10px 20px;
+  border-radius: 18px;
+  background: #fff;
+  font-size: 1.3rem;
+  font-weight: 900;
+  box-shadow: var(--shadow-1);
+  translate: -50% 0;
+  animation: pop-in 0.4s var(--ease-bounce);
+}
+
+/* Hamsterweg ---------------------------------------------------------------- */
+
+.maze-level {
+  justify-content: center;
+}
+
+.maze-wrap {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+.maze {
+  height: min(100%, 540px);
+  max-width: calc(100% - 250px);
+  width: auto;
+}
+
+.maze-floor {
+  fill: #fff8e8;
+  stroke: #f1dfb8;
+  stroke-width: 0.6;
+}
+
+.maze-walls {
+  fill: none;
+  stroke: #8a5a2b;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+}
+
+.maze-hamster {
+  transition: transform 0.14s ease-out;
+}
+
+.maze-hamster-in.is-bumped {
+  animation: shake 0.3s;
+}
+
+.maze-count {
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+@container kblevel (width < 640px) {
+  .maze-wrap {
+    flex-direction: column;
+  }
+
+  .maze {
+    max-width: 100%;
+    height: auto;
+    min-height: 0;
+    flex: 1;
+  }
+}
+
+/* Sternenregen -------------------------------------------------------------- */
+
+.rain-sky {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: 200px;
+  overflow: hidden;
+  border-radius: 26px;
+  background: linear-gradient(#141a4a, #3b3f9a 70%, #6a4fb0);
+}
+
+.rain-count {
+  position: absolute;
+  top: 10px;
+  left: 14px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 16px;
+  background: rgb(255 255 255 / 92%);
+  font-weight: 900;
+}
+
+.rain-lost {
+  font-weight: 800;
+  color: var(--ink-faint);
+}
+
+.rain-star {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: clamp(64px, 9cqw, 100px);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+}
+
+.rain-star > .emoji {
+  position: absolute;
+  inset: 0;
+}
+
+.rain-star span {
+  position: relative;
+  padding-top: 10%;
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #5a3d00;
+}
+
+.rain-star.is-caught {
+  animation: star-catch 0.6s forwards;
+}
+
+.rain-star.is-lost {
+  animation: star-lost 0.6s forwards;
+}
+
+.rain-ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 12%;
+  background: linear-gradient(#2a2f6b, #1b1f4d);
+  border-top: 3px solid rgb(255 255 255 / 15%);
+}
+
+@keyframes star-catch {
+  to {
+    transform: scale(1.8) rotate(40deg);
+    opacity: 0;
+  }
+}
+
+@keyframes star-lost {
+  to {
+    transform: translateY(30%) scale(0.8);
+    opacity: 0;
+    filter: grayscale(1);
+  }
+}
+
+/* Text zum Abtippen --------------------------------------------------------- */
+
+.typing-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 6px;
+  max-width: 100%;
+}
+
+.typing-word {
+  display: inline-flex;
+  gap: 4px;
+  margin-right: 4px;
+}
+
+.typing-line.is-medium .typing-word {
+  gap: 0;
+  margin-right: 0;
+}
+
+.typing-ch {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ink-soft);
+}
+
+.typing-line.is-big .typing-ch {
+  min-width: 52px;
+  height: 64px;
+  padding: 0 4px;
+  border-radius: 12px;
+  background: var(--cloud);
+  box-shadow: inset 0 -4px 0 var(--line);
+  font-size: 2.6rem;
+}
+
+.typing-line.is-medium .typing-ch {
+  height: 46px;
+  padding: 0 1px;
+  border-bottom: 4px solid transparent;
+  border-radius: 4px;
+  font-size: 1.8rem;
+}
+
+.typing-ch.is-space {
+  min-width: 26px;
+}
+
+.typing-line.is-medium .typing-ch.is-space {
+  min-width: 0.45em;
+}
+
+.typing-ch.is-done {
+  color: var(--leaf-dark);
+}
+
+.typing-line.is-big .typing-ch.is-done {
+  background: var(--leaf-light);
+  box-shadow: none;
+}
+
+.typing-ch.is-wrong {
+  border-radius: 8px;
+  background: var(--danger);
+  color: #fff;
+  animation: shake 0.3s;
+}
+
+.typing-line.is-big .typing-ch.is-wrong {
+  box-shadow: none;
+}
+
+.typing-ch.is-next {
+  color: var(--ink);
+  border-bottom-color: var(--fox);
+  animation: next-blink 1.1s ease-in-out infinite;
+}
+
+.typing-line.is-big .typing-ch.is-next {
+  box-shadow: inset 0 0 0 3px var(--fox), inset 0 -5px 0 var(--fox);
+}
+
+.typing-ch.is-waiting {
+  color: var(--ink-faint);
+}
+
+.typing-ch.is-end {
+  display: none;
+}
+
+@keyframes next-blink {
+  50% {
+    background-color: var(--fox-light);
+  }
+}
+
+/* Bilderwörter, Zehn Finger, Tipp-Profi ------------------------------------- */
+
+.words-card,
+.tenfinger-card,
+.profi-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 100%;
+  padding: 18px 34px 22px;
+  border-radius: 30px;
+  background: #fff;
+  box-shadow: var(--shadow-2);
+  animation: pop-in 0.35s var(--ease-bounce);
+}
+
+.words-card.is-done {
+  box-shadow: 0 0 0 6px var(--leaf), var(--shadow-2);
+}
+
+.words-speak {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+
+.tenfinger-card,
+.profi-card {
+  gap: 6px;
+  padding: 14px 28px;
+}
+
+.tenfinger-finger,
+.profi-how {
+  min-height: 1.4em;
+  font-weight: 900;
+  color: var(--ink-soft);
+}
+
+.profi-how {
+  color: var(--grape-dark);
+}
+
+.race {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(640px, 100%);
+  padding: 10px 16px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: var(--shadow-1);
+}
+
+.race-lane {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.race-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 92px;
+  font-weight: 900;
+}
+
+.race-bar {
+  flex: 1;
+  height: 16px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--line);
+}
+
+.race-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  transition: width 0.15s linear;
+}
+
+.race-fill.is-me {
+  background: linear-gradient(90deg, var(--sky), var(--leaf));
+}
+
+.race-fill.is-flinn {
+  background: linear-gradient(90deg, var(--fox), var(--sun));
+}
+
+.race-start {
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+.race-result {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 640px;
+  padding: 10px 18px;
+  border-radius: 20px;
+  background: var(--sun-light);
+  font-weight: 800;
+  animation: pop-in 0.35s var(--ease-bounce);
+}
+
+.race-result.is-won {
+  background: var(--leaf-light);
+}
+
+/* Wenig Höhe: Bilder und Schrift kleiner */
+@container kblevel (height < 600px) {
+  .zoo-pic,
+  .words-pic {
+    width: 104px !important;
+    height: 104px !important;
+  }
+
+  .zoo-letter {
+    font-size: 4.2rem;
+  }
+
+  .typing-line.is-big .typing-ch {
+    min-width: 40px;
+    height: 50px;
+    font-size: 2rem;
+  }
+}
+
+@container kblevel (height < 440px) {
+  .hands {
+    display: none;
+  }
+}

@@ -1,5 +1,6 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { EmojiName } from '../core/emoji';
+import { useLatest } from '../core/hooks';
 import { Emoji } from './Emoji';
 
 export interface MenuItem {
@@ -22,6 +23,23 @@ export function ContextMenu({ x, y, items, onClose }: { x: number; y: number; it
       y: Math.max(8, Math.min(y, window.innerHeight - r.height - 8)),
     });
   }, [x, y]);
+
+  // Ein Klick daneben oder Esc schließt das Menü – egal, in welchem Fenster es aufging.
+  const close = useLatest(onClose);
+  useEffect(() => {
+    const onDown = (e: PointerEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) close.current();
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close.current();
+    };
+    window.addEventListener('pointerdown', onDown, true);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('pointerdown', onDown, true);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [close]);
 
   return (
     <div

@@ -94,6 +94,52 @@ function noise(at: number, dur: number, filter = 1800, gain = 0.3, q = 0.8): voi
   src.stop(t0 + dur);
 }
 
+/**
+ * Eine Melodie spielen: [Frequenz (0 = Pause), Dauer in Schlägen].
+ * Gibt eine Stopp-Funktion zurück; onEnd kommt am Ende (auch ohne Ton, damit Anzeigen nicht hängen bleiben).
+ */
+export function playMelody(notes: [number, number][], bpm: number, onEnd?: () => void): () => void {
+  const a = audio();
+  const beat = 60 / bpm;
+  const total = notes.reduce((sum, [, beats]) => sum + beats, 0) * beat;
+  const timer = window.setTimeout(() => onEnd?.(), total * 1000 + 100);
+  if (!a) return () => window.clearTimeout(timer);
+  const bus = a.ctx.createGain();
+  bus.gain.value = 0.9;
+  bus.connect(a.out);
+  const oscs: OscillatorNode[] = [];
+  let t = a.ctx.currentTime + 0.06;
+  for (const [f, beats] of notes) {
+    const dur = beats * beat;
+    if (f > 0) {
+      const o = a.ctx.createOscillator();
+      const env = a.ctx.createGain();
+      o.type = 'triangle';
+      o.frequency.value = f;
+      env.gain.setValueAtTime(0.0001, t);
+      env.gain.exponentialRampToValueAtTime(0.24, t + 0.02);
+      env.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(0.05, dur * 0.92));
+      o.connect(env);
+      env.connect(bus);
+      o.start(t);
+      o.stop(t + dur);
+      oscs.push(o);
+    }
+    t += dur;
+  }
+  return () => {
+    window.clearTimeout(timer);
+    for (const o of oscs) {
+      try {
+        o.stop();
+      } catch {
+        // Schon zu Ende.
+      }
+    }
+    bus.disconnect();
+  };
+}
+
 const C5 = 523.25;
 const E5 = 659.25;
 const G5 = 783.99;

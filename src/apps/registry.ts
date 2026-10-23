@@ -1,5 +1,6 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
 import type { EmojiName } from '../core/emoji';
+import type { AppParams } from '../os/osContext';
 
 export type AppCategory = 'computer' | 'schule' | 'kreativ' | 'system';
 
@@ -15,6 +16,10 @@ export interface AppDef {
   /** Liegt als Symbol auf dem Desktop */
   desktop?: boolean;
   component?: LazyExoticComponent<ComponentType>;
+  /** Verknüpfung: öffnet eine andere App, z. B. Papierkorb → Dateien */
+  opens?: { app: string; params: AppParams };
+  /** Nicht im Start-Menü (z. B. die Anzeige, die Dateien öffnet) */
+  hidden?: boolean;
   /** Noch in Arbeit – das sagt Flinn dazu. */
   soon?: string;
 }
@@ -39,6 +44,17 @@ export const APPS: AppDef[] = [
     component: lazy(() => import('./maus/MausApp')),
   },
   {
+    id: 'tastatur',
+    name: 'Tastatur',
+    icon: 'keyboard',
+    color: '#ff7a2f',
+    colorDark: '#d95a10',
+    category: 'computer',
+    size: { w: 1060, h: 720 },
+    desktop: true,
+    component: lazy(() => import('./tastatur/TastaturApp')),
+  },
+  {
     id: 'rechnen',
     name: 'Rechnen',
     icon: 'abacus',
@@ -50,13 +66,35 @@ export const APPS: AppDef[] = [
     component: lazy(() => import('./rechnen/RechnenApp')),
   },
   {
+    id: 'dateien',
+    name: 'Dateien',
+    icon: 'file-folder',
+    color: '#f5a524',
+    colorDark: '#cc8400',
+    category: 'computer',
+    size: { w: 1000, h: 660 },
+    desktop: true,
+    component: lazy(() => import('./dateien/DateienApp')),
+  },
+  {
+    id: 'laden',
+    name: 'App-Laden',
+    icon: 'shopping-bags',
+    color: '#ff9f1c',
+    colorDark: '#d97f00',
+    category: 'system',
+    size: { w: 980, h: 680 },
+    desktop: true,
+    component: lazy(() => import('./laden/LadenApp')),
+  },
+  {
     id: 'einstellungen',
     name: 'Einstellungen',
     icon: 'gear',
     color: '#69728f',
     colorDark: '#4b526b',
     category: 'system',
-    size: { w: 900, h: 640 },
+    size: { w: 920, h: 660 },
     desktop: true,
     component: lazy(() => import('./einstellungen/SettingsApp')),
   },
@@ -67,32 +105,23 @@ export const APPS: AppDef[] = [
     color: '#22b8a0',
     colorDark: '#13907c',
     category: 'system',
-    size: { w: 600, h: 440 },
+    size: { w: 1000, h: 660 },
     desktop: true,
-    component: lazy(() => import('./papierkorb/TrashApp')),
+    opens: { app: 'dateien', params: { folder: 'trash' } },
+  },
+  {
+    id: 'anzeige',
+    name: 'Anzeige',
+    icon: 'open-book',
+    color: '#5b6cff',
+    colorDark: '#3d4de0',
+    category: 'system',
+    size: { w: 760, h: 600 },
+    hidden: true,
+    component: lazy(() => import('./anzeige/AnzeigeApp')),
   },
 
   // In Arbeit – sie stehen schon im Start-Menü, damit man sieht, wohin die Reise geht.
-  {
-    id: 'tastatur',
-    name: 'Tastatur',
-    icon: 'keyboard',
-    color: '#ff7a2f',
-    colorDark: '#d95a10',
-    category: 'computer',
-    size: { w: 1000, h: 680 },
-    soon: 'Hier lernst du bald, wo die Buchstaben wohnen – mit Buchstabenregen, Tipp-Rennen und dem 10-Finger-System.',
-  },
-  {
-    id: 'dateien',
-    name: 'Dateien',
-    icon: 'file-folder',
-    color: '#f5a524',
-    colorDark: '#cc8400',
-    category: 'computer',
-    size: { w: 900, h: 600 },
-    soon: 'Bald kannst du hier deine Bilder und Briefe in Ordnern aufräumen – und Gelöschtes aus dem Papierkorb zurückholen.',
-  },
   {
     id: 'internet',
     name: 'Was ist das Internet?',
@@ -172,16 +201,6 @@ export const APPS: AppDef[] = [
     category: 'kreativ',
     size: { w: 1000, h: 700 },
     soon: 'Bald programmierst du hier einen kleinen Roboter – erst mit Pfeilen, später mit echtem Code.',
-  },
-  {
-    id: 'laden',
-    name: 'App-Laden',
-    icon: 'shopping-bags',
-    color: '#ff9f1c',
-    colorDark: '#d97f00',
-    category: 'system',
-    size: { w: 960, h: 660 },
-    soon: 'Bald tauschst du hier deine Bytes gegen Hintergründe, Mauszeiger und Sticker. Was du holst, landet in deinem Download-Ordner.',
   },
 ];
 

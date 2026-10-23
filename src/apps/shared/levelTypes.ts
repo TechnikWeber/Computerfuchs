@@ -5,7 +5,8 @@ export type Tier = 1 | 2 | 3;
 /** Was jedes Spiel-Level bekommt. */
 export interface LevelProps {
   tier: Tier;
-  onDone: () => void;
+  /** score: Bestwert, z. B. Anschläge pro Minute */
+  onDone: (score?: number) => void;
 }
 
 /** Ein Eintrag auf der Level-Karte. */

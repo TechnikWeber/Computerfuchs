@@ -6,6 +6,7 @@ import { sfx } from '../core/sound';
 import { parseSaveFile } from '../core/storage';
 import { Avatar } from './Avatar';
 import { Icon } from './Icon';
+import { PinPrompt } from './PinPad';
 import { ProfileWizard } from './ProfileWizard';
 import { Wallpaper } from './Wallpaper';
 
@@ -17,7 +18,9 @@ export function Login({ onLogin, onShutdown }: { onLogin: (id: string) => void; 
   const save = useSave();
   const profiles = save.data.profiles;
   const [creating, setCreating] = useState(profiles.length === 0);
+  const [asking, setAsking] = useState<string | null>(null);
   const [message, setMessage] = useState<{ text: string; ok: boolean } | null>(null);
+  const askingProfile = asking ? profiles.find((p) => p.id === asking) : undefined;
   const [dragging, setDragging] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const now = useNow();
@@ -47,7 +50,7 @@ export function Login({ onLogin, onShutdown }: { onLogin: (id: string) => void; 
 
   return (
     <div
-      className="login"
+      className={askingProfile ? 'login is-asking' : 'login'}
       onDragOver={(e) => {
         if (e.dataTransfer.types.includes('Files')) {
           e.preventDefault();
@@ -73,6 +76,20 @@ export function Login({ onLogin, onShutdown }: { onLogin: (id: string) => void; 
             onDone={(p) => onLogin(p.id)}
             onCancel={profiles.length > 0 ? () => setCreating(false) : undefined}
           />
+        ) : askingProfile ? (
+          <PinPrompt
+            profile={askingProfile}
+            onSuccess={() => onLogin(askingProfile.id)}
+            onReset={() => {
+              save.updateProfile(askingProfile.id, (p) => {
+                const next = { ...p };
+                delete next.pin;
+                return next;
+              });
+              onLogin(askingProfile.id);
+            }}
+            onCancel={() => setAsking(null)}
+          />
         ) : (
           <>
             <h1 className="login-title">Wer bist du?</h1>
@@ -84,12 +101,18 @@ export function Login({ onLogin, onShutdown }: { onLogin: (id: string) => void; 
                   className="profile-card"
                   onClick={() => {
                     sfx.tap();
-                    onLogin(p.id);
+                    if (p.pin) setAsking(p.id);
+                    else onLogin(p.id);
                   }}
                 >
                   <Avatar id={p.avatar} size={104} />
                   <span className="profile-name">{p.name}</span>
                   <span className="profile-rank">{rankFor(p.bytesEarned).name}</span>
+                  {p.pin && (
+                    <span className="profile-lock" title="Mit Geheimcode">
+                      <Icon name="lock" size={18} stroke={3} />
+                    </span>
+                  )}
                 </button>
               ))}
               <button type="button" className="profile-card profile-new" onClick={() => setCreating(true)}>

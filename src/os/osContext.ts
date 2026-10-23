@@ -18,6 +18,10 @@ export interface CompleteResult extends LevelOutcome {
 export interface AppParams {
   /** Für Einstellungen: welcher Bereich offen sein soll */
   tab?: string;
+  /** Für Dateien: welcher Ordner offen sein soll */
+  folder?: string;
+  /** Für die Anzeige: welche Datei gezeigt wird */
+  file?: string;
 }
 
 /** Was jede App vom „Betriebssystem" bekommt. */
@@ -26,7 +30,8 @@ export interface OsApi {
   group: AgeGroup;
   kiosk: boolean;
   update: (change: (p: Profile) => Profile) => void;
-  completeLevel: (appId: string, levelId: string, stars: Stars, unlocks?: Feature) => CompleteResult;
+  /** score: Bestwert, bei dem höher besser ist (z. B. Anschläge pro Minute) */
+  completeLevel: (appId: string, levelId: string, stars: Stars, unlocks?: Feature, score?: number) => CompleteResult;
   toast: (t: ToastInput) => void;
   openApp: (appId: string, params?: AppParams) => void;
   celebrate: () => void;
@@ -38,6 +43,8 @@ export interface WindowInfo {
   focused: boolean;
   params: AppParams & { nonce: number };
   close: () => void;
+  /** Eigener Fenstertitel, z. B. der Name der geöffneten Datei */
+  setTitle: (title: string | null) => void;
 }
 
 export const OsContext = createContext<OsApi | null>(null);

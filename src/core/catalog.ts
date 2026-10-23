@@ -33,13 +33,18 @@ export function avatarById(id: string): AvatarDef {
   return AVATARS.find((a) => a.id === id) ?? AVATARS[0];
 }
 
+/** `shop`: gibt es nur im App-Laden. */
 export const WALLPAPERS = [
-  { id: 'wiese', name: 'Sonnenwiese' },
-  { id: 'nacht', name: 'Sternennacht' },
-  { id: 'meer', name: 'Unterwasser' },
-  { id: 'weltall', name: 'Weltall' },
-  { id: 'berge', name: 'Abendrot' },
-  { id: 'bonbon', name: 'Bonbon' },
+  { id: 'wiese', name: 'Sonnenwiese', shop: false },
+  { id: 'nacht', name: 'Sternennacht', shop: false },
+  { id: 'meer', name: 'Unterwasser', shop: false },
+  { id: 'weltall', name: 'Weltall', shop: false },
+  { id: 'berge', name: 'Abendrot', shop: false },
+  { id: 'bonbon', name: 'Bonbon', shop: false },
+  { id: 'regenbogen', name: 'Regenbogenland', shop: true },
+  { id: 'polarlicht', name: 'Polarlicht', shop: true },
+  { id: 'kirschbluete', name: 'Kirschblüten', shop: true },
+  { id: 'pixel', name: 'Pixel-Welt', shop: true },
 ] as const;
 
 export type WallpaperId = (typeof WALLPAPERS)[number]['id'];

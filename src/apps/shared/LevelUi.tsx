@@ -82,6 +82,8 @@ interface IntroProps {
   level: MapLevel;
   text: string;
   mouse?: MouseAction;
+  /** Eigenes Bild statt der Maus, z. B. Tasten */
+  illustration?: ReactNode;
   /** Stufen-Auswahl: höchste freie Stufe und Hinweise je Stufe */
   tiers?: { hints: [string, string, string]; maxTier: Tier; stars: number };
   tier?: Tier;
@@ -90,7 +92,7 @@ interface IntroProps {
   onBack: () => void;
 }
 
-export function LevelIntro({ level, text, mouse, tiers, tier = 1, onTier, onStart, onBack }: IntroProps) {
+export function LevelIntro({ level, text, mouse, illustration, tiers, tier = 1, onTier, onStart, onBack }: IntroProps) {
   const hint = tiers ? tiers.hints[tier - 1] : undefined;
   return (
     <div className="level-intro" style={{ '--lvl': level.color } as CSSProperties}>
@@ -103,10 +105,8 @@ export function LevelIntro({ level, text, mouse, tiers, tier = 1, onTier, onStar
             <Icon name="play" size={26} /> Los geht's!
           </button>
         </FoxSays>
-        {mouse && (
-          <div className="level-intro-mouse">
-            <MouseHint action={mouse} size={104} />
-          </div>
+        {(illustration || mouse) && (
+          <div className="level-intro-mouse">{illustration ?? (mouse && <MouseHint action={mouse} size={104} />)}</div>
         )}
       </div>
       {tiers && (

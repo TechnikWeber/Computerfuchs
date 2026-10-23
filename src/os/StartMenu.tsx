@@ -26,8 +26,8 @@ export function StartMenu({ profile, onOpen, onLogout, onShutdown, onClose }: Pr
   const rank = rankFor(profile.bytesEarned);
   const next = nextRank(profile.bytesEarned);
   const progress = next ? (profile.bytesEarned - rank.min) / (next.min - rank.min) : 1;
-  const ready = APPS.filter((a) => a.component);
-  const soon = APPS.filter((a) => !a.component);
+  const ready = APPS.filter((a) => (a.component || a.opens) && !a.hidden);
+  const soon = APPS.filter((a) => a.soon);
 
   return (
     <div className="start-menu" role="dialog" aria-label="Start-Menü" onPointerDown={(e) => e.stopPropagation()}>

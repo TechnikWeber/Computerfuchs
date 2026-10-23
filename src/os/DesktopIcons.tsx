@@ -39,6 +39,7 @@ export function DesktopIcons({ apps, selected, doubleClick, doubleClickMs, big, 
             .filter(Boolean)
             .join(' ')}
           style={{ '--app': app.color, '--app-dark': app.colorDark } as CSSProperties}
+          data-app={app.id}
           onPointerDown={(e) => {
             e.stopPropagation();
             if (e.button !== 0) return;

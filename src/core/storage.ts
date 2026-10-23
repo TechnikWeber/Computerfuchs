@@ -1,8 +1,15 @@
 import { AVATARS, WALLPAPERS, type AvatarId, type WallpaperId } from './catalog';
+import { EMOJI, type EmojiName } from './emoji';
+import {
+  CURSOR_SKIN_IDS, MAX_NAME_LENGTH, ROOT, SONG_IDS, isSystemFolder, seedFiles,
+  type CursorSkinId, type FileContent, type FileNode, type SongId,
+} from './files';
+import type { Pin } from './pin';
 import {
   CURSOR_SIZES, FEATURES, MAX_NAME, clampAge, defaultSettings,
-  type CursorSize, type Feature, type LevelRecord, type Profile, type ProfileSettings, type Stars,
+  type CursorSize, type Feature, type LevelRecord, type Profile, type ProfileSettings, type Stars, type Sticker,
 } from './profile';
+import { SHOP_IDS } from './shop';
 
 /*
  * Spielstände liegen im localStorage des Browsers und lassen sich als Datei
@@ -59,7 +66,10 @@ function oneOf<T extends string>(value: unknown, allowed: readonly T[], fallback
 
 const AVATAR_IDS = AVATARS.map((a) => a.id) as AvatarId[];
 const WALLPAPER_IDS = WALLPAPERS.map((w) => w.id) as WallpaperId[];
+const EMOJI_SET = new Set<string>(EMOJI);
 const KEY_PATTERN = /^[a-z0-9-]{1,40}$/;
+export const MAX_FILES = 500;
+const MAX_STICKERS = 40;
 
 function sanitizeSettings(raw: unknown, age: number): ProfileSettings {
   const base = defaultSettings(age);
@@ -70,8 +80,95 @@ function sanitizeSettings(raw: unknown, age: number): ProfileSettings {
     volume: num(raw.volume, base.volume, 0, 1),
     voice: typeof raw.voice === 'boolean' ? raw.voice : base.voice,
     cursor: oneOf<CursorSize>(raw.cursor, CURSOR_SIZES, base.cursor),
+    cursorSkin: oneOf<CursorSkinId>(raw.cursorSkin, CURSOR_SKIN_IDS, base.cursorSkin),
     doubleClickMs: int(raw.doubleClickMs, base.doubleClickMs, 250, 1500),
+    showExtensions: typeof raw.showExtensions === 'boolean' ? raw.showExtensions : base.showExtensions,
   };
+}
+
+const isEmoji = (v: unknown): v is EmojiName => typeof v === 'string' && EMOJI_SET.has(v);
+
+function sanitizeContent(raw: unknown): FileContent | null {
+  if (!isRecord(raw)) return null;
+  switch (raw.type) {
+    case 'bild':
+      return isEmoji(raw.emoji) ? { type: 'bild', emoji: raw.emoji } : null;
+    case 'sticker':
+      return isEmoji(raw.emoji) ? { type: 'sticker', emoji: raw.emoji } : null;
+    case 'hintergrund':
+      return (WALLPAPER_IDS as readonly unknown[]).includes(raw.wallpaper)
+        ? { type: 'hintergrund', wallpaper: raw.wallpaper as WallpaperId }
+        : null;
+    case 'zeiger':
+      return (CURSOR_SKIN_IDS as readonly unknown[]).includes(raw.cursor) ? { type: 'zeiger', cursor: raw.cursor as CursorSkinId } : null;
+    case 'musik':
+      return (SONG_IDS as readonly unknown[]).includes(raw.song) ? { type: 'musik', song: raw.song as SongId } : null;
+    case 'text':
+      return typeof raw.text === 'string' ? { type: 'text', text: raw.text.slice(0, 4000) } : null;
+    default:
+      return null;
+  }
+}
+
+/** Dateisystem prüfen: kaputte Einträge weg, unbekannte Eltern und Kreise nach „Mein Computer“. */
+export function sanitizeFiles(raw: unknown, now: string): FileNode[] {
+  if (!Array.isArray(raw)) return seedFiles(now);
+  const out: FileNode[] = [];
+  const ids = new Set<string>();
+  for (const r of raw) {
+    if (out.length >= MAX_FILES) break;
+    if (!isRecord(r) || typeof r.id !== 'string' || !r.id || r.id.length > 64 || ids.has(r.id) || isSystemFolder(r.id)) continue;
+    const folder = r.folder === true;
+    const content = folder ? null : sanitizeContent(r.content);
+    if (!folder && !content) continue;
+    const name = typeof r.name === 'string' ? r.name.replace(/[\\/:*?"<>|]/g, '').trim().slice(0, MAX_NAME_LENGTH) : '';
+    const node: FileNode = {
+      id: r.id,
+      name: name || (folder ? 'Ordner' : 'Datei'),
+      parent: typeof r.parent === 'string' ? r.parent : ROOT,
+      created: typeof r.created === 'string' && r.created.length <= 40 ? r.created : now,
+    };
+    if (folder) node.folder = true;
+    if (content) node.content = content;
+    if (typeof r.trashedFrom === 'string' && r.trashedFrom.length <= 64) node.trashedFrom = r.trashedFrom;
+    ids.add(r.id);
+    out.push(node);
+  }
+  const folders = new Set(out.filter((n) => n.folder).map((n) => n.id));
+  for (const n of out) if (!isSystemFolder(n.parent) && !folders.has(n.parent)) n.parent = ROOT;
+  const byId = new Map(out.map((n) => [n.id, n]));
+  for (const n of out) {
+    const visited = new Set<string>();
+    let cur: FileNode | undefined = n;
+    while (cur && !isSystemFolder(cur.parent)) {
+      if (visited.has(cur.id)) {
+        n.parent = ROOT;
+        break;
+      }
+      visited.add(cur.id);
+      cur = byId.get(cur.parent);
+    }
+  }
+  return out;
+}
+
+function sanitizeStickers(raw: unknown): Sticker[] {
+  if (!Array.isArray(raw)) return [];
+  const out: Sticker[] = [];
+  for (const s of raw) {
+    if (out.length >= MAX_STICKERS) break;
+    if (!isRecord(s) || typeof s.id !== 'string' || s.id.length > 64 || !isEmoji(s.emoji)) continue;
+    out.push({ id: s.id, emoji: s.emoji, x: num(s.x, 0.5, 0, 1), y: num(s.y, 0.5, 0, 1) });
+  }
+  return out;
+}
+
+function sanitizePin(raw: unknown): Pin | undefined {
+  if (!isRecord(raw)) return undefined;
+  if ((raw.kind !== 'bilder' && raw.kind !== 'zahlen') || typeof raw.hash !== 'string' || !/^[0-9a-f]{8}$/.test(raw.hash)) {
+    return undefined;
+  }
+  return { kind: raw.kind, hash: raw.hash };
 }
 
 function sanitizeProgress(raw: unknown): Profile['progress'] {
@@ -87,6 +184,7 @@ function sanitizeProgress(raw: unknown): Profile['progress'] {
         plays: int(rec.plays, 0, 0, 1_000_000),
       };
       if (typeof rec.last === 'string' && rec.last.length <= 40) entry.last = rec.last;
+      if (typeof rec.best === 'number' && Number.isFinite(rec.best) && rec.best > 0) entry.best = int(rec.best, 0, 0, 100_000);
       clean[levelId] = entry;
     }
     out[appId] = clean;
@@ -111,19 +209,29 @@ export function sanitizeProfile(raw: unknown, now = new Date().toISOString()): P
     ? [...new Set(raw.seen.filter((s): s is string => typeof s === 'string' && s.length <= 60))].slice(0, 200)
     : [];
 
-  return {
+  const createdAt = typeof raw.createdAt === 'string' && raw.createdAt.length <= 40 ? raw.createdAt : now;
+  const profile: Profile = {
     id: typeof raw.id === 'string' && raw.id.length > 0 && raw.id.length <= 64 ? raw.id : newId(),
     name,
     avatar,
     age,
-    createdAt: typeof raw.createdAt === 'string' && raw.createdAt.length <= 40 ? raw.createdAt : now,
+    createdAt,
     bytes,
     bytesEarned,
     progress: sanitizeProgress(raw.progress),
     features,
     settings: sanitizeSettings(raw.settings, age),
     seen,
+    // Spielstände aus Version 0.1 haben noch keine Dateien – sie bekommen den Startinhalt.
+    files: sanitizeFiles(raw.files, createdAt),
+    owned: Array.isArray(raw.owned)
+      ? [...new Set(raw.owned.filter((id): id is string => typeof id === 'string' && SHOP_IDS.includes(id)))]
+      : [],
+    stickers: sanitizeStickers(raw.stickers),
   };
+  const pin = sanitizePin(raw.pin);
+  if (pin) profile.pin = pin;
+  return profile;
 }
 
 export function sanitizeSave(raw: unknown): SaveData | null {

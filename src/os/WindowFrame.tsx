@@ -1,5 +1,6 @@
-import { useMemo, useRef, type CSSProperties, type Dispatch, type PointerEvent, type ReactNode } from 'react';
+import { useCallback, useMemo, useRef, type CSSProperties, type Dispatch, type PointerEvent, type ReactNode } from 'react';
 import type { AppDef } from '../apps/registry';
+import { useLatest } from '../core/hooks';
 import { sfx } from '../core/sound';
 import { Emoji } from './Emoji';
 import { Icon } from './Icon';
@@ -34,14 +35,19 @@ interface Props {
   canControl: boolean;
   area: Area;
   params: AppParams & { nonce: number };
+  /** Eigener Titel statt des App-Namens */
+  title?: string;
+  onTitle: (title: string | null) => void;
   dispatch: Dispatch<WmAction>;
   children: ReactNode;
 }
 
-export function WindowFrame({ win, app, focused, canMove, canControl, area, params, dispatch, children }: Props) {
+export function WindowFrame({ win, app, focused, canMove, canControl, area, params, title, onTitle, dispatch, children }: Props) {
   const frame = useRef<HTMLDivElement>(null);
   const drag = useRef<Drag | null>(null);
   const maxed = win.mode === 'max';
+  const titleLatest = useLatest(onTitle);
+  const setTitle = useCallback((t: string | null) => titleLatest.current(t), [titleLatest]);
 
   const close = () => {
     sfx.close();
@@ -54,12 +60,13 @@ export function WindowFrame({ win, app, focused, canMove, canControl, area, para
       appId: win.appId,
       focused,
       params,
+      setTitle,
       close: () => {
         sfx.close();
         dispatch({ type: 'close', id: win.id });
       },
     }),
-    [win.id, win.appId, focused, params, dispatch],
+    [win.id, win.appId, focused, params, setTitle, dispatch],
   );
 
   const focus = () => {
@@ -150,7 +157,7 @@ export function WindowFrame({ win, app, focused, canMove, canControl, area, para
         }}
       >
         <Emoji name={app.icon} size={34} />
-        <h2 className="win-name">{app.name}</h2>
+        <h2 className="win-name">{title ?? app.name}</h2>
         <div className="win-controls">
           {canControl && (
             <>

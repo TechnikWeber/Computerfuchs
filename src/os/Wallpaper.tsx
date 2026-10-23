@@ -52,7 +52,175 @@ export function Wallpaper({ id, className }: { id: WallpaperId; className?: stri
       {id === 'weltall' && <Weltall u={u} />}
       {id === 'berge' && <Berge u={u} />}
       {id === 'bonbon' && <Bonbon u={u} />}
+      {id === 'regenbogen' && <Regenbogen u={u} />}
+      {id === 'polarlicht' && <Polarlicht u={u} />}
+      {id === 'kirschbluete' && <Kirschbluete u={u} />}
+      {id === 'pixel' && <Pixel />}
     </svg>
+  );
+}
+
+const RAINBOW = ['#ff4d5e', '#ff8a3d', '#ffd23f', '#3cc46b', '#3aa3ff', '#5b6cff', '#9b7bff'];
+
+function Regenbogen({ u }: { u: string }) {
+  return (
+    <>
+      <defs>
+        <linearGradient id={`${u}s`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#7fd0ff" />
+          <stop offset=".7" stopColor="#d4f0ff" />
+          <stop offset="1" stopColor="#f2fbff" />
+        </linearGradient>
+      </defs>
+      <rect width="1600" height="1000" fill={`url(#${u}s)`} />
+      <g fill="none" strokeWidth="38" opacity=".92">
+        {RAINBOW.map((c, i) => {
+          const r = 540 - i * 38;
+          return <path key={c} d={`M${800 - r} 840A${r} ${r} 0 0 1 ${800 + r} 840`} stroke={c} />;
+        })}
+      </g>
+      <g fill="#fff">
+        <Cloud x={290} y={820} s={1.15} />
+        <Cloud x={1320} y={820} s={1.15} />
+        <Cloud x={760} y={150} s={0.6} />
+      </g>
+      <path d="M0 820c240-70 480-50 760 10s560-50 840-20V1000H0Z" fill="#8be38f" />
+      <path d="M0 900c300-50 640 10 960-10 250-15 450-30 640-10V1000H0Z" fill="#4cc36a" />
+    </>
+  );
+}
+
+function Polarlicht({ u }: { u: string }) {
+  const bands = [
+    { d: 'M0 260C260 160 480 360 800 250s560-160 800-40v120c-240-90-480 40-800 130S260 280 0 380Z', c: '#3cf0a0', o: 0.55 },
+    { d: 'M0 360C300 280 560 460 860 360s520-120 740-30v90c-260-70-460 60-760 140S280 380 0 450Z', c: '#2fd1ff', o: 0.4 },
+    { d: 'M200 160C460 90 700 220 960 150s420-90 640-10v70c-220-60-400 40-660 90S420 200 200 230Z', c: '#b98bff', o: 0.35 },
+  ];
+  return (
+    <>
+      <defs>
+        <linearGradient id={`${u}s`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#050f24" />
+          <stop offset=".6" stopColor="#0b2747" />
+          <stop offset="1" stopColor="#143e5e" />
+        </linearGradient>
+        {bands.map((b, i) => (
+          <linearGradient key={i} id={`${u}a${i}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor={b.c} stopOpacity="0" />
+            <stop offset=".5" stopColor={b.c} stopOpacity="1" />
+            <stop offset="1" stopColor={b.c} stopOpacity="0" />
+          </linearGradient>
+        ))}
+      </defs>
+      <rect width="1600" height="1000" fill={`url(#${u}s)`} />
+      {SPACE_STARS.slice(0, 120).map((s, i) => (
+        <circle key={i} cx={s.x} cy={s.y * 0.7} r={s.s * 0.8} fill="#fff" opacity={s.o * 0.8} />
+      ))}
+      {bands.map((b, i) => (
+        <path key={i} d={b.d} fill={`url(#${u}a${i})`} opacity={b.o} />
+      ))}
+      <path d="M0 760 200 600l140 100 180-180 180 170 200-130 180 140 180-160 180 140 160-80V1000H0Z" fill="#1d3557" />
+      <path d="m520 520 50 52-26-6-24 22-22-20-30 6ZM1260 540l46 48-24-4-22 18-22-18-26 6ZM900 560l40 40-20-4-20 16-18-14-22 4Z" fill="#eef6ff" opacity=".9" />
+      <path d="M0 860c300-40 640 20 960 0 260-16 460-36 640-20V1000H0Z" fill="#0c1d31" />
+    </>
+  );
+}
+
+const BLOSSOMS = (() => {
+  const r = seeded(21);
+  const branch = (x0: number, y0: number, x1: number, y1: number, n: number) =>
+    Array.from({ length: n }, (_, i) => {
+      const t = i / (n - 1);
+      return { x: x0 + (x1 - x0) * t + (r() - 0.5) * 70, y: y0 + (y1 - y0) * t + (r() - 0.5) * 60, s: 0.7 + r() * 0.6 };
+    });
+  return [...branch(40, 120, 980, 230, 16), ...branch(420, 170, 620, 360, 5), ...branch(760, 220, 980, 420, 5), ...branch(1600, 90, 1180, 200, 8)];
+})();
+
+const PETALS = (() => {
+  const r = seeded(33);
+  return Array.from({ length: 30 }, () => ({ x: r() * 1600, y: 300 + r() * 600, rot: r() * 180 }));
+})();
+
+function Kirschbluete({ u }: { u: string }) {
+  const pinks = ['#ffb7d0', '#ff8fb8', '#ffd1e0'];
+  return (
+    <>
+      <defs>
+        <linearGradient id={`${u}s`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#ffe1ee" />
+          <stop offset=".6" stopColor="#fff5f9" />
+          <stop offset="1" stopColor="#e3f3ff" />
+        </linearGradient>
+      </defs>
+      <rect width="1600" height="1000" fill={`url(#${u}s)`} />
+      <g fill="none" stroke="#6b4a3a" strokeLinecap="round">
+        <path d="M-20 110c220 40 360 0 540 80s300 70 460 30" strokeWidth="26" />
+        <path d="M430 170c60 60 120 110 190 190" strokeWidth="12" />
+        <path d="M760 230c70 50 140 110 220 190" strokeWidth="12" />
+        <path d="M1620 80c-140 20-280 60-440 120" strokeWidth="20" />
+      </g>
+      {BLOSSOMS.map((b, i) => (
+        <g key={i} transform={`translate(${b.x} ${b.y}) scale(${b.s})`}>
+          {[0, 72, 144, 216, 288].map((a) => (
+            <ellipse key={a} cx="0" cy="-16" rx="12" ry="17" fill={pinks[i % 3]} transform={`rotate(${a})`} />
+          ))}
+          <circle r="6" fill="#ffd23f" />
+        </g>
+      ))}
+      {PETALS.map((p, i) => (
+        <ellipse key={i} cx={p.x} cy={p.y} rx="9" ry="5" fill="#ffb7d0" opacity=".8" transform={`rotate(${p.rot} ${p.x} ${p.y})`} />
+      ))}
+      <path d="M0 880c300-40 700 20 1000 0 300-20 450-10 600 5V1000H0Z" fill="#cdeccf" />
+    </>
+  );
+}
+
+/** Höhen in Klötzchen je Spalte – berechnet, nicht zufällig, damit das Bild immer gleich aussieht. */
+const PIXEL_HILLS = Array.from({ length: 40 }, (_, i) => ({
+  back: 6 + Math.round(2.4 * Math.sin(i / 3.2) + 1.5 * Math.sin(i / 1.7)),
+  front: 3 + Math.round(1.6 * Math.sin(i / 2.3 + 1) + Math.sin(i / 1.1)),
+}));
+
+const PIXEL_SUN = (() => {
+  const out: { x: number; y: number }[] = [];
+  for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) if (dx * dx + dy * dy <= 18) out.push({ x: 32 + dx, y: 5 + dy });
+  return out;
+})();
+
+const PIXEL_CLOUDS = [
+  { x: 5, y: 4, w: [3, 5, 6] },
+  { x: 18, y: 7, w: [2, 4, 5] },
+];
+
+function Pixel() {
+  const B = 40;
+  return (
+    <>
+      <rect width="1600" height="1000" fill="#6ec6ff" />
+      <rect y="440" width="1600" height="560" fill="#9fdcff" />
+      {PIXEL_SUN.map((p, i) => (
+        <rect key={i} x={p.x * B} y={p.y * B} width={B} height={B} fill={(p.x + p.y) % 2 ? '#ffd23f' : '#ffc533'} />
+      ))}
+      {PIXEL_CLOUDS.map((c, i) => (
+        <g key={i} fill="#fff">
+          {c.w.map((w, row) => (
+            <rect key={row} x={(c.x - Math.floor(w / 2)) * B} y={(c.y + row - 2) * B} width={w * B} height={B} />
+          ))}
+        </g>
+      ))}
+      {PIXEL_HILLS.map((h, i) => (
+        <g key={i}>
+          <rect x={i * B} y={1000 - h.back * B} width={B} height={h.back * B} fill={i % 2 ? '#3cc46b' : '#36b562'} />
+          <rect x={i * B} y={1000 - h.front * B} width={B} height={h.front * B} fill={i % 2 ? '#2a9d55' : '#27924f'} />
+          <rect x={i * B} y={1000 - h.front * B} width={B} height={B / 2} fill="#7be08f" />
+        </g>
+      ))}
+      <g>
+        <rect x={9 * B} y={1000 - 9 * B} width={B} height={4 * B} fill="#8a5a3c" />
+        <rect x={8 * B} y={1000 - 12 * B} width={3 * B} height={3 * B} fill="#1f8a4c" />
+        <rect x={7 * B} y={1000 - 11 * B} width={5 * B} height={B} fill="#1f8a4c" />
+      </g>
+    </>
   );
 }
 

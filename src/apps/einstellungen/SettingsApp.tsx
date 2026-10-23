@@ -13,11 +13,13 @@ import { sfx } from '../../core/sound';
 import { speak, speechAvailable } from '../../core/speech';
 import { exportSave, parseSaveFile } from '../../core/storage';
 import { Avatar } from '../../os/Avatar';
+import { CURSOR_SKINS, cursorPreview } from '../../os/cursors';
 import { Emoji } from '../../os/Emoji';
 import { Fox } from '../../os/Fox';
 import { Icon } from '../../os/Icon';
 import { useOs, useWindow } from '../../os/osContext';
 import { ParentGate } from '../../os/ParentGate';
+import { PinSetup } from '../../os/PinPad';
 import { Wallpaper } from '../../os/Wallpaper';
 
 type Tab = 'hintergrund' | 'ton' | 'maus' | 'ich' | 'info' | 'erwachsene';
@@ -125,11 +127,21 @@ function Toggle({ label, desc, checked, onChange }: { label: string; desc?: stri
 }
 
 function WallpaperPage({ onPick }: { onPick: (id: ProfileSettings['wallpaper']) => void }) {
-  const { profile } = useOs();
+  const { profile, openApp } = useOs();
+  const mine = WALLPAPERS.filter((w) => !w.shop || profile.owned.includes(`hg-${w.id}`));
+  const more = WALLPAPERS.length - mine.length;
   return (
     <Page title="Hintergrund" intro="Such dir ein Bild für deinen Desktop aus.">
+      {more > 0 && (
+        <button type="button" className="shop-teaser" onClick={() => openApp('laden')}>
+          <Emoji name="shopping-bags" size={40} />
+          <span>
+            <strong>{more} weitere Hintergründe</strong> gibt es im App-Laden – für deine Bytes.
+          </span>
+        </button>
+      )}
       <div className="wall-grid">
-        {WALLPAPERS.map((w) => (
+        {mine.map((w) => (
           <button
             key={w.id}
             type="button"
@@ -184,7 +196,7 @@ function SoundPage({ set }: { set: (p: Partial<ProfileSettings>) => void }) {
 }
 
 function MousePage({ set }: { set: (p: Partial<ProfileSettings>) => void }) {
-  const { profile } = useOs();
+  const { profile, openApp } = useOs();
   const ms = profile.settings.doubleClickMs;
   return (
     <Page title="Maus" intro="So stellt man auch an einem echten Computer die Maus ein.">
@@ -206,6 +218,29 @@ function MousePage({ set }: { set: (p: Partial<ProfileSettings>) => void }) {
             <span>{CURSOR_LABEL[c]}</span>
           </button>
         ))}
+      </div>
+      <h3>Farbe des Mauszeigers</h3>
+      <div className="cursor-picks">
+        {CURSOR_SKINS.filter((s) => s.id === 'standard' || profile.owned.includes(`zeiger-${s.id}`)).map((s) => (
+          <button
+            key={s.id}
+            type="button"
+            className={profile.settings.cursorSkin === s.id ? 'cursor-pick is-active' : 'cursor-pick'}
+            onClick={() => {
+              sfx.tap();
+              set({ cursorSkin: s.id });
+            }}
+          >
+            <img src={cursorPreview(s.id, 44)} width={44} height={44} alt="" />
+            <span>{s.name}</span>
+          </button>
+        ))}
+        {CURSOR_SKINS.some((s) => s.id !== 'standard' && !profile.owned.includes(`zeiger-${s.id}`)) && (
+          <button type="button" className="cursor-pick is-shop" onClick={() => openApp('laden')}>
+            <Emoji name="shopping-bags" size={40} />
+            <span>Mehr im App-Laden</span>
+          </button>
+        )}
       </div>
       <h3>Doppelklick-Tempo</h3>
       <p className="settings-intro">Wie schnell müssen die zwei Klicks hintereinander kommen? Probier es am Geschenk aus.</p>
@@ -276,7 +311,8 @@ function MePage() {
           <strong>{p.name}</strong>
           <span>{rankFor(p.bytesEarned).name}</span>
           <span>
-            {formatBytes(p.bytes)} · {stars('maus')} Sterne im Maustraining · {stars('rechnen')} Sterne beim Rechnen
+            {formatBytes(p.bytes)} · {stars('maus')} Sterne Maus · {stars('tastatur')} Sterne Tastatur · {stars('rechnen')} Sterne
+            Rechnen
           </span>
         </div>
       </div>
@@ -311,6 +347,18 @@ function MePage() {
           </button>
         ))}
       </div>
+      <h3>Geheimcode</h3>
+      <PinSetup
+        profile={p}
+        onSave={(pin) =>
+          os.update((q) => {
+            const next = { ...q };
+            if (pin) next.pin = pin;
+            else delete next.pin;
+            return next;
+          })
+        }
+      />
     </Page>
   );
 }
@@ -448,11 +496,31 @@ function GrownUpPage() {
         ))}
       </div>
 
+      {p.pin && (
+        <>
+          <h3>Geheimcode von {p.name}</h3>
+          <p className="settings-intro">Vergessen? Hier lässt er sich entfernen. Danach kann {p.name} einen neuen festlegen.</p>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={() =>
+              os.update((q) => {
+                const next = { ...q };
+                delete next.pin;
+                return next;
+              })
+            }
+          >
+            <Icon name="lock" size={22} /> Geheimcode entfernen
+          </button>
+        </>
+      )}
+
       <h3>Kiosk-Modus</h3>
       <p className="settings-intro">
         {os.kiosk
           ? 'Der Kiosk-Modus ist aktiv: kein Knopf zum Verlassen des Vollbilds, Ausschalten führt zurück zum Startbildschirm.'
-          : 'Für einen Lerncomputer ohne Ausweg die Seite mit ?kiosk am Ende der Adresse öffnen und das Gerät im Kiosk-Modus des Betriebssystems betreiben. Die Anleitung steht im Projekt unter docs/CONCEPT.de.md.'}
+          : 'Für einen Lerncomputer ohne Ausweg die Seite mit ?kiosk am Ende der Adresse öffnen und das Gerät im Kiosk-Modus des Betriebssystems betreiben. Die Anleitung für Linux, Raspberry Pi und Windows steht im Projekt unter docs/KIOSK.de.md.'}
       </p>
 
       <h3>Profil löschen</h3>

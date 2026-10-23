@@ -1,4 +1,7 @@
 import { AVATARS, type AvatarId, type WallpaperId } from './catalog';
+import type { EmojiName } from './emoji';
+import { seedFiles, type CursorSkinId, type FileNode } from './files';
+import type { Pin } from './pin';
 
 /*
  * Ein Profil pro Kind. Alles bleibt im Browser; es gibt keinen Server.
@@ -21,6 +24,8 @@ export interface LevelRecord {
   stars: Stars;
   plays: number;
   last?: string;
+  /** Bestwert, wo es einen gibt – etwa Anschläge pro Minute */
+  best?: number;
 }
 
 export interface ProfileSettings {
@@ -31,8 +36,20 @@ export interface ProfileSettings {
   /** Der Fuchs liest Anleitungen vor. */
   voice: boolean;
   cursor: CursorSize;
+  /** Farbe des Mauszeigers – weitere gibt es im App-Laden. */
+  cursorSkin: CursorSkinId;
   /** Wie viel Zeit zwischen zwei Klicks für einen Doppelklick bleibt. */
   doubleClickMs: number;
+  /** Dateiendungen wie .jpg in der Dateien-App zeigen */
+  showExtensions: boolean;
+}
+
+/** Ein Sticker auf dem Desktop; x und y als Bruchteil der Fläche. */
+export interface Sticker {
+  id: string;
+  emoji: EmojiName;
+  x: number;
+  y: number;
 }
 
 export interface Profile {
@@ -51,6 +68,13 @@ export interface Profile {
   settings: ProfileSettings;
   /** Schon gezeigte Hinweise, z. B. die Begrüßung. */
   seen: string[];
+  /** Das eigene kleine Dateisystem (ohne die Systemordner) */
+  files: FileNode[];
+  /** IDs der Dinge aus dem App-Laden */
+  owned: string[];
+  stickers: Sticker[];
+  /** Geheimcode fürs Anmelden, wenn das Kind einen festgelegt hat */
+  pin?: Pin;
 }
 
 export const MIN_AGE = 3;
@@ -92,7 +116,9 @@ export function defaultSettings(age: number): ProfileSettings {
     volume: 0.7,
     voice: age <= 9,
     cursor: age <= 6 ? 'gross' : 'normal',
+    cursorSkin: 'standard',
     doubleClickMs: defaultDoubleClickMs(age),
+    showExtensions: age >= 10,
   };
 }
 
@@ -121,6 +147,9 @@ export function createProfile(input: { name: string; avatar: AvatarId; age: numb
     features: defaultFeatures(age),
     settings: defaultSettings(age),
     seen: [],
+    files: seedFiles(now),
+    owned: [],
+    stickers: [],
   };
 }
 
@@ -191,6 +220,8 @@ export function applyLevelResult(
   levelId: string,
   stars: Stars,
   now: string,
+  /** Bestwert, bei dem höher besser ist (z. B. Anschläge pro Minute) */
+  score?: number,
 ): { profile: Profile; outcome: LevelOutcome } {
   const appProgress = profile.progress[appId] ?? {};
   const previous = levelRecord(profile, appId, levelId);
@@ -199,6 +230,9 @@ export function applyLevelResult(
   const bytesEarned = profile.bytesEarned + bytes;
   const rankBefore = rankFor(profile.bytesEarned);
   const rankAfter = rankFor(bytesEarned);
+  const record: LevelRecord = { stars: best, plays: previous.plays + 1, last: now };
+  const bestScore = Math.max(previous.best ?? 0, score ?? 0);
+  if (bestScore > 0) record.best = Math.round(bestScore);
 
   return {
     profile: {
@@ -207,7 +241,7 @@ export function applyLevelResult(
       bytesEarned,
       progress: {
         ...profile.progress,
-        [appId]: { ...appProgress, [levelId]: { stars: best, plays: previous.plays + 1, last: now } },
+        [appId]: { ...appProgress, [levelId]: record },
       },
     },
     outcome: {

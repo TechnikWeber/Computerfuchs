@@ -2,8 +2,8 @@ import type { CSSProperties, ReactNode } from 'react';
 
 export type IconName =
   | 'close' | 'minimize' | 'maximize' | 'restore' | 'speaker' | 'speaker-off' | 'fullscreen' | 'fullscreen-exit'
-  | 'power' | 'back' | 'next' | 'lock' | 'check' | 'plus' | 'upload' | 'download' | 'logout' | 'replay' | 'grid'
-  | 'trash' | 'info' | 'play' | 'user';
+  | 'power' | 'back' | 'next' | 'up' | 'lock' | 'check' | 'plus' | 'upload' | 'download' | 'logout' | 'replay' | 'grid'
+  | 'trash' | 'info' | 'play' | 'stop' | 'user';
 
 const PATHS: Record<IconName, ReactNode> = {
   close: <path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" />,
@@ -32,6 +32,7 @@ const PATHS: Record<IconName, ReactNode> = {
   power: <path d="M12 3.8v7.4M7.1 6.6a7.4 7.4 0 1 0 9.8 0" />,
   back: <path d="M14.5 5.5 8 12l6.5 6.5" />,
   next: <path d="M9.5 5.5 16 12l-6.5 6.5" />,
+  up: <path d="M12 19V5.5M5.5 12 12 5.5l6.5 6.5" />,
   lock: (
     <>
       <rect x="5" y="10.5" width="14" height="10" rx="2.5" />
@@ -60,6 +61,7 @@ const PATHS: Record<IconName, ReactNode> = {
     </>
   ),
   play: <path d="M8 5.5 18 12 8 18.5z" fill="currentColor" />,
+  stop: <rect x="6.5" y="6.5" width="11" height="11" rx="2" fill="currentColor" />,
   user: (
     <>
       <circle cx="12" cy="8.5" r="3.8" />

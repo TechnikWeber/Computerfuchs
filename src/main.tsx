@@ -5,6 +5,8 @@ import '@fontsource-variable/fredoka';
 import './styles/global.css';
 import './styles/os.css';
 import './styles/apps.css';
+import './styles/files.css';
+import './styles/keyboard.css';
 import App from './App';
 import { SaveProvider } from './core/SaveProvider';
 

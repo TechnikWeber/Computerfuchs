@@ -12,8 +12,10 @@ import { setSoundEnabled, setSoundVolume, sfx } from '../core/sound';
 import { setVoiceEnabled } from '../core/speech';
 import { Confetti } from './Confetti';
 import { makeConfetti, type ConfettiBit } from './confettiBits';
-import { ContextMenu } from './ContextMenu';
+import { ContextMenu, type MenuItem } from './ContextMenu';
+import { cursorCss } from './cursors';
 import { DesktopIcons } from './DesktopIcons';
+import { DesktopStickers } from './DesktopStickers';
 import { FEATURE_INFO } from './features';
 import { Fox } from './Fox';
 import { FoxSays } from './FoxSays';
@@ -50,7 +52,8 @@ export function Desktop({ profile, onLogout, onShutdown }: Props) {
   const [wm, dispatch] = useReducer(wmReducer, initialWm);
   const [selected, setSelected] = useState<string | null>(null);
   const [startOpen, setStartOpen] = useState(false);
-  const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
+  const [menu, setMenu] = useState<{ x: number; y: number; items: MenuItem[] } | null>(null);
+  const [titles, setTitles] = useState<Record<string, string>>({});
   const [toasts, setToasts] = useState<Toast[]>([]);
   // Begrüßung beim ersten Mal, Warnung wenn der Browser nichts speichert.
   const [notices, setNotices] = useState<Notice[]>(() => [
@@ -108,7 +111,13 @@ export function Desktop({ profile, onLogout, onShutdown }: Props) {
 
   const openApp = useCallback(
     (appId: string, p?: AppParams) => {
-      const app = appById(appId);
+      let app = appById(appId);
+      let appParams = p;
+      // Verknüpfungen wie der Papierkorb öffnen eine andere App an der richtigen Stelle.
+      if (app?.opens) {
+        appParams = { ...app.opens.params, ...p };
+        app = appById(app.opens.app);
+      }
       setStartOpen(false);
       setMenu(null);
       if (!app) return;
@@ -117,23 +126,26 @@ export function Desktop({ profile, onLogout, onShutdown }: Props) {
         pushNotice({ kind: 'soon', app });
         return;
       }
+      const id = app.id;
       const small = area.w < 900 || area.h < 560;
-      dispatch({ type: 'open', appId, w: app.size.w, h: app.size.h, area, max: !canMove || small });
-      if (p) setParams((all) => ({ ...all, [appId]: { ...p, nonce: (all[appId]?.nonce ?? 0) + 1 } }));
+      dispatch({ type: 'open', appId: id, w: app.size.w, h: app.size.h, area, max: !canMove || small });
+      // Immer neu setzen: Wer die App ohne Ziel öffnet, soll nicht im Ordner vom letzten Mal landen.
+      const next = appParams ?? {};
+      setParams((all) => ({ ...all, [id]: { ...next, nonce: (all[id]?.nonce ?? 0) + 1 } }));
       sfx.open();
     },
     [area, canMove, pushNotice],
   );
 
   const completeLevel = useCallback(
-    (appId: string, levelId: string, stars: Stars, unlocks?: Feature): CompleteResult => {
+    (appId: string, levelId: string, stars: Stars, unlocks?: Feature, score?: number): CompleteResult => {
       const now = new Date().toISOString();
       const before = profileRef.current;
-      const { outcome } = applyLevelResult(before, appId, levelId, stars, now);
+      const { outcome } = applyLevelResult(before, appId, levelId, stars, now, score);
       const unlocked = unlocks && !hasFeature(before, unlocks) ? unlocks : null;
       // Die Änderung selbst läuft über den neuesten Stand – so geht nichts verloren.
       update((p) => {
-        const next = applyLevelResult(p, appId, levelId, stars, now).profile;
+        const next = applyLevelResult(p, appId, levelId, stars, now, score).profile;
         return unlocks ? withFeature(next, unlocks) : next;
       });
       if (outcome.bytes > 0) {
@@ -173,9 +185,22 @@ export function Desktop({ profile, onLogout, onShutdown }: Props) {
   const desktopApps = APPS.filter((a) => a.desktop);
   const notice = notices[0];
 
+  const desktopMenu: MenuItem[] = [
+    { label: 'Hintergrund ändern …', icon: 'artist-palette', onSelect: () => openApp('einstellungen', { tab: 'hintergrund' }) },
+    { label: 'Dateien öffnen', icon: 'file-folder', onSelect: () => openApp('dateien') },
+    { label: 'Einstellungen', icon: 'gear', onSelect: () => openApp('einstellungen', { tab: 'ton' }) },
+  ];
+
+  const removeSticker = (id: string) => {
+    sfx.whoosh();
+    update((p) => ({ ...p, stickers: p.stickers.filter((s) => s.id !== id) }));
+    toast({ title: 'Sticker weg', text: 'Die Datei liegt weiter in deinen Downloads.', icon: 'wastebasket' });
+  };
+
   return (
     <OsContext.Provider value={api}>
-      <div className={`desktop cursor-${profile.settings.cursor} group-${group}`}>
+      <div className={`desktop group-${group}`}>
+        <style>{cursorCss(profile.settings.cursor, profile.settings.cursorSkin)}</style>
         <Wallpaper id={profile.settings.wallpaper} />
 
         <div
@@ -191,9 +216,19 @@ export function Desktop({ profile, onLogout, onShutdown }: Props) {
             if (e.target !== e.currentTarget && !(e.target as HTMLElement).closest('.desk-icons')) return;
             if (!canRight) return;
             setStartOpen(false);
-            setMenu({ x: e.clientX, y: e.clientY });
+            setMenu({ x: e.clientX, y: e.clientY, items: desktopMenu });
           }}
         >
+          <DesktopStickers
+            stickers={profile.stickers}
+            areaRef={areaRef}
+            onMove={(id, x, y) => update((p) => ({ ...p, stickers: p.stickers.map((s) => (s.id === id ? { ...s, x, y } : s)) }))}
+            onRemove={removeSticker}
+            onMenu={(id, x, y) => {
+              if (!canRight) return;
+              setMenu({ x, y, items: [{ label: 'Sticker entfernen', icon: 'wastebasket', onSelect: () => removeSticker(id) }] });
+            }}
+          />
           <DesktopIcons
             apps={desktopApps}
             selected={selected}
@@ -220,6 +255,16 @@ export function Desktop({ profile, onLogout, onShutdown }: Props) {
                 canControl={canControl}
                 area={area}
                 params={params[w.appId] ?? NO_PARAMS}
+                title={titles[w.id]}
+                onTitle={(t) =>
+                  setTitles((all) => {
+                    if ((all[w.id] ?? null) === t) return all;
+                    const next = { ...all };
+                    if (t) next[w.id] = t;
+                    else delete next[w.id];
+                    return next;
+                  })
+                }
                 dispatch={dispatch}
               >
                 <Suspense
@@ -266,18 +311,7 @@ export function Desktop({ profile, onLogout, onShutdown }: Props) {
           />
         )}
 
-        {menu && (
-          <ContextMenu
-            x={menu.x}
-            y={menu.y}
-            onClose={() => setMenu(null)}
-            items={[
-              { label: 'Hintergrund ändern …', icon: 'artist-palette', onSelect: () => openApp('einstellungen', { tab: 'hintergrund' }) },
-              { label: 'Maustraining öffnen', icon: 'computer-mouse', onSelect: () => openApp('maus') },
-              { label: 'Einstellungen', icon: 'gear', onSelect: () => openApp('einstellungen', { tab: 'ton' }) },
-            ]}
-          />
-        )}
+        {menu && <ContextMenu x={menu.x} y={menu.y} onClose={() => setMenu(null)} items={menu.items} />}
 
         <Toasts toasts={toasts} />
 
