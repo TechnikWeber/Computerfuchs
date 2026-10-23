@@ -201,7 +201,8 @@ export function sanitizeProfile(raw: unknown, now = new Date().toISOString()): P
       ? raw.name.replace(/\s+/g, ' ').trim().slice(0, MAX_NAME)
       : (AVATARS.find((a) => a.id === avatar)?.name ?? 'Kind');
   const bytes = int(raw.bytes, 0, 0, 100_000_000);
-  const bytesEarned = Math.max(bytes, int(raw.bytesEarned, bytes, 0, 100_000_000));
+  // Kein Math.max mit dem Kontostand: Erwachsene dürfen Bytes schenken, ohne dass der Rang steigt.
+  const bytesEarned = int(raw.bytesEarned, bytes, 0, 100_000_000);
   const features = Array.isArray(raw.features)
     ? [...new Set(raw.features.filter((f): f is Feature => (FEATURES as readonly unknown[]).includes(f)))]
     : [];
@@ -231,6 +232,7 @@ export function sanitizeProfile(raw: unknown, now = new Date().toISOString()): P
   };
   const pin = sanitizePin(raw.pin);
   if (pin) profile.pin = pin;
+  if (raw.allOpen === true) profile.allOpen = true;
   return profile;
 }
 

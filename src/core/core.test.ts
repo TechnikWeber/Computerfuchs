@@ -4,8 +4,8 @@ import { createDoubleClick } from './dblclick';
 import { catmullRom, dist, nearestIndex, polylineLength, resample } from './geometry';
 import { scatter } from './layout';
 import {
-  RANKS, REPLAY_REWARD, STAR_REWARD, ageGroup, applyLevelResult, createProfile, defaultFeatures, nextRank, rankFor,
-  rewardFor, withAge,
+  MAX_BYTES, RANKS, REPLAY_REWARD, STAR_REWARD, ageGroup, applyLevelResult, createProfile, defaultFeatures, nextRank,
+  rankFor, rewardFor, withAge, withAllOpen, withBytes,
 } from './profile';
 import { seeded, shuffle } from './random';
 
@@ -82,6 +82,30 @@ describe('Profil', () => {
     expect(younger.age).toBe(4);
     expect(younger.features).toHaveLength(4);
     expect(withAge(p, 99).age).toBe(18);
+  });
+
+  it('schaltet alles frei, ohne Sterne zu verschenken – und wieder zurück', () => {
+    const p = createProfile({ name: 'A', avatar: 'fox', age: 5 }, 'id', 'now');
+    const open = withAllOpen(p, true);
+    expect(open.allOpen).toBe(true);
+    expect([...open.features].sort()).toEqual(['doubleClick', 'moveWindows', 'rightClick', 'windowControls']);
+    expect(open.progress).toEqual({});
+    expect(open.bytes).toBe(0);
+    const closed = withAllOpen(open, false);
+    expect('allOpen' in closed).toBe(false);
+    expect(closed.features).toHaveLength(4);
+  });
+
+  it('lässt Erwachsene Kontostand und Rang einstellen', () => {
+    const p = { ...createProfile({ name: 'A', avatar: 'fox', age: 8 }, 'id', 'now'), bytes: 120, bytesEarned: 600 };
+    // Geschenkt: mehr auf dem Konto, der Rang bleibt.
+    const gift = withBytes(p, 220, p.bytesEarned);
+    expect(gift.bytes).toBe(220);
+    expect(rankFor(gift.bytesEarned).name).toBe('Schlaufuchs');
+    const odd = withBytes(p, -40, 12.6);
+    expect(odd.bytes).toBe(0);
+    expect(odd.bytesEarned).toBe(13);
+    expect(withBytes(p, Number.NaN, 5 * MAX_BYTES).bytesEarned).toBe(MAX_BYTES);
   });
 
   it('kennt Ränge und den nächsten Rang', () => {

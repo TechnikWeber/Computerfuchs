@@ -25,7 +25,7 @@ export default function RechnenApp() {
 
   // Weiter kommt, wer die Stufe davor geschafft hat – oder schon alt genug dafür ist.
   const isUnlocked = (i: number) => {
-    if (i === 0 || os.group === 'gross') return true;
+    if (i === 0 || os.allOpen || os.group === 'gross') return true;
     const level = RECHNEN_LEVELS[i];
     return (progress[RECHNEN_LEVELS[i - 1].id]?.stars ?? 0) > 0 || os.profile.age >= AGE[level.id] + 1;
   };

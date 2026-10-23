@@ -171,7 +171,7 @@ export function Desktop({ profile, onLogout, onShutdown }: Props) {
   );
 
   const api = useMemo<OsApi>(
-    () => ({ profile, group, kiosk, update, completeLevel, toast, openApp, celebrate }),
+    () => ({ profile, group, allOpen: profile.allOpen === true, kiosk, update, completeLevel, toast, openApp, celebrate }),
     [profile, group, kiosk, update, completeLevel, toast, openApp, celebrate],
   );
 

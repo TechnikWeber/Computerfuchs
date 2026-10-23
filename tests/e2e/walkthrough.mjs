@@ -567,6 +567,46 @@ await step('Alter stellen nur Erwachsene um', async () => {
   if (await page.$('.me-age')) throw new Error('Unter „Ich" lässt sich das Alter noch ändern');
 });
 
+await step('Erwachsene: Bytes schenken und alles freischalten', async () => {
+  await page.click('.settings-tab >> text=Für Erwachsene');
+  await page.waitForSelector('text=Alle Level und Stufen offen');
+  const saved = () => page.evaluate(() => JSON.parse(localStorage.getItem('computerfuchs.save')).profiles[0]);
+  const before = await saved();
+  // Geschenkt: Nur der Kontostand steigt, der Rang bleibt.
+  await page.fill('.bytes-field input[aria-label="Kontostand in Bytes"]', String(before.bytes + 100));
+  await page.click('.bytes-form >> text=Bytes speichern');
+  await page.waitForSelector('.bytes-form .settings-note');
+  const toggle = page.locator('.toggle', { hasText: 'Alle Level und Stufen offen' });
+  await toggle.click();
+  await wait(400);
+  let after = await saved();
+  if (after.bytes !== before.bytes + 100 || after.bytesEarned !== before.bytesEarned) {
+    throw new Error(`Bytes: ${after.bytes} / ${after.bytesEarned}`);
+  }
+  if (after.allOpen !== true || after.features.length !== 4) throw new Error('„Alles offen“ nicht gespeichert');
+  await shot('erwachsene-freischalten');
+  // Aus und wieder an
+  await toggle.click();
+  await wait(300);
+  if ('allOpen' in (await saved())) throw new Error('„Alles offen“ lässt sich nicht ausschalten');
+  await toggle.click();
+  await wait(300);
+  after = await saved();
+  if (after.allOpen !== true) throw new Error('„Alles offen“ nicht wieder an');
+  // Im Maustraining sind jetzt alle Stufen wählbar – geöffnet wird trotzdem die passende.
+  await closeWindows();
+  await openDesk('maus');
+  await page.waitForSelector('.level-map');
+  await page.locator('.level-card').first().click();
+  await page.waitForSelector('.level-intro');
+  if ((await page.locator('.tier-chip.is-locked').count()) !== 0) throw new Error('Stufen noch gesperrt');
+  const stars = after.progress.maus?.taschenlampe?.stars ?? 0;
+  const current = await page.textContent('.tier-chip.is-current span');
+  if (current !== `Stufe ${Math.min(3, stars + 1)}`) throw new Error(`geöffnet: ${current} bei ${stars} Sternen`);
+  await shot('alles-offen-stufen');
+  await closeWindows();
+});
+
 await step('Neu laden: Spielstand bleibt', async () => {
   await page.reload();
   await page.click('.power-btn');

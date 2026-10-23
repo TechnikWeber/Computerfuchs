@@ -33,10 +33,13 @@ benutzt. Genau dort setzt Computerfuchs an.
    | Rechtsklick-Menü auf dem Desktop | Level 6 „Farbenzauber“ | 10 Jahren |
    | Verkleinern, Vergrößern, Größe ziehen | Level 8 „Fenster-Profi“ | 10 Jahren |
 
-   Eltern können jede Funktion im Erwachsenen-Bereich einzeln an- und ausschalten.
-   Auch das Alter stellen dort nur Erwachsene um. Es bestimmt Symbolgröße, offene
-   Level und die Funktionen zu Beginn. Könnte ein Kind es selbst ändern, ließe
-   sich das Mitwachsen einfach überspringen.
+   Eltern können jede Funktion im Erwachsenen-Bereich einzeln an- und
+   ausschalten oder alles auf einmal freischalten – alle Level und Stufen, für
+   Geschwister, die schon weiter sind, oder für den Unterricht. Sterne gibt es
+   dafür nicht; die verdient das Kind weiter selbst. Auch das Alter stellen dort
+   nur Erwachsene um. Es bestimmt Symbolgröße, offene Level und die Funktionen
+   zu Beginn. Könnte ein Kind es selbst ändern, ließe sich das Mitwachsen
+   einfach überspringen.
 
 2. **Echte Begriffe, aber keine Kopie.** Computerfuchs sieht weder wie Windows
    noch wie macOS aus. Er hat aber alles, was überall gleich funktioniert:
@@ -92,7 +95,8 @@ als App aus 0.4.
 - **Einstellungen:** Hintergrund, Ton und Lautstärke, Vorlesen, Zeigergröße und
   -farbe, Doppelklick-Tempo mit Testfeld (wie an einem echten Computer), Profil
   (Name, Tier, Geheimcode) und ein Erwachsenen-Bereich (Spielstand-Datei, Alter,
-  Funktionen, Geheimcode entfernen, Kiosk-Hinweis, Profil löschen)
+  Funktionen, alles freischalten, Bytes, Geheimcode entfernen, Kiosk-Hinweis,
+  Profil löschen)
 - **Offline und als App:** Nach dem ersten Besuch startet Computerfuchs auch
   ohne Internet. Chrome und Edge installieren es als App mit eigenem Symbol.
 - **Kiosk-Skripte** für Linux mit Cage, den Raspberry Pi und Windows
@@ -198,8 +202,12 @@ Spiel-Netz, statt Erklärungen zu lesen.
 
 - **Bytes:** Der erste, zweite und dritte Stern eines Levels bringen 16, 32 und
   64 Bytes. Eine Wiederholung ohne neuen Stern bringt 4 Bytes. Ein Level ist
-  also 112 Bytes wert, und alle 21 Level mit Sternen zusammen etwa 2,3 KB. Jede
+  also 112 Bytes wert, und alle 26 Level mit Sternen zusammen etwa 2,9 KB. Jede
   der sechs Dateien-Aufgaben bringt noch einmal 16 Bytes.
+- **Von Erwachsenen eingestellt:** Im Erwachsenen-Bereich lassen sich Bytes
+  schenken oder der Kontostand korrigieren. „Insgesamt verdient“ bestimmt den
+  Rang und lässt sich ebenfalls einstellen. Wer nur den Kontostand erhöht, lässt
+  den Rang zeigen, was das Kind selbst geschafft hat.
 - **Ränge** nach allen jemals verdienten Bytes:
 
   | Rang | ab |

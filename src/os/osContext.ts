@@ -28,6 +28,8 @@ export interface AppParams {
 export interface OsApi {
   profile: Profile;
   group: AgeGroup;
+  /** Erwachsene haben alle Level und Stufen geöffnet. */
+  allOpen: boolean;
   kiosk: boolean;
   update: (change: (p: Profile) => Profile) => void;
   /** score: Bestwert, bei dem höher besser ist (z. B. Anschläge pro Minute) */

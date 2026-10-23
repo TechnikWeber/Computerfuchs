@@ -26,7 +26,8 @@ useful feedback. No technical knowledge is needed.
   or use a [kiosk](KIOSK.md). The app is in German.
 - **A new profile:** the child creates it – that is part of the test. For a
   second test, delete the profile in the grown-ups' area (Einstellungen → Für
-  Erwachsene).
+  Erwachsene). To try a later level straight away, switch on "Alle Level und
+  Stufen offen" there; it opens everything without handing out stars.
 - **A nickname instead of the real name** helps if you want to share screenshots
   or the save file later.
 - **Pen and paper**, ideally with the [observation sheet](#observation-sheet)

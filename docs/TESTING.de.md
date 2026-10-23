@@ -26,7 +26,9 @@ dafür nicht.
   Oder ein eingerichteter [Kiosk](KIOSK.de.md).
 - **Ein neues Profil:** Das Kind legt es selbst an – das gehört zum Test. Für
   einen zweiten Test lässt sich das Profil im Erwachsenen-Bereich wieder löschen
-  (Einstellungen → Für Erwachsene).
+  (Einstellungen → Für Erwachsene). Soll das Kind gleich ein späteres Level
+  ausprobieren, schaltet dort „Alle Level und Stufen offen“ alles frei, ohne
+  Sterne zu verschenken.
 - **Ein Spitzname statt des echten Namens** ist gut, wenn du später Screenshots
   oder die Spielstand-Datei teilen möchtest.
 - **Zettel und Stift**, am besten mit dem [Beobachtungsbogen](#beobachtungsbogen)

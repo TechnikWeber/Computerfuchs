@@ -52,7 +52,8 @@ The interface is in German.
   the mouse course rather than handed out: open by double-click, move windows,
   right-click menu, and minimise/maximise/resize. Flinn the fox announces each
   one and lets the child try it straight away. Ages 7–9 start with the first two,
-  ages 10 and up with all of them, and parents can switch each one on or off.
+  ages 10 and up with all of them. Parents can switch each one on or off, or
+  open everything at once: all levels and tiers, without handing out stars.
 - **Mouse course, 8 levels × 3 tiers.**
   - Flashlight: move the pointer to find hidden animals in the dark.
   - Balloons: click to pop them. Tier 3 pops only the red ones.
@@ -117,7 +118,8 @@ The interface is in German.
   comes in normal, large and huge sizes.
 - **Bytes instead of coins.** Every new star earns Bytes. Lifetime Bytes decide
   the rank: Fuchswelpe, Jungfuchs, Schlaufuchs, then Computerfuchs at
-  1 kilobyte, and Meisterfuchs after that.
+  1 kilobyte, and Meisterfuchs after that. Grown-ups can gift Bytes or correct
+  the balance; gifts leave the rank alone.
 - **Profiles with a secret code.** Each child picks an animal, a name and their
   age. If they like, they protect their profile with four pictures or four
   digits – their first password. If a child forgets the code, a grown-up resets

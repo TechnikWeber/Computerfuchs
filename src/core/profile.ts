@@ -75,6 +75,8 @@ export interface Profile {
   stickers: Sticker[];
   /** Geheimcode fürs Anmelden, wenn das Kind einen festgelegt hat */
   pin?: Pin;
+  /** Von Erwachsenen geöffnet: alle Level und Stufen spielbar, ohne geschenkte Sterne */
+  allOpen?: boolean;
 }
 
 export const MIN_AGE = 3;
@@ -264,6 +266,33 @@ export function applyLevelResult(
 export function withAge(profile: Profile, age: number): Profile {
   const next = clampAge(age);
   return { ...profile, age: next, features: [...new Set([...profile.features, ...defaultFeatures(next)])] };
+}
+
+/**
+ * Alles freischalten – nur im Erwachsenen-Bereich, etwa für Geschwister, die schon
+ * weiter sind, oder für den Unterricht. Öffnet alle Level und Stufen und schaltet
+ * die Desktop-Funktionen ein. Sterne und Bytes gibt es dafür nicht; die verdient
+ * das Kind weiter selbst. Ausschalten schließt die Level wieder, die
+ * Desktop-Funktionen bleiben (sie lassen sich einzeln abschalten).
+ */
+export function withAllOpen(profile: Profile, on: boolean): Profile {
+  if (on) return { ...profile, allOpen: true, features: [...FEATURES] };
+  const next = { ...profile };
+  delete next.allOpen;
+  return next;
+}
+
+export const MAX_BYTES = 1_000_000;
+
+const cleanBytes = (n: number) => (Number.isFinite(n) ? Math.min(MAX_BYTES, Math.max(0, Math.round(n))) : 0);
+
+/**
+ * Kontostand und Rang von Hand einstellen – nur im Erwachsenen-Bereich, zum
+ * Belohnen oder Korrigieren. Wer nur den Kontostand erhöht, verschenkt Bytes,
+ * ohne den Rang zu ändern: Der zeigt weiter, was das Kind selbst verdient hat.
+ */
+export function withBytes(profile: Profile, bytes: number, bytesEarned: number): Profile {
+  return { ...profile, bytes: cleanBytes(bytes), bytesEarned: cleanBytes(bytesEarned) };
 }
 
 export function withFeature(profile: Profile, feature: Feature): Profile {

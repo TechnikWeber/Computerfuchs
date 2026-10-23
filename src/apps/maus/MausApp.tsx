@@ -39,8 +39,9 @@ export default function MausApp() {
 
   const starsOf = (id: string) => progress[id]?.stars ?? 0;
   // Große Kinder dürfen springen; die Kleinen gehen Schritt für Schritt.
-  const isUnlocked = (i: number) => os.group === 'gross' || i === 0 || starsOf(MAUS_LEVELS[i - 1].id) > 0;
+  const isUnlocked = (i: number) => os.allOpen || os.group === 'gross' || i === 0 || starsOf(MAUS_LEVELS[i - 1].id) > 0;
   const maxTier = (level: MausLevel): Tier => Math.min(3, starsOf(level.id) + 1) as Tier;
+  const openTiers = (level: MausLevel): Tier => (os.allOpen ? 3 : maxTier(level));
 
   const openIntro = (level: MausLevel) => {
     sfx.tap();
@@ -74,7 +75,7 @@ export default function MausApp() {
         level={level}
         text={level.intro}
         mouse={level.mouse}
-        tiers={{ hints: level.tiers, maxTier: maxTier(level), stars: starsOf(level.id) }}
+        tiers={{ hints: level.tiers, maxTier: openTiers(level), stars: starsOf(level.id) }}
         tier={tier}
         onTier={(t) => setView({ name: 'intro', level, tier: t })}
         onStart={() => {

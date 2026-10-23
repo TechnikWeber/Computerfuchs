@@ -27,7 +27,7 @@ export function ParentGate({ onPass }: { onPass: () => void }) {
         <Icon name="lock" size={40} />
       </span>
       <h2>Nur für Erwachsene</h2>
-      <p>Hier kann man Spielstände sichern, laden und löschen. Bitte lös kurz diese Aufgabe:</p>
+      <p>Hier stellen Erwachsene ein, was Kinder nicht selbst ändern sollen. Bitte lös kurz diese Aufgabe:</p>
       <label className="parent-gate-task">
         <span>
           {task.a} × {task.b} =

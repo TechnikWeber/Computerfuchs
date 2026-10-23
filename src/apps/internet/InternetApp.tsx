@@ -34,10 +34,11 @@ export default function InternetApp() {
   const ageTier = tierForAge(os.profile.age);
 
   const starsOf = (id: string) => progress[id]?.stars ?? 0;
-  const isUnlocked = (i: number) => os.group === 'gross' || i === 0 || starsOf(CHAPTERS[i - 1].id) > 0;
+  const isUnlocked = (i: number) => os.allOpen || os.group === 'gross' || i === 0 || starsOf(CHAPTERS[i - 1].id) > 0;
   // Ältere Kinder fangen gleich auf ihrer Stufe an – niemand muss erst die für Fünfjährige spielen.
   // Geöffnet wird die höchste freie Stufe – das ist zugleich die passende fürs Alter.
   const maxTier = (level: InternetChapter): Tier => Math.min(3, Math.max(starsOf(level.id) + 1, ageTier)) as Tier;
+  const openTiers = (level: InternetChapter): Tier => (os.allOpen ? 3 : maxTier(level));
 
   const openIntro = (level: InternetChapter) => {
     sfx.tap();
@@ -71,7 +72,7 @@ export default function InternetApp() {
         level={level}
         text={level.intro}
         illustration={<Emoji name={level.icon} size={112} />}
-        tiers={{ hints: level.tiers, maxTier: maxTier(level), stars: starsOf(level.id), notes: TIER_AGES }}
+        tiers={{ hints: level.tiers, maxTier: openTiers(level), stars: starsOf(level.id), notes: TIER_AGES }}
         tier={tier}
         onTier={(t) => setView({ name: 'intro', level, tier: t })}
         onStart={() => {

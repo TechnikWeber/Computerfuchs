@@ -79,6 +79,15 @@ describe('Spielstand', () => {
     expect(p?.settings.wallpaper).toBe('nacht');
   });
 
+  it('behält „alles offen“ und geschenkte Bytes', () => {
+    const p = sanitizeProfile({ ...mia, allOpen: true, bytes: 900, bytesEarned: 200 });
+    expect(p?.allOpen).toBe(true);
+    // Mehr auf dem Konto als je verdient: geschenkt – der Rang darf dadurch nicht steigen.
+    expect(p?.bytes).toBe(900);
+    expect(p?.bytesEarned).toBe(200);
+    expect(sanitizeProfile({ ...mia, allOpen: 'ja' })?.allOpen).toBeUndefined();
+  });
+
   it('verwirft doppelte Profile und begrenzt die Anzahl', () => {
     const many = Array.from({ length: MAX_PROFILES + 5 }, (_, i) => ({ ...mia, id: `p${i}` }));
     const data = sanitizeSave({ format: 'computerfuchs', version: 1, profiles: [mia, mia, ...many] });

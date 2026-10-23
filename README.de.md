@@ -52,7 +52,8 @@ einen Computer bedient, und daran Mathe, Lesen und mehr üben.
   verschieben, Rechtsklick-Menü sowie verkleinern, vergrößern und Größe ändern.
   Flinn, der Fuchs, kündigt jede an und lässt sie gleich ausprobieren. Mit 7 bis
   9 Jahren sind die ersten beiden schon da, ab 10 alle. Eltern können jede
-  einzeln an- und ausschalten.
+  einzeln an- und ausschalten oder alles auf einmal freischalten: alle Level und
+  Stufen, ohne Sterne zu verschenken.
 - **Maustraining, 8 Level mit je 3 Stufen.**
   - Taschenlampe: versteckte Tiere im Dunkeln suchen.
   - Ballons: zum Platzen anklicken, auf Stufe 3 nur die roten.
@@ -121,7 +122,8 @@ einen Computer bedient, und daran Mathe, Lesen und mehr üben.
   es in Normal, Groß und Riesig.
 - **Bytes statt Münzen.** Jeder neue Stern bringt Bytes. Die gesammelten Bytes
   bestimmen den Rang: Fuchswelpe, Jungfuchs, Schlaufuchs, ab 1 Kilobyte
-  Computerfuchs und danach Meisterfuchs.
+  Computerfuchs und danach Meisterfuchs. Erwachsene können Bytes schenken oder
+  den Kontostand korrigieren; Geschenke ändern den Rang nicht.
 - **Profile mit Geheimcode.** Jedes Kind wählt ein Tier, einen Namen und sein
   Alter. Wer mag, schützt sein Profil mit vier Bildern oder vier Zahlen – das
   erste eigene Passwort. Hat ein Kind den Code vergessen, setzen Erwachsene ihn

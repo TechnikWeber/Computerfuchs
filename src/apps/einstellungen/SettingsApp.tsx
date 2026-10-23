@@ -6,7 +6,7 @@ import { downloadText } from '../../core/download';
 import { promptInstall, useInstallState } from '../../core/install';
 import type { EmojiName } from '../../core/emoji';
 import {
-  CURSOR_SIZES, FEATURES, MAX_NAME, rankFor, withAge,
+  CURSOR_SIZES, FEATURES, MAX_BYTES, MAX_NAME, rankFor, withAge, withAllOpen, withBytes,
   type CursorSize, type Feature, type ProfileSettings,
 } from '../../core/profile';
 import { useSave } from '../../core/saveContext';
@@ -401,6 +401,67 @@ function InfoPage() {
   );
 }
 
+const digits = (text: string) => text.replace(/\D/g, '').slice(0, 7);
+const asBytes = (text: string) => Math.min(MAX_BYTES, Number(text || '0'));
+
+function BytesForm() {
+  const os = useOs();
+  const p = os.profile;
+  const [bytes, setBytes] = useState(String(p.bytes));
+  const [earned, setEarned] = useState(String(p.bytesEarned));
+  const [saved, setSaved] = useState<string | null>(null);
+  return (
+    <form
+      className="bytes-form"
+      onSubmit={(e) => {
+        e.preventDefault();
+        const b = asBytes(bytes);
+        const total = asBytes(earned);
+        os.update((q) => withBytes(q, b, total));
+        setBytes(String(b));
+        setEarned(String(total));
+        sfx.coin();
+        setSaved(`Gespeichert: ${formatBytes(b)} auf dem Konto, Rang ${rankFor(total).name}.`);
+      }}
+    >
+      <label className="bytes-field">
+        <span className="bytes-label">Kontostand</span>
+        <input
+          inputMode="numeric"
+          value={bytes}
+          onChange={(e) => {
+            setBytes(digits(e.target.value));
+            setSaved(null);
+          }}
+          aria-label="Kontostand in Bytes"
+          autoComplete="off"
+        />
+        <span className="bytes-unit">Bytes</span>
+      </label>
+      <label className="bytes-field">
+        <span className="bytes-label">Insgesamt verdient</span>
+        <input
+          inputMode="numeric"
+          value={earned}
+          onChange={(e) => {
+            setEarned(digits(e.target.value));
+            setSaved(null);
+          }}
+          aria-label="Insgesamt verdiente Bytes"
+          autoComplete="off"
+        />
+        <span className="bytes-unit">Bytes · Rang: {rankFor(asBytes(earned)).name}</span>
+      </label>
+      <div className="settings-buttons">
+        <button type="submit" className="btn btn-leaf btn-small">
+          Bytes speichern
+        </button>
+      </div>
+      {saved && <p className="settings-note">{saved}</p>}
+    </form>
+  );
+}
+
 function GrownUpPage() {
   const os = useOs();
   const save = useSave();
@@ -497,6 +558,33 @@ function GrownUpPage() {
           />
         ))}
       </div>
+
+      <h3>Alles freischalten</h3>
+      <p className="settings-intro">
+        Für Geschwister, die schon weiter sind, für den Unterricht oder zum Ausprobieren: Alle Level und Stufen sind dann offen,
+        und der Desktop kann alles. Sterne und Bytes gibt es dafür nicht – die verdient {p.name} weiter selbst. Geöffnet wird
+        trotzdem die Stufe, die gerade passt.
+      </p>
+      <div className="settings-stack">
+        <Toggle
+          label="Alle Level und Stufen offen"
+          desc={
+            p.allOpen
+              ? 'Ausschalten schließt die Level wieder. Die Desktop-Funktionen bleiben, wie sie oben eingestellt sind.'
+              : 'Schaltet auch die vier Desktop-Funktionen ein.'
+          }
+          checked={p.allOpen === true}
+          onChange={(on) => os.update((q) => withAllOpen(q, on))}
+        />
+      </div>
+
+      <h3>Bytes von {p.name}</h3>
+      <p className="settings-intro">
+        Zum Belohnen oder Korrigieren. Der Kontostand ist, was {p.name} im App-Laden ausgeben kann. „Insgesamt verdient“
+        bestimmt den Rang – zum Belohnen reicht es, nur den Kontostand zu erhöhen. Dann zeigt der Rang weiter, was {p.name}{' '}
+        selbst geschafft hat.
+      </p>
+      <BytesForm key={p.id} />
 
       {p.pin && (
         <>

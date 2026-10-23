@@ -49,8 +49,9 @@ export default function TastaturApp() {
   }, []);
 
   const starsOf = (id: string) => progress[id]?.stars ?? 0;
-  const isUnlocked = (i: number) => os.group === 'gross' || i === 0 || starsOf(TASTATUR_LEVELS[i - 1].id) > 0;
+  const isUnlocked = (i: number) => os.allOpen || os.group === 'gross' || i === 0 || starsOf(TASTATUR_LEVELS[i - 1].id) > 0;
   const maxTier = (level: TastaturLevel): Tier => Math.min(3, starsOf(level.id) + 1) as Tier;
+  const openTiers = (level: TastaturLevel): Tier => (os.allOpen ? 3 : maxTier(level));
 
   const openIntro = (level: TastaturLevel) => {
     sfx.tap();
@@ -92,7 +93,7 @@ export default function TastaturApp() {
         level={level}
         text={level.intro}
         illustration={<KeyCaps codes={level.keys} />}
-        tiers={{ hints: level.tiers, maxTier: maxTier(level), stars: starsOf(level.id) }}
+        tiers={{ hints: level.tiers, maxTier: openTiers(level), stars: starsOf(level.id) }}
         tier={tier}
         onTier={(t) => setView({ name: 'intro', level, tier: t })}
         onStart={() => {

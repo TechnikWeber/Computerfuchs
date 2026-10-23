@@ -33,9 +33,11 @@ exactly where Computerfuchs starts.
    | Right-click menu on the desktop | level 6 "Colour magic" | age 10 |
    | Minimise, maximise, resize | level 8 "Window pro" | age 10 |
 
-   Parents can switch each feature on or off in the grown-ups' area. The age is
-   changed there too, by grown-ups only. It decides the icon size, the open
-   levels and the starting features. If a child could change it, the whole
+   Parents can switch each feature on or off in the grown-ups' area, or open
+   everything at once – all levels and tiers, for siblings who are further along
+   or for a lesson. That hands out no stars; the child still earns those. The
+   age is changed there too, by grown-ups only. It decides the icon size, the
+   open levels and the starting features. If a child could change it, the whole
    growing-up could simply be skipped.
 
 2. **Real concepts, not a copy.** Computerfuchs looks neither like Windows nor
@@ -91,7 +93,7 @@ Version 0.2, plus "What is the internet?" from 0.3 and installing as an app from
 - **Settings:** wallpaper, sound and volume, reading aloud, pointer size and
   colour, double-click speed with a test area (like on a real computer), profile
   (name, animal, secret code), and a grown-ups' area (save file, age, features,
-  remove the secret code, kiosk note, delete profile)
+  open everything, Bytes, remove the secret code, kiosk note, delete profile)
 - **Offline and as an app:** after the first visit, Computerfuchs starts
   without internet too. Chrome and Edge install it as an app with its own icon.
 - **Kiosk scripts** for Linux with Cage, the Raspberry Pi and Windows
@@ -195,8 +197,11 @@ of reading explanations.
 
 - **Bytes:** the first, second and third star of a level earn 16, 32 and
   64 Bytes. A replay without a new star earns 4 Bytes. One level is therefore
-  worth 112 Bytes, and all 21 levels with stars together about 2.3 KB. Each of
+  worth 112 Bytes, and all 26 levels with stars together about 2.9 KB. Each of
   the six file tasks adds another 16 Bytes.
+- **Set by grown-ups:** the grown-ups' area can gift Bytes or correct the
+  balance. "Total earned" decides the rank and can be set as well. Raising only
+  the balance keeps the rank showing what the child achieved.
 - **Ranks** by Bytes earned over all time:
 
   | Rank | from |
