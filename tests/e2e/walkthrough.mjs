@@ -8,7 +8,8 @@
  * Nutzt einen installierten Chrome, Chromium oder Edge (kein Browser-Download).
  * Anderer Pfad: Umgebungsvariable CHROME_PATH. Screenshots landen in test-results/e2e.
  * Spielt alle 8 Maus-Level, Rechnen, Einstellungen, Spielstand-Datei, Neuladen,
- * ein zweites Profil und den Kiosk-Modus durch und meldet Konsolenfehler.
+ * ein zweites Profil, alle 7 Tastatur-Level, die Dateien-Aufgaben, den App-Laden,
+ * Sticker, ein Lied, den Geheimcode und den Kiosk-Modus durch und meldet Konsolenfehler.
  */
 import { chromium } from 'playwright-core';
 import fs from 'node:fs';
@@ -100,6 +101,58 @@ async function startLevel(index) {
   await page.click('.level-intro .btn-leaf');
   await page.waitForSelector('.level-stage');
   await wait(400);
+}
+
+/** Desktop-Symbol per Doppelklick öffnen. */
+async function openDesk(appId) {
+  const icon = await center(page.locator(`.desk-icon[data-app="${appId}"]`));
+  await page.mouse.dblclick(icon.x, icon.y, { delay: 60 });
+  await wait(700);
+}
+
+async function closeWindows() {
+  for (let i = 0; i < 6; i++) {
+    const btn = await page.$('.win-btn-close');
+    if (!btn) return;
+    await btn.click();
+    await wait(300);
+  }
+}
+
+/**
+ * Tippen wie mit einer echten Tastatur. Playwright kennt nur das US-Layout –
+ * für ä, ö, ü, ß und @ schicken wir die Tastenereignisse deshalb selbst.
+ */
+async function typeKeys(text, ms = 45) {
+  for (const key of text) {
+    await page.evaluate((k) => window.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true })), key);
+    await wait(ms);
+  }
+}
+
+async function startTastatur(index) {
+  await page.locator('.level-card').nth(index).click();
+  await page.waitForSelector('.level-intro');
+  await wait(250);
+  await page.click('.level-intro .btn-leaf');
+  await page.waitForSelector('.kb-level');
+  await wait(350);
+}
+
+/** Text der aktuellen Zeile abtippen, bis das Ergebnis kommt. */
+async function typeLines(pause) {
+  const t0 = Date.now();
+  while (!(await page.$('.result')) && Date.now() - t0 < 40000) {
+    const line = await page.$('.typing-line');
+    if (!line) {
+      await wait(150);
+      continue;
+    }
+    const target = await line.getAttribute('aria-label');
+    const done = await page.$$eval('.typing-ch.is-done', (els) => els.length);
+    await typeKeys(target.slice(done));
+    await wait(pause);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -423,8 +476,7 @@ await step('Rechnen: Zählen bis 10', async () => {
   await page.click('.win-btn-close');
   await wait(300);
   // Doppelklick ist jetzt Pflicht auf dem Desktop.
-  const icon = await center(page.locator('.desk-icon').nth(1));
-  await page.mouse.dblclick(icon.x, icon.y, { delay: 60 });
+  await openDesk('rechnen');
   await page.waitForSelector('.level-map', { timeout: 8000 });
   await wait(300);
   await shot('rechnen-karte');
@@ -560,6 +612,370 @@ await step('Zweites Profil: 12 Jahre, voller Desktop', async () => {
   const cards = await page.$$eval('.level-card', (els) => els.filter((e) => e.getAttribute('aria-disabled') === 'true').length);
   if (cards !== 0) throw new Error('Große sollten alle Level offen haben');
 });
+
+// --- Version 0.2: Tastatur, Dateien, App-Laden, Sticker, Lieder, Geheimcode ---
+
+await step('Tastatur 1: Tastenzoo', async () => {
+  await closeWindows();
+  await openDesk('tastatur');
+  await page.waitForSelector('.level-map');
+  await shot('tastatur-karte');
+  await startTastatur(0);
+  await shot('tastenzoo');
+  let wrongDone = false;
+  const t0 = Date.now();
+  while (!(await page.$('.result')) && Date.now() - t0 < 30000) {
+    const letter = (await page.textContent('.zoo-letter').catch(() => ''))?.trim().toLowerCase();
+    if (!letter || letter === '?') {
+      await wait(200);
+      continue;
+    }
+    if (!wrongDone) {
+      // Einmal danebengetippt: Es soll ein Tipp kommen.
+      await typeKeys(letter === 'q' ? 'w' : 'q');
+      await page.waitForSelector('.level-hint', { timeout: 2000 });
+      await shot('tastenzoo-falsch');
+      wrongDone = true;
+    }
+    await typeKeys(letter);
+    await wait(1450);
+  }
+  await waitResult(5000);
+  await backToMap();
+});
+
+await step('Tastatur 2: Hüpfhase (Leertaste)', async () => {
+  await startTastatur(1);
+  const t0 = Date.now();
+  let shotDone = false;
+  let ok = 0;
+  while (!(await page.$('.result')) && Date.now() - t0 < 50000) {
+    const xs = await page.$$eval('.hop-hedgehog:not(.is-hit)', (els) => els.map((e) => parseFloat(e.style.left)));
+    // Höchstwert merken – am Ende verschwinden die Punkte, wenn das Ergebnis kommt.
+    ok = Math.max(ok, await page.$$eval('.progress-dots .dot-ok', (els) => els.length).catch(() => 0));
+    if (xs.some((x) => x > 21.5 && x < 25)) {
+      await page.keyboard.press(' ');
+      if (!shotDone) {
+        await wait(300);
+        await shot('huepfhase-sprung');
+        shotDone = true;
+      }
+      await wait(450);
+    }
+    await wait(20);
+  }
+  await waitResult(5000);
+  results.push(`     Hüpfhase: ${ok} von 6 Igeln übersprungen`);
+  await backToMap();
+});
+
+await step('Tastatur 3: Hamsterweg (Pfeiltasten)', async () => {
+  await startTastatur(2);
+  await shot('hamsterweg');
+  const pos = () =>
+    page.$eval('.maze-hamster', (el) => {
+      const m = /translate\(([-\d.]+)px, ([-\d.]+)px\)/.exec(el.style.transform);
+      return m ? `${Math.round(Number(m[1]) / 10)},${Math.round(Number(m[2]) / 10)}` : '?';
+    });
+  const won = async () => !!(await page.$('.maze-hamster image[href*="party-popper"], .result'));
+  const DIRS = [
+    ['ArrowRight', 'ArrowLeft'],
+    ['ArrowDown', 'ArrowUp'],
+    ['ArrowLeft', 'ArrowRight'],
+    ['ArrowUp', 'ArrowDown'],
+  ];
+  const seen = new Set();
+  // Tiefensuche mit der Tastatur: probieren, und wenn es nicht weitergeht, zurück.
+  const explore = async () => {
+    const here = await pos();
+    seen.add(here);
+    for (const [go, back] of DIRS) {
+      if (await won()) return true;
+      await page.keyboard.press(go);
+      await wait(70);
+      if (await won()) return true;
+      const now = await pos();
+      if (now === here) continue;
+      if (!seen.has(now) && (await explore())) return true;
+      if (await won()) return true;
+      await page.keyboard.press(back);
+      await wait(70);
+    }
+    return false;
+  };
+  if (!(await explore())) throw new Error('Käse nicht gefunden');
+  await waitResult(5000);
+  await backToMap();
+});
+
+await step('Tastatur 4: Sternenregen', async () => {
+  await startTastatur(3);
+  const t0 = Date.now();
+  let shotDone = false;
+  while (!(await page.$('.result')) && Date.now() - t0 < 60000) {
+    const letters = await page.$$eval('.rain-star.is-fall span', (els) => els.map((e) => e.textContent.toLowerCase()));
+    if (letters[0]) {
+      if (!shotDone) {
+        await wait(1200);
+        await shot('sternenregen');
+        shotDone = true;
+      }
+      await typeKeys(letters[0]);
+    }
+    await wait(300);
+  }
+  await waitResult(5000);
+  await backToMap();
+});
+
+await step('Tastatur 5: Bilderwörter', async () => {
+  await startTastatur(4);
+  await shot('bilderwoerter');
+  await typeLines(1400);
+  await waitResult(5000);
+  await backToMap();
+});
+
+await step('Tastatur 6: Zehn Finger', async () => {
+  await startTastatur(5);
+  await shot('zehnfinger');
+  await typeLines(700);
+  await waitResult(5000);
+  await backToMap();
+});
+
+await step('Tastatur 7: Tipp-Profi, alle drei Stufen', async () => {
+  await startTastatur(6);
+  await shot('tippprofi-1');
+  await typeLines(800);
+  await waitResult(5000);
+  // Stufe 2: Satzzeichen und @
+  await page.click('.result-actions >> text=Stufe 2');
+  await page.waitForSelector('.kb-level');
+  await wait(400);
+  await shot('tippprofi-2');
+  await typeLines(800);
+  await waitResult(5000);
+  // Stufe 3: Wettrennen gegen Flinn
+  await page.click('.result-actions >> text=Stufe 3');
+  await page.waitForSelector('.race');
+  await wait(400);
+  const target = await page.getAttribute('.typing-line', 'aria-label');
+  // Einmal vertippen und mit der Rücktaste korrigieren
+  await typeKeys(target.slice(0, 3) + '#');
+  await wait(200);
+  if (!(await page.$('.typing-ch.is-wrong'))) throw new Error('Falscher Buchstabe wird nicht rot angezeigt');
+  await shot('tippprofi-rennen');
+  await typeKeys(['Backspace']);
+  await typeKeys(target.slice(3), 90);
+  await page.waitForSelector('.race-result', { timeout: 5000 });
+  await shot('tippprofi-ergebnis');
+  await waitResult(8000);
+  const best = await page.evaluate(() => {
+    const save = JSON.parse(localStorage.getItem('computerfuchs.save'));
+    const p = save.profiles.find((x) => x.name === 'Jonas');
+    return p.progress.tastatur?.tippprofi?.best;
+  });
+  if (!best) throw new Error('Anschläge pro Minute nicht gespeichert');
+  results.push(`     Tipp-Profi: ${best} Anschläge pro Minute`);
+});
+
+const fileItem = (name) => page.locator('.files-grid .file-item', { hasText: name }).first();
+const place = (name) => page.locator('.files-place', { hasText: name });
+async function openItem(name) {
+  const c = await center(fileItem(name));
+  await page.mouse.dblclick(c.x, c.y, { delay: 50 });
+  await wait(500);
+}
+async function dragItem(name, target) {
+  const a = await center(fileItem(name));
+  const b = await center(target);
+  await page.mouse.move(a.x, a.y);
+  await page.mouse.down();
+  await page.mouse.move(a.x + 16, a.y + 10, { steps: 4 });
+  await page.mouse.move(b.x, b.y, { steps: 12 });
+  await wait(120);
+  await page.mouse.up();
+  await wait(400);
+}
+
+await step('Dateien: Flinns sechs Aufgaben', async () => {
+  await closeWindows();
+  await openDesk('dateien');
+  await page.waitForSelector('.files');
+  await shot('dateien');
+  // 1 und 2: Ordner öffnen, Bild ansehen
+  await openItem('Bilder');
+  await openItem('Hund');
+  await page.waitForSelector('.viewer-picture');
+  await shot('anzeige-bild');
+  await page.locator('.win', { has: page.locator('.viewer') }).locator('.win-btn-close').click();
+  await wait(400);
+  // 3: Downloads aufräumen – mit Ziehen und Ablegen auf die Seitenleiste
+  await place('Downloads').click();
+  await wait(300);
+  await dragItem('Muschel vom Strand', place('Bilder'));
+  await dragItem('Hänschen klein', place('Musik'));
+  await dragItem('Hausaufgaben', place('Dokumente'));
+  // 4: Neuer Ordner
+  await place('Bilder').click();
+  await wait(300);
+  await page.click('.files-toolbar >> text=Neuer Ordner');
+  await page.waitForSelector('.file-rename');
+  await page.keyboard.type('Tiere');
+  await page.keyboard.press('Enter');
+  await wait(400);
+  // 5: Hund und Katze in den Ordner
+  await dragItem('Hund', fileItem('Tiere'));
+  await dragItem('Katze', fileItem('Tiere'));
+  await shot('dateien-tiere');
+  // 6: Löschen und zurückholen
+  await fileItem('Altes Gespenst').click();
+  await page.keyboard.press('Delete');
+  await wait(400);
+  await place('Papierkorb').click();
+  await wait(300);
+  await fileItem('Altes Gespenst').click();
+  await page.click('.files-toolbar >> text=Wiederherstellen');
+  await wait(800);
+  await dismissNotices();
+  await shot('dateien-fertig');
+  const done = await page.$$eval('.mission.is-done', (els) => els.length);
+  if (done !== 6) throw new Error(`nur ${done} von 6 Aufgaben erledigt`);
+});
+
+await step('Dateien: Kopieren, Einfügen, falscher Name', async () => {
+  await place('Bilder').click();
+  await wait(300);
+  await fileItem('Sonnenblume').click();
+  await page.keyboard.press('Control+c');
+  await place('Dokumente').click();
+  await wait(300);
+  await page.keyboard.press('Control+v');
+  await wait(400);
+  if ((await fileItem('Sonnenblume').count()) === 0) throw new Error('Kopie fehlt in „Dokumente"');
+  await fileItem('Sonnenblume').click();
+  await page.keyboard.press('F2');
+  await page.waitForSelector('.file-rename');
+  await page.keyboard.type('Blume/Sonne');
+  await page.keyboard.press('Enter');
+  await page.waitForSelector('.files-hint', { timeout: 2000 });
+  const hint = await page.textContent('.files-hint');
+  if (!hint.includes('Zeichen')) throw new Error(`unerwarteter Hinweis: ${hint}`);
+  await shot('dateien-falscher-name');
+  await page.keyboard.press('Escape');
+  await wait(200);
+});
+
+await step('App-Laden: Hintergrund kaufen und festlegen', async () => {
+  await closeWindows();
+  const jonas = () =>
+    page.evaluate(() => JSON.parse(localStorage.getItem('computerfuchs.save')).profiles.find((p) => p.name === 'Jonas'));
+  const bytesBefore = (await jonas()).bytes;
+  await openDesk('laden');
+  await page.waitForSelector('.shop');
+  await wait(300);
+  await shot('laden');
+  await page.locator('.shop-card', { hasText: 'Regenbogenland' }).locator('button').click();
+  await page.waitForSelector('.shop-confirm');
+  await shot('laden-frage');
+  await page.click('.shop-confirm >> text=Ja, holen');
+  await page.waitForSelector('.shop-done', { timeout: 6000 });
+  await shot('laden-fertig');
+  await page.click('.shop-done >> text=Downloads öffnen');
+  await page.waitForSelector('.files');
+  await wait(400);
+  await openItem('Regenbogenland');
+  await page.waitForSelector('.viewer-wallpaper');
+  await page.click('text=Als Hintergrund festlegen');
+  await wait(500);
+  const p = await jonas();
+  if (p.settings.wallpaper !== 'regenbogen') throw new Error(`Hintergrund ist ${p.settings.wallpaper}`);
+  if (p.bytes !== bytesBefore - 120) throw new Error(`Bytes: vorher ${bytesBefore}, jetzt ${p.bytes}`);
+  results.push(`     App-Laden: ${bytesBefore} Bytes, nach dem Kauf ${p.bytes}`);
+  await closeWindows();
+  await wait(300);
+  await shot('desktop-regenbogen');
+});
+
+await step('Sticker kleben und auf den Papierkorb ziehen', async () => {
+  await openDesk('laden');
+  await page.click('.shop-tab >> text=Sticker');
+  await page.locator('.shop-card', { hasText: 'Einhorn' }).locator('button').click();
+  await page.click('.shop-confirm >> text=Ja, holen');
+  await page.waitForSelector('.shop-done', { timeout: 6000 });
+  await page.click('.shop-done >> text=Gleich ansehen');
+  await page.waitForSelector('.viewer-sticker');
+  await page.click('text=Auf den Desktop kleben');
+  await wait(300);
+  await closeWindows();
+  await page.waitForSelector('.sticker');
+  await shot('desktop-sticker');
+  const s = await center(page.locator('.sticker').first());
+  const t = await center(page.locator('.desk-icon[data-app="papierkorb"]'));
+  await page.mouse.move(s.x, s.y);
+  await page.mouse.down();
+  await page.mouse.move(t.x, t.y, { steps: 15 });
+  await page.mouse.up();
+  await wait(400);
+  if (await page.$('.sticker')) throw new Error('Sticker ist noch da');
+});
+
+await step('Lied abspielen', async () => {
+  await openDesk('dateien');
+  await page.waitForSelector('.files');
+  await place('Musik').click();
+  await wait(300);
+  await openItem('Alle meine Entchen');
+  await page.waitForSelector('.viewer-song');
+  await page.click('.viewer-song >> text=Abspielen');
+  await page.waitForSelector('.song-disc.is-playing');
+  await wait(600);
+  await shot('lied');
+  await page.click('.viewer-song >> text=Anhalten');
+  await wait(200);
+  if (await page.$('.song-disc.is-playing')) throw new Error('Lied läuft weiter');
+  await closeWindows();
+});
+
+await step('Geheimcode mit Bildern', async () => {
+  await openDesk('einstellungen');
+  await page.waitForSelector('.settings');
+  await page.click('.settings-tab >> text="Ich"');
+  await page.click('text=Bilder-Code festlegen');
+  const code = async (nums) => {
+    for (const i of nums) {
+      await page.click(`.pin-key[aria-label="Bild ${i}"]`);
+      await wait(120);
+    }
+  };
+  await code([1, 5, 9, 2]);
+  await wait(500);
+  await code([1, 5, 9, 2]);
+  await wait(400);
+  await shot('geheimcode-gespeichert');
+  const pin = await page.evaluate(
+    () => JSON.parse(localStorage.getItem('computerfuchs.save')).profiles.find((x) => x.name === 'Jonas').pin,
+  );
+  if (pin?.kind !== 'bilder') throw new Error('Geheimcode nicht gespeichert');
+  await closeWindows();
+  await page.click('.start-btn');
+  await page.click('.start-foot >> text=Abmelden');
+  await page.waitForSelector('.profile-card');
+  const card = page.locator('.profile-card', { hasText: 'Jonas' });
+  if ((await card.locator('.profile-lock').count()) !== 1) throw new Error('Schloss fehlt auf dem Profil');
+  await card.click();
+  await page.waitForSelector('.pin-prompt');
+  await code([3, 3, 3, 3]);
+  await wait(700);
+  await code([4, 4, 4, 4]);
+  await wait(700);
+  await page.waitForSelector('text=Code vergessen?');
+  await shot('geheimcode-falsch');
+  await code([1, 5, 9, 2]);
+  await page.waitForSelector('.desktop', { timeout: 5000 });
+});
+
 
 await step('Kiosk-Modus ohne Vollbild-Knopf', async () => {
   await page.goto(`${BASE}?kiosk`);
