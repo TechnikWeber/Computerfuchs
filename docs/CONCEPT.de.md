@@ -69,8 +69,8 @@ benutzt. Genau dort setzt Computerfuchs an.
 
 ## Was Computerfuchs heute kann
 
-Stand: Version 0.2, dazu „Was ist das Internet?“ aus 0.3 und die Installation
-als App aus 0.4.
+Stand: Version 0.2, dazu „Was ist das Internet?“ und der Malkasten aus 0.3 und
+die Installation als App aus 0.4.
 
 - Einschalten (mit Vollbild), ein Anmeldebildschirm mit Profilen, der
   Profil-Assistent (Tier, Name, Alter), ein Geheimcode aus Bildern oder Zahlen
@@ -86,10 +86,14 @@ als App aus 0.4.
 - **Was ist das Internet?:** 5 Kapitel mit je 3 Stufen (Das Netz, Bilder-Post,
   Kabel im Meer, Das Telefonbuch, Das Schloss). Wie sie aufgebaut sind, steht
   [weiter unten](#wie-was-ist-das-internet-funktioniert).
+- **Malkasten:** Pinsel, Farbeimer, Stempel und Radierer, je nach Alter dazu
+  Formen, Pipette und eigene Farben; sechs Ausmalbilder, Rückgängig und
+  Wiederholen. Bilder landen als Datei in „Bilder“ und werden auf Wunsch zum
+  Hintergrund.
 - **Dateien:** ein eigenes Dateisystem pro Kind mit Papierkorb, Ziehen und
   Ablegen, Umbenennen, Kopieren und Einfügen, Tastenkürzeln und sechs Aufgaben
-  von Flinn. Eine **Anzeige** öffnet Bilder, Hintergründe, Mauszeiger, Sticker,
-  Lieder und Texte.
+  von Flinn. Eine **Anzeige** öffnet Bilder (auch gemalte), Hintergründe,
+  Mauszeiger, Sticker, Lieder und Texte.
 - **App-Laden:** 19 Dinge zum Kaufen in vier Abteilungen; alles landet in
   „Downloads“
 - **Einstellungen:** Hintergrund, Ton und Lautstärke, Vorlesen, Zeigergröße und
@@ -115,7 +119,7 @@ Status: ✅ fertig · 🔜 als Nächstes · 💡 geplant
 | Tastatur | 5+ / 8+ / 10+ | Tasten mit Anlaut-Bildern finden („A wie Affe“), Leertaste, Pfeiltasten, Buchstabenregen, Wörter zu Bildern, Rücktaste, Großbuchstaben, Satzzeichen und @ (AltGr+Q), 10-Finger-System auf QWERTZ, Tipp-Rennen gegen Flinn mit Rekord | ✅ |
 | Tastatur (weiter) | ab 9 | Tastenkürzel wie Strg+Z, längere Texte, eigene Rekordliste | 💡 |
 | Dateien | ab 6 | Ordner, Ziehen, Umbenennen, Kopieren und Einfügen, Papierkorb und Zurückholen, Dateiendungen | ✅ |
-| Dateien (weiter) | ab 9 | Suchen, Sortieren, Dateigrößen vergleichen, ein Bild aus dem Malkasten speichern | 💡 |
+| Dateien (weiter) | ab 9 | Suchen, Sortieren, Dateigrößen vergleichen | 💡 |
 | Was ist das Internet? | 5–7 / 8–10 / ab 11 | Geräte am Router und WLAN, der Weg zu Oma über die Internetanbieter, ein Netz, das hält; ein Foto in Paketen, Router mit Wegweisern, Pakete ordnen und nachfordern; Seekabel (reißt eins, nimmt man einen anderen Weg), ein Rennen mit Lichtgeschwindigkeit, ein echter Ping; DNS als Telefonbuch, Adressen tippen, wem eine Adresse gehört; Postkarte oder Schatzkiste, Geheimschrift, wo das Passwort hin darf | ✅ |
 | Netz-Detektiv | ab 8 | ein Spiel-Internet mit Suchmaschine: Werbung, Fake-News, „Du hast gewonnen!“-Fallen, Cookie-Banner | 💡 |
 | Postfach | ab 8 | E-Mail mit Anhang (z. B. das eigene Bild aus dem Malkasten), antworten, Spam und Phishing erkennen | 💡 |
@@ -141,7 +145,7 @@ Status: ✅ fertig · 🔜 als Nächstes · 💡 geplant
 
 | App | Alter | Was man lernt | Status |
 |---|---|---|---|
-| Malkasten | ab 4 | genau zeichnen, Werkzeuge, Rückgängig, Bild speichern und als Hintergrund setzen | 🔜 |
+| Malkasten | ab 4 | Pinsel, Farbeimer, Stempel, Radierer; ab 7 Formen, ab 10 Pipette und eigene Farben; sechs Ausmalbilder; Rückgängig und Wiederholen; Bilder speichern, wieder öffnen und als Hintergrund setzen; Flinns sechs Aufgaben | ✅ |
 | Schreibwerkstatt | ab 7 | Tippen mit Sinn: Einladung schreiben, markieren, kopieren, speichern, drucken | 💡 |
 | Klangstudio | ab 4 | ein Beat-Raster per Klick, das Lied als Datei speichern | 💡 |
 | Robo-Code | 5+ / 8+ / 12+ | Pfeile legen (ohne Lesen) → Schleifen und Bedingungen → echter Code | 💡 |
@@ -203,7 +207,8 @@ Spiel-Netz, statt Erklärungen zu lesen.
 - **Bytes:** Der erste, zweite und dritte Stern eines Levels bringen 16, 32 und
   64 Bytes. Eine Wiederholung ohne neuen Stern bringt 4 Bytes. Ein Level ist
   also 112 Bytes wert, und alle 26 Level mit Sternen zusammen etwa 2,9 KB. Jede
-  der sechs Dateien-Aufgaben bringt noch einmal 16 Bytes.
+  der sechs Aufgaben in den Dateien und im Malkasten bringt noch einmal
+  16 Bytes.
 - **Von Erwachsenen eingestellt:** Im Erwachsenen-Bereich lassen sich Bytes
   schenken oder der Kontostand korrigieren. „Insgesamt verdient“ bestimmt den
   Rang und lässt sich ebenfalls einstellen. Wer nur den Kontostand erhöht, lässt
@@ -232,7 +237,12 @@ Spiel-Netz, statt Erklärungen zu lesen.
 2. **Als Datei:** Im Erwachsenen-Bereich lassen sich alle Profile als JSON-Datei
    sichern. Laden geht dort oder per Ziehen auf den Anmeldebildschirm. Geladene
    Dateien werden streng geprüft und repariert.
-3. **Später ein Zaubercode** 💡: etwa 16 Zeichen oder ein QR-Code auf dem
+3. **Gemalte Bilder** sind für den localStorage zu groß. Sie liegen als PNG in
+   der IndexedDB des Browsers; die Datei in „Bilder“ zeigt nur auf das Bild.
+   Jedes Speichern legt ein neues an, so bleiben Kopien unabhängig. In der
+   Spielstand-Datei reisen die Bilder als Text mit. Bilder, auf die keine Datei
+   mehr zeigt, räumt Computerfuchs nach drei Tagen weg.
+4. **Später ein Zaubercode** 💡: etwa 16 Zeichen oder ein QR-Code auf dem
    Führerschein mit dem Fortschritt (ohne Bilder). Er ist für Schul-PCs gedacht,
    die beim Abmelden alles löschen.
 
@@ -313,11 +323,17 @@ Danach startet Computerfuchs auch ganz ohne Internet. Eine lokale Kopie von
   (`e.code`), die Spiele prüfen das Zeichen (`e.key`). So funktionieren sie auch
   mit anderen Layouts; Chrome und Edge erkennen eine nicht deutsche Tastatur und
   zeigen einen Hinweis.
+- **Malkasten:** ein Canvas mit fester Größe (1440 × 900, also 16:10), das die
+  Oberfläche verkleinert anzeigt. Rückgängig merkt sich nur den Ausschnitt, den
+  ein Strich oder eine Füllung verändert hat (zusammen höchstens 64 MB). Der
+  Farbeimer füllt mit etwas Toleranz und wächst ein Pixel unter die Linie,
+  damit an weichen Kanten kein heller Rand bleibt. Was gerade auf dem Blatt ist,
+  bleibt als Entwurf erhalten, auch wenn das Fenster zugeht.
 - **Tests:** Vitest für die Logik (Profile, Belohnung, Spielstand-Dateien,
   Fenster, Rechenaufgaben, Geometrie, Dateisystem, App-Laden, Geheimcode,
-  Tastaturbelegung, Tippen, Labyrinthe, Netze und Wege). Dazu kommt
-  `npm run e2e`, ein automatischer Durchlauf in einem unsichtbaren Chrome durch
-  die ganze App, mit Screenshots.
+  Tastaturbelegung, Tippen, Labyrinthe, Netze und Wege, Farbeimer, Rückgängig,
+  gemalte Bilder). Dazu kommt `npm run e2e`, ein automatischer Durchlauf in
+  einem unsichtbaren Chrome durch die ganze App, mit Screenshots.
 
 ## Fahrplan
 
@@ -325,7 +341,7 @@ Danach startet Computerfuchs auch ganz ohne Internet. Eine lokale Kopie von
 |---|---|
 | **0.1** | Desktop, der mitwächst; Maustraining (8 × 3); Rechnen (6 Level); Einstellungen; Spielstand-Datei; Kiosk-Schalter |
 | **0.2** | Tastatur (7 × 3); Dateien mit Papierkorb und Flinns Aufgaben; App-Laden; Geheimcode; offline nutzbar; Kiosk-Skripte für Linux, Raspberry Pi und Windows |
-| **0.3** (jetzt) | „Was ist das Internet?“ in 5 Kapiteln × 3 Stufen ✅; Malkasten (Bilder landen in „Bilder“); Buchstaben |
+| **0.3** (jetzt) | „Was ist das Internet?“ in 5 Kapiteln × 3 Stufen ✅; Malkasten mit Ausmalbildern, Bilder als Datei und Hintergrund ✅; Buchstaben |
 | **0.4** | Führerscheine zum Ausdrucken; Elternecke mit Fortschritt und Pausen-Erinnerung; als App installierbar ✅; englische Oberfläche |
 | danach | weitere Schul-Apps; Material für Lehrkräfte; Zaubercode/QR |
 

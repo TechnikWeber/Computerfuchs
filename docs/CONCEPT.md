@@ -67,8 +67,8 @@ exactly where Computerfuchs starts.
 
 ## What Computerfuchs can do today
 
-Version 0.2, plus "What is the internet?" from 0.3 and installing as an app from
-0.4.
+Version 0.2, plus "What is the internet?" and the paint box from 0.3 and
+installing as an app from 0.4.
 
 - Power on (with fullscreen), a login screen with profiles, the profile wizard
   (animal, name, age), a secret code made of pictures or digits, and shutting
@@ -84,10 +84,14 @@ Version 0.2, plus "What is the internet?" from 0.3 and installing as an app from
 - **What is the internet?:** 5 chapters with 3 tiers each (the network, picture
   post, cables in the sea, the phone book, the lock). How they work is
   [further down](#how-what-is-the-internet-works).
+- **Paint box:** brush, paint bucket, stamps and eraser, plus shapes, an
+  eyedropper and colours of your own depending on age; six colouring pages,
+  undo and redo. Pictures land as files in "Bilder" and can become the
+  wallpaper.
 - **Files:** a file system of its own for every child, with a recycle bin, drag
   and drop, renaming, copy and paste, keyboard shortcuts and six tasks from
-  Flinn. A **viewer** opens pictures, wallpapers, mouse pointers, stickers, songs
-  and texts.
+  Flinn. A **viewer** opens pictures (painted ones too), wallpapers, mouse
+  pointers, stickers, songs and texts.
 - **App store:** 19 things to buy in four departments; everything lands in
   "Downloads"
 - **Settings:** wallpaper, sound and volume, reading aloud, pointer size and
@@ -112,7 +116,7 @@ Status: ✅ done · 🔜 next · 💡 planned
 | Keyboard | 5+ / 8+ / 10+ | finding keys with initial-sound pictures, space bar, arrow keys, letter rain, words for pictures, backspace, capitals, punctuation and @ (AltGr+Q), touch typing on QWERTZ, races against Flinn with a record | ✅ |
 | Keyboard (continued) | 9+ | shortcuts such as Ctrl+Z, longer texts, a personal record list | 💡 |
 | Files | 6+ | folders, dragging, renaming, copy and paste, recycle bin and restore, file extensions | ✅ |
-| Files (continued) | 9+ | searching, sorting, comparing file sizes, saving a picture from the paint box | 💡 |
+| Files (continued) | 9+ | searching, sorting, comparing file sizes | 💡 |
 | What is the internet? | 5–7 / 8–10 / 11+ | devices on the router and Wi-Fi, the way to grandma via the internet providers, a network that holds; a photo in packets, routers with signposts, sorting packets and asking for a lost one; sea cables (if one breaks, take another way), a race at the speed of light, a real ping; DNS as a phone book, typing addresses, who owns an address; postcard or treasure chest, a secret code, where a password may go | ✅ |
 | Net detective | 8+ | a play internet with a search engine: ads, fake news, "you have won!" traps, cookie banners | 💡 |
 | Mailbox | 8+ | e-mail with an attachment (e.g. your own drawing), replying, spotting spam and phishing | 💡 |
@@ -138,7 +142,7 @@ Status: ✅ done · 🔜 next · 💡 planned
 
 | App | Age | What you learn | Status |
 |---|---|---|---|
-| Paint box | 4+ | drawing precisely, tools, undo, saving a picture and using it as wallpaper | 🔜 |
+| Paint box | 4+ | brush, paint bucket, stamps, eraser; from 7 shapes, from 10 an eyedropper and own colours; six colouring pages; undo and redo; saving pictures, opening them again and using them as wallpaper; Flinn's six tasks | ✅ |
 | Writing workshop | 7+ | typing with a purpose: write an invitation, select, copy, save, print | 💡 |
 | Sound studio | 4+ | a click-to-beat grid, saving the song as a file | 💡 |
 | Robo-Code | 5+ / 8+ / 12+ | laying arrows (no reading needed) → loops and conditions → real code | 💡 |
@@ -198,7 +202,7 @@ of reading explanations.
 - **Bytes:** the first, second and third star of a level earn 16, 32 and
   64 Bytes. A replay without a new star earns 4 Bytes. One level is therefore
   worth 112 Bytes, and all 26 levels with stars together about 2.9 KB. Each of
-  the six file tasks adds another 16 Bytes.
+  the six tasks in the files app and in the paint box adds another 16 Bytes.
 - **Set by grown-ups:** the grown-ups' area can gift Bytes or correct the
   balance. "Total earned" decides the rank and can be set as well. Raising only
   the balance keeps the rank showing what the child achieved.
@@ -226,7 +230,12 @@ of reading explanations.
 2. **As a file:** the grown-ups' area exports all profiles as a JSON file.
    Importing works there or by dropping the file on the login screen. Imported
    files are strictly validated and repaired.
-3. **Later, a magic code** 💡: about 16 characters, or a QR code on the printed
+3. **Paintings** are too big for localStorage. They are stored as PNG in the
+   browser's IndexedDB, and the file in "Bilder" only points to the picture.
+   Every save creates a new one, so copies stay independent. In the save file
+   the pictures travel along as text. Pictures that no file points to any more
+   are cleared away after three days.
+4. **Later, a magic code** 💡: about 16 characters, or a QR code on the printed
    licence, holding the progress (without pictures). It is meant for school PCs
    that wipe everything at logout.
 
@@ -301,10 +310,16 @@ own web server works too.
 - **Keyboard:** the on-screen keyboard knows keys by position (`e.code`), the
   games check the character (`e.key`). That way they also work with other
   layouts; Chrome and Edge detect a non-German keyboard and show a hint.
+- **Paint box:** a canvas of fixed size (1440 × 900, i.e. 16:10) that the
+  interface shows scaled down. Undo only keeps the area a stroke or fill
+  changed (at most 64 MB in total). The paint bucket fills with some tolerance
+  and grows one pixel under the line, so soft edges leave no light rim. What is
+  on the sheet stays as a draft, even when the window closes.
 - **Tests:** Vitest for the logic (profiles, rewards, save files, windows, maths
   tasks, geometry, file system, app store, secret code, keyboard layout, typing,
-  mazes, networks and routes). On top comes `npm run e2e`, an automated
-  walkthrough of the whole app in headless Chrome, with screenshots.
+  mazes, networks and routes, paint bucket, undo, paintings). On top comes
+  `npm run e2e`, an automated walkthrough of the whole app in headless Chrome,
+  with screenshots.
 
 ## Roadmap
 
@@ -312,7 +327,7 @@ own web server works too.
 |---|---|
 | **0.1** | a desktop that grows with the child; mouse course (8 × 3); maths (6 levels); settings; save file; kiosk switch |
 | **0.2** | keyboard (7 × 3); files with recycle bin and Flinn's tasks; app store; secret code; works offline; kiosk scripts for Linux, Raspberry Pi and Windows |
-| **0.3** (now) | "What is the internet?" in 5 chapters × 3 tiers ✅; paint box (pictures land in "Bilder"); letters |
+| **0.3** (now) | "What is the internet?" in 5 chapters × 3 tiers ✅; paint box with colouring pages, pictures as files and wallpaper ✅; letters |
 | **0.4** | printable licences; parents' corner with progress and break reminder; installable as an app ✅; English interface |
 | later | more school apps; material for teachers; magic code/QR |
 

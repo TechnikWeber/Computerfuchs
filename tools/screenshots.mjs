@@ -102,6 +102,8 @@ const lena = {
     maus: levels({ taschenlampe: 3, ballons: 3, geschenke: 3, fuettern: 3, weg: 3, farben: 3, tauchgang: 3, fenster: 3 }),
     tastatur: { ...levels({ tastenzoo: 3, huepfhase: 3, pfeilweg: 3, sternenregen: 2, woerter: 3, zehnfinger: 1 }), tippprofi: { ...record(3), best: 142 } },
     rechnen: levels({ zaehlen: 3, plus10: 3, minus10: 3, bis20: 3, einmaleins: 2 }),
+    // Vier von Flinns Mal-Aufgaben sind schon geschafft – so zeigt das Bild die nächste.
+    malkasten: levels({ strich: 1, farbe: 1, eimer: 1, zurueck: 1 }),
   },
   features: ALL_FEATURES,
   settings: { wallpaper: 'polarlicht' },
@@ -323,6 +325,51 @@ await page.click('.net-controls >> text=Losschicken');
 await page.waitForSelector('.nm-edge.tone-pick', { timeout: 6000 });
 await wait(800);
 await shot('internet-sea-cable', { mouse: [1240, 40] });
+await closeWindows();
+
+// 11. Malkasten: Der Schmetterling wird bunt …
+await openApp('malkasten');
+await page.waitForSelector('.paint-canvas');
+await wait(500);
+await page.click('.paint-btn >> text=Neu');
+await page.click('.paint-card >> text=Schmetterling');
+await wait(400);
+const paper = await page.locator('.paint-paper').boundingBox();
+const paperClick = async (fx, fy) => {
+  await page.mouse.click(paper.x + paper.width * fx, paper.y + paper.height * fy);
+  await wait(120);
+};
+const COLORING = [
+  ['Lila', [[0.25, 0.267], [0.75, 0.267]]],
+  ['Rosa', [[0.35, 0.627], [0.65, 0.627]]],
+  ['Gelb', [[0.333, 0.3], [0.667, 0.3], [0.379, 0.667], [0.621, 0.667], [0.125, 0.853], [0.875, 0.843]]],
+  ['Braun', [[0.5, 0.433], [0.5, 0.5], [0.5, 0.567], [0.5, 0.261]]],
+  ['Hellblau', [[0.083, 0.133]]],
+  ['Hellgrün', [[0.5, 0.973]]],
+];
+for (const [color, spots] of COLORING) {
+  await page.click(`.paint-swatch[aria-label="${color}"]`);
+  for (const [fx, fy] of spots) await paperClick(fx, fy);
+}
+await page.click('.paint-tool >> text=Stempel');
+await page.click('.paint-stamp >> nth=2');
+for (const [fx, fy] of [[0.18, 0.72], [0.84, 0.18], [0.12, 0.3]]) await paperClick(fx, fy);
+await page.click('.paint-tool >> text=Farbeimer');
+await wait(300);
+await shot('paint-box', { mouse: [paper.x + paper.width * 0.9, paper.y + paper.height * 0.55] });
+
+// … und wird zum Hintergrund.
+await page.click('.paint-btn >> text="Speichern"');
+await page.fill('.paint-save input', 'Mein Schmetterling');
+await page.click('.paint-save button[type=submit]');
+await page.waitForSelector('.paint-hint >> text=Gespeichert');
+await page.click('.paint-btn >> text=Als Hintergrund');
+await wait(600);
+await closeWindows();
+await page.waitForFunction(() => (document.querySelector('.desktop > .wallpaper-picture')?.naturalWidth ?? 0) > 0);
+// Bis Flinns Bytes-Meldungen wieder weg sind
+await wait(4500);
+await shot('painted-desktop', { mouse: [1240, 60] });
 
 await browser.close();
 if (problems.length) {

@@ -16,8 +16,9 @@ use a computer, and learn maths, reading and more on it.
 ![The Computerfuchs desktop with icons, stickers, the taskbar and the mouse course](docs/images/hero-desktop.jpg)
 
 > Early prototype, version 0.3 in progress. The mouse course, keyboard, maths,
-> "What is the internet?", files and the app store are playable. A paint box,
-> letters and more are on the roadmap (see the [concept](docs/CONCEPT.md)).
+> "What is the internet?", the paint box, files and the app store are
+> playable. Letters and more are on the roadmap (see the
+> [concept](docs/CONCEPT.md)).
 
 ## Screenshots
 
@@ -39,6 +40,10 @@ The interface is in German.
   <tr>
     <td width="50%"><img src="docs/images/internet-packets.jpg" alt="A cat photo cut into four parts; two envelopes fly from a laptop over three routers to Grandma"><br><b>What is the internet?</b> A photo travels to Grandma in four packets, from router to router.</td>
     <td width="50%"><img src="docs/images/internet-sea-cable.jpg" alt="A world map with two sea cables to New York; a shark sits at the broken one, the other cable via Portugal is highlighted"><br><b>Cables in the sea:</b> a shark has bitten the cable, so the photo needs another way.</td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/paint-box.jpg" alt="The paint box with a coloured-in butterfly, tools on the left, colours below and Flinn's tasks on the right"><br><b>Paint box:</b> colouring pages, a paint bucket, stamps – and undo, like on a real computer.</td>
+    <td width="50%"><img src="docs/images/painted-desktop.jpg" alt="The desktop with the painted butterfly as wallpaper behind the icons"><br><b>My own wallpaper:</b> the picture is saved in "Bilder" and becomes the desktop.</td>
   </tr>
   <tr>
     <td width="50%"><img src="docs/images/files.jpg" alt="The file explorer with the Bilder folder and Flinn's tasks"><br><b>Files:</b> folders, drag and drop, recycle bin – with Flinn's tasks.</td>
@@ -101,6 +106,15 @@ The interface is in German.
   - The lock: postcard or treasure chest, past a nosy raccoon; a secret code
     with a Caesar strip; and would you type your password here – is there a
     padlock, and whose address is it?
+- **Paint box.** Brush, paint bucket, stamps and eraser for everyone; from 7
+  also lines, rectangles and circles, from 10 an eyedropper and colours of your
+  own. Six colouring pages – a house, a fish, flowers, a rocket, a cat and a
+  butterfly – fill cleanly with the bucket. Undo and redo work as on a real
+  computer, keyboard shortcuts included (Ctrl+Z, Ctrl+Y, Ctrl+S). Saved
+  pictures land as files in "Bilder", open again for more painting, show up in
+  the files app and the viewer, and can become the wallpaper. Flinn sets six
+  tasks, from the first brush stroke to your own wallpaper, and closing the
+  window loses nothing.
 - **Files with a recycle bin.** Every child has a small file system of their own
   with pictures, music, documents and downloads. They create folders, rename
   them (with the same rules as on Windows), drag files into folders, copy and
@@ -128,8 +142,8 @@ The interface is in German.
 - **Saved in the browser, backed up as a file.** Progress is stored locally. A
   grown-ups' area behind a small arithmetic gate exports all profiles as a JSON
   file and imports them again, by button or by dropping the file on the login
-  screen. Damaged or foreign files are rejected with an explanation instead of
-  crashing.
+  screen. Paintings travel along in the file. Damaged or foreign files are
+  rejected with an explanation instead of crashing.
 - **Works offline, installs as an app.** After the first visit, Computerfuchs
   lives in the browser's offline storage and starts without internet too. Chrome
   and Edge install it as an app with its own icon and window (there is a button
@@ -153,7 +167,7 @@ to watch for, and has an observation sheet to print.
 ```sh
 npm ci
 npm run dev        # http://localhost:5173
-npm test           # Vitest (logic: profiles, rewards, save files, windows, maths, files, keyboard, networks)
+npm test           # Vitest (logic: profiles, rewards, save files, windows, maths, files, keyboard, networks, painting)
 npm run lint       # oxlint
 npm run build      # type-check + production build into dist/
 npm run preview    # serve dist/ at http://localhost:4173
@@ -163,11 +177,12 @@ npm run screenshots  # retake the README images (docs/images/), also against the
 
 `npm run e2e` plays through the whole app in headless Chrome: all eight mouse
 levels, all seven keyboard levels and all 15 stages of "What is the internet?",
-maths, Flinn's file tasks, an app store purchase, stickers, a song, the secret
-code, settings, the save file, a reload, a second profile, kiosk mode and a
-restart without internet. It fails on any console error. Pass a URL to test the
-live site: `npm run e2e -- https://technikweber.github.io/Computerfuchs/`.
-Screenshots go to `test-results/e2e/`.
+maths, the paint box with a painted wallpaper, Flinn's file tasks, an app store
+purchase, stickers, a song, the secret code, settings, the save file, a reload,
+a second profile, kiosk mode and a restart without internet. It fails on any
+console error. Pass a URL to test the live site:
+`npm run e2e -- https://technikweber.github.io/Computerfuchs/`. Screenshots go
+to `test-results/e2e/`.
 
 Stack: React 19, TypeScript 7, Vite 8, Vitest, oxlint — the same as
 [LinuxKompass](https://github.com/TechnikWeber/LinuxKompass) and
