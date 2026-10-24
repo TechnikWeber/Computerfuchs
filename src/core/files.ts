@@ -18,6 +18,8 @@ export const CURSOR_SKIN_IDS: readonly CursorSkinId[] = ['standard', 'orange', '
 
 export type FileContent =
   | { type: 'bild'; emoji: EmojiName }
+  /** Im Malkasten gemalt; die Pixel liegen unter `picture` in der IndexedDB (core/pictures.ts). */
+  | { type: 'gemalt'; picture: string }
   | { type: 'hintergrund'; wallpaper: WallpaperId }
   | { type: 'zeiger'; cursor: CursorSkinId }
   | { type: 'sticker'; emoji: EmojiName }
@@ -37,6 +39,13 @@ export interface FileNode {
   /** Woher ein Eintrag im Papierkorb kam – für „Wiederherstellen“. */
   trashedFrom?: string;
   created: string;
+}
+
+/** IDs gemalter Bilder: „pic-“ und eine zufällige Kennung */
+const PICTURE_ID = /^pic-[a-z0-9-]{8,64}$/;
+
+export function isPictureId(id: unknown): id is string {
+  return typeof id === 'string' && PICTURE_ID.test(id);
 }
 
 export const ROOT = 'root';
@@ -60,6 +69,7 @@ export function isSystemFolder(id: string): boolean {
 /** Echte Dateiendungen – wer sie einschaltet, lernt, was .jpg und .mp3 bedeuten. */
 export const EXTENSION: Record<FileType, string> = {
   bild: 'jpg',
+  gemalt: 'png',
   hintergrund: 'jpg',
   zeiger: 'cur',
   sticker: 'png',
@@ -69,6 +79,7 @@ export const EXTENSION: Record<FileType, string> = {
 
 export const TYPE_NAME: Record<FileType, string> = {
   bild: 'Bild',
+  gemalt: 'Gemaltes Bild',
   hintergrund: 'Hintergrundbild',
   zeiger: 'Mauszeiger',
   sticker: 'Sticker',
@@ -160,6 +171,11 @@ export function pathOf(files: FileNode[], id: string): { id: string; name: strin
     cur = parentOf(files, cur);
   }
   return out;
+}
+
+/** Alle gemalten Bilder, auf die Dateien zeigen */
+export function picturesIn(files: FileNode[]): string[] {
+  return files.flatMap((n) => (n.content?.type === 'gemalt' ? [n.content.picture] : []));
 }
 
 /** Liegt `id` in `folder` (oder tiefer)? */
@@ -358,6 +374,8 @@ export function fakeSize(n: FileNode): number {
   switch (n.content.type) {
     case 'bild':
       return 240_000;
+    case 'gemalt':
+      return 320_000;
     case 'hintergrund':
       return 1_200_000;
     case 'zeiger':

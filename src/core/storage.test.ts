@@ -88,6 +88,31 @@ describe('Spielstand', () => {
     expect(sanitizeProfile({ ...mia, allOpen: 'ja' })?.allOpen).toBeUndefined();
   });
 
+  it('nimmt gemalte Bilder mit in die Datei – und lässt nur gültige wieder herein', () => {
+    const painting = { id: 'f-bild', name: 'Mein Haus', parent: 'bilder', content: { type: 'gemalt' as const, picture: 'pic-abcdef12' }, created: 'x' };
+    const withPainting = { ...mia, files: [...mia.files, painting], settings: { ...mia.settings, wallpaperFile: 'f-bild' } };
+    const data: SaveData = { ...emptySave(), profiles: [withPainting] };
+    const png = 'data:image/png;base64,iVBORw0KGgo=';
+    const file = exportSave(data, new Date('2026-10-24T10:00:00Z'), { 'pic-abcdef12': png });
+    const parsed = parseSaveFile(file.text);
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    expect(parsed.pictures).toEqual({ 'pic-abcdef12': png });
+    const p = parsed.data.profiles[0];
+    expect(p.files.find((n) => n.id === 'f-bild')?.content).toEqual({ type: 'gemalt', picture: 'pic-abcdef12' });
+    expect(p.settings.wallpaperFile).toBe('f-bild');
+    // Falsche Bilddaten und Bilder, auf die keine Datei zeigt, bleiben draußen.
+    const evil = JSON.parse(file.text);
+    evil.pictures = { 'pic-abcdef12': 'data:text/html;base64,PGI+', 'pic-unbenutzt1': png };
+    const parsed2 = parseSaveFile(JSON.stringify(evil));
+    expect(parsed2.ok && parsed2.pictures).toEqual({});
+    // Ohne Bilder sieht die Datei aus wie bisher.
+    expect(JSON.parse(exportSave(save, new Date()).text).pictures).toBeUndefined();
+    // Ein kaputter Verweis fliegt raus.
+    const broken = { ...painting, content: { type: 'gemalt', picture: '../etwas' } };
+    expect(sanitizeProfile({ ...withPainting, files: [broken] })?.files).toEqual([]);
+  });
+
   it('verwirft doppelte Profile und begrenzt die Anzahl', () => {
     const many = Array.from({ length: MAX_PROFILES + 5 }, (_, i) => ({ ...mia, id: `p${i}` }));
     const data = sanitizeSave({ format: 'computerfuchs', version: 1, profiles: [mia, mia, ...many] });

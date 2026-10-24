@@ -5,7 +5,7 @@ import { catmullRom, dist, nearestIndex, polylineLength, resample } from './geom
 import { scatter } from './layout';
 import {
   MAX_BYTES, RANKS, REPLAY_REWARD, STAR_REWARD, ageGroup, applyLevelResult, createProfile, defaultFeatures, nextRank,
-  rankFor, rewardFor, withAge, withAllOpen, withBytes,
+  rankFor, rewardFor, wallpaperPicture, withAge, withAllOpen, withBytes,
 } from './profile';
 import { seeded, shuffle } from './random';
 
@@ -106,6 +106,15 @@ describe('Profil', () => {
     expect(odd.bytes).toBe(0);
     expect(odd.bytesEarned).toBe(13);
     expect(withBytes(p, Number.NaN, 5 * MAX_BYTES).bytesEarned).toBe(MAX_BYTES);
+  });
+
+  it('findet das gemalte Hintergrundbild – solange es die Datei gibt', () => {
+    const p = createProfile({ name: 'A', avatar: 'fox', age: 8 }, 'id', 'now');
+    const file = { id: 'f-bild', name: 'Bild', parent: 'bilder', content: { type: 'gemalt' as const, picture: 'pic-abcdef12' }, created: 'now' };
+    const painted = { ...p, files: [...p.files, file], settings: { ...p.settings, wallpaperFile: 'f-bild' } };
+    expect(wallpaperPicture(painted)).toBe('pic-abcdef12');
+    expect(wallpaperPicture({ ...painted, files: p.files })).toBeNull();
+    expect(wallpaperPicture(p)).toBeNull();
   });
 
   it('kennt Ränge und den nächsten Rang', () => {

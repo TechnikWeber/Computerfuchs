@@ -1,7 +1,7 @@
 import { AVATARS, WALLPAPERS, type AvatarId, type WallpaperId } from './catalog';
 import { EMOJI, type EmojiName } from './emoji';
 import {
-  CURSOR_SKIN_IDS, MAX_NAME_LENGTH, ROOT, SONG_IDS, isSystemFolder, seedFiles,
+  CURSOR_SKIN_IDS, MAX_NAME_LENGTH, ROOT, SONG_IDS, isPictureId, isSystemFolder, picturesIn, seedFiles,
   type CursorSkinId, type FileContent, type FileNode, type SongId,
 } from './files';
 import type { Pin } from './pin';
@@ -74,7 +74,7 @@ const MAX_STICKERS = 40;
 function sanitizeSettings(raw: unknown, age: number): ProfileSettings {
   const base = defaultSettings(age);
   if (!isRecord(raw)) return base;
-  return {
+  const settings: ProfileSettings = {
     wallpaper: oneOf(raw.wallpaper, WALLPAPER_IDS, base.wallpaper),
     sound: typeof raw.sound === 'boolean' ? raw.sound : base.sound,
     volume: num(raw.volume, base.volume, 0, 1),
@@ -84,6 +84,10 @@ function sanitizeSettings(raw: unknown, age: number): ProfileSettings {
     doubleClickMs: int(raw.doubleClickMs, base.doubleClickMs, 250, 1500),
     showExtensions: typeof raw.showExtensions === 'boolean' ? raw.showExtensions : base.showExtensions,
   };
+  if (typeof raw.wallpaperFile === 'string' && raw.wallpaperFile.length > 0 && raw.wallpaperFile.length <= 64) {
+    settings.wallpaperFile = raw.wallpaperFile;
+  }
+  return settings;
 }
 
 const isEmoji = (v: unknown): v is EmojiName => typeof v === 'string' && EMOJI_SET.has(v);
@@ -95,6 +99,8 @@ function sanitizeContent(raw: unknown): FileContent | null {
       return isEmoji(raw.emoji) ? { type: 'bild', emoji: raw.emoji } : null;
     case 'sticker':
       return isEmoji(raw.emoji) ? { type: 'sticker', emoji: raw.emoji } : null;
+    case 'gemalt':
+      return isPictureId(raw.picture) ? { type: 'gemalt', picture: raw.picture } : null;
     case 'hintergrund':
       return (WALLPAPER_IDS as readonly unknown[]).includes(raw.wallpaper)
         ? { type: 'hintergrund', wallpaper: raw.wallpaper as WallpaperId }
@@ -297,13 +303,40 @@ export function writeSaveText(text: string, store: Storage | null = storage()): 
 // Spielstand-Datei
 // ---------------------------------------------------------------------------
 
-export function exportSave(data: SaveData, now: Date): { filename: string; text: string } {
+/** Alle gemalten Bilder, auf die irgendein Profil zeigt */
+export function picturesInSave(data: SaveData): Set<string> {
+  return new Set(data.profiles.flatMap((p) => picturesIn(p.files)));
+}
+
+/** `pictures`: gemalte Bilder als data:-Adressen (siehe core/pictures.ts) – so reisen sie mit. */
+export function exportSave(data: SaveData, now: Date, pictures: Record<string, string> = {}): { filename: string; text: string } {
   const date = now.toISOString().slice(0, 10);
-  const payload = { ...data, exportedAt: now.toISOString(), app: 'Computerfuchs' };
+  const payload = {
+    ...data,
+    exportedAt: now.toISOString(),
+    app: 'Computerfuchs',
+    ...(Object.keys(pictures).length > 0 ? { pictures } : {}),
+  };
   return { filename: `computerfuchs-spielstand-${date}.json`, text: JSON.stringify(payload, null, 2) };
 }
 
-export type ParseResult = { ok: true; data: SaveData } | { ok: false; reason: string };
+const PICTURE_DATA = /^data:image\/(?:png|webp|jpeg);base64,[A-Za-z0-9+/]*={0,2}$/;
+/** Ein gemaltes Bild ist ein paar Hundert Kilobyte – 16 Millionen Zeichen sind großzügig. */
+const MAX_PICTURE_TEXT = 16_000_000;
+
+/** Nur Bilder übernehmen, auf die ein geladenes Profil zeigt, und nur echte PNG/WebP/JPEG-Daten. */
+function sanitizePictures(raw: unknown, data: SaveData): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (!isRecord(raw)) return out;
+  const wanted = picturesInSave(data);
+  for (const [id, value] of Object.entries(raw)) {
+    if (!wanted.has(id) || typeof value !== 'string' || value.length > MAX_PICTURE_TEXT || !PICTURE_DATA.test(value)) continue;
+    out[id] = value;
+  }
+  return out;
+}
+
+export type ParseResult = { ok: true; data: SaveData; pictures: Record<string, string> } | { ok: false; reason: string };
 
 export function parseSaveFile(text: string): ParseResult {
   let raw: unknown;
@@ -320,7 +353,7 @@ export function parseSaveFile(text: string): ParseResult {
   }
   const data = sanitizeSave(raw);
   if (!data || data.profiles.length === 0) return { ok: false, reason: 'In der Datei steckt kein Profil.' };
-  return { ok: true, data };
+  return { ok: true, data, pictures: sanitizePictures(raw.pictures, data) };
 }
 
 /** Geladene Profile übernehmen: gleiche ID ersetzt, neue kommen dazu. */

@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react';
 import { useLatest } from './hooks';
+import { sweepPictures } from './pictures';
 import { createProfile, type Profile } from './profile';
 import { SaveContext, type NewProfileInput, type SaveApi } from './saveContext';
-import { SAVE_KEY, loadSave, mergeSaves, newId, sanitizeSave, writeSaveText, type SaveData } from './storage';
+import { SAVE_KEY, loadSave, mergeSaves, newId, picturesInSave, sanitizeSave, writeSaveText, type SaveData } from './storage';
 
 type Action =
   | { type: 'add'; profile: Profile }
@@ -81,6 +82,16 @@ export function SaveProvider({ children }: { children: ReactNode }) {
       window.removeEventListener('pagehide', flush);
       window.removeEventListener('storage', onStorage);
     };
+  }, [latest]);
+
+  // Gemalte Bilder, auf die keine Datei mehr zeigt, nach einer Weile wegräumen – nie bei leerem oder kaputtem Spielstand.
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      const current = latest.current;
+      if (current.profiles.length === 0) return;
+      void sweepPictures(picturesInSave(current), new Set(current.profiles.map((p) => p.id)));
+    }, 8000);
+    return () => window.clearTimeout(id);
   }, [latest]);
 
   const profile = useCallback((id: string) => data.profiles.find((p) => p.id === id), [data.profiles]);

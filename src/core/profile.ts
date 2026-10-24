@@ -30,6 +30,8 @@ export interface LevelRecord {
 
 export interface ProfileSettings {
   wallpaper: WallpaperId;
+  /** Ein gemaltes Bild als Hintergrund: die Datei im eigenen Dateisystem. Gibt es sie nicht mehr, gilt `wallpaper`. */
+  wallpaperFile?: string;
   sound: boolean;
   /** 0 bis 1 */
   volume: number;
@@ -153,6 +155,13 @@ export function createProfile(input: { name: string; avatar: AvatarId; age: numb
     owned: [],
     stickers: [],
   };
+}
+
+/** Das gemalte Bild, das gerade Hintergrund ist – null, wenn es keins gibt oder die Datei weg ist. */
+export function wallpaperPicture(profile: Profile): string | null {
+  const id = profile.settings.wallpaperFile;
+  const node = id ? profile.files.find((n) => n.id === id) : undefined;
+  return node?.content?.type === 'gemalt' ? node.content.picture : null;
 }
 
 export function hasFeature(profile: Profile, feature: Feature): boolean {

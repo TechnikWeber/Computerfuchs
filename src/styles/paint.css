@@ -1,0 +1,545 @@
+/* ==========================================================================
+ * Malkasten
+ * ======================================================================== */
+
+.paint {
+  position: absolute;
+  inset: 0;
+  container: paint / inline-size;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  background: #eef1f8;
+}
+
+/* Leiste oben: Neu, Öffnen, Speichern, Rückgängig */
+
+.paint-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  overflow-x: auto;
+  background: #fff;
+  border-bottom: 2px solid var(--line);
+}
+
+.paint-btn {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 14px;
+  background: transparent;
+  font: 800 0.95rem var(--font-ui);
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.paint-btn:hover:not(:disabled) {
+  background: var(--cloud);
+}
+
+.paint-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.paint-sep {
+  flex: none;
+  width: 2px;
+  height: 28px;
+  margin: 0 6px;
+  background: var(--line);
+}
+
+.paint-gap {
+  flex: 1 1 auto;
+}
+
+.paint-bar .chip-btn {
+  flex: none;
+  display: inline-flex;
+  gap: 6px;
+  margin-left: 6px;
+}
+
+/* Mitte: Werkzeuge, Blatt, Aufgaben */
+
+.paint-body {
+  position: relative;
+  min-height: 0;
+  display: flex;
+}
+
+.paint-tools {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(2, 66px);
+  align-content: start;
+  gap: 4px;
+  padding: 8px 6px;
+  overflow-y: auto;
+  background: #fff;
+  border-right: 2px solid var(--line);
+}
+
+/* Die Kleinen haben nur vier Werkzeuge – dafür groß, untereinander */
+.paint.group-klein .paint-tools {
+  grid-template-columns: 92px;
+}
+
+.paint-tool {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  padding: 6px 2px;
+  border: none;
+  border-radius: 16px;
+  background: transparent;
+  font: 800 0.78rem var(--font-ui);
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.paint-tool:hover {
+  background: var(--cloud);
+}
+
+.paint-tool.is-active {
+  background: var(--fox-light);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 3px var(--fox);
+}
+
+.paint-stage {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  container-type: size;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+}
+
+.paint-paper {
+  position: relative;
+  width: min(100cqw, 160cqh);
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 2px 0 #d8dcea, 0 10px 28px rgb(20 24 60 / 14%);
+  touch-action: none;
+  user-select: none;
+}
+
+.paint-canvas,
+.paint-overlay {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.paint-overlay {
+  pointer-events: none;
+}
+
+.paint-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.paint-ring[data-on='true'] {
+  opacity: 1;
+}
+
+.paint-ring.is-brush {
+  border: 2px solid rgb(35 38 59 / 70%);
+  box-shadow: 0 0 0 1.5px rgb(255 255 255 / 85%), inset 0 0 0 1.5px rgb(255 255 255 / 85%);
+}
+
+.paint-ring.is-dot {
+  border: 2px solid var(--fox);
+  box-shadow: 0 0 0 2px #fff;
+}
+
+.paint-ring.is-stamp {
+  border-radius: 0;
+}
+
+.paint-ring.is-stamp img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0.55;
+}
+
+.paint-hint {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: max-content;
+  max-width: min(600px, calc(100% - 32px));
+  padding: 6px 18px 6px 8px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: var(--shadow-2);
+  font-weight: 800;
+  line-height: 1.3;
+  translate: -50% 0;
+  animation: pop-in 0.3s var(--ease-bounce);
+  pointer-events: none;
+}
+
+.paint-missions {
+  flex: none;
+  width: 250px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: auto;
+  background: #fff;
+  border-left: 2px solid var(--line);
+}
+
+.paint-missions-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+}
+
+/* Leiste unten: Farben, Stempel, Dicke */
+
+.paint-foot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 12px;
+  overflow-x: auto;
+  background: #fff;
+  border-top: 2px solid var(--line);
+}
+
+.paint-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.paint-swatch {
+  position: relative;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--line);
+  cursor: pointer;
+  transition: transform 0.15s var(--ease-bounce);
+}
+
+.paint-swatch:hover {
+  transform: scale(1.08);
+}
+
+.paint-swatch.is-active {
+  box-shadow: 0 0 0 3px var(--ink);
+  transform: scale(1.14);
+}
+
+/* Eigene Farbe: innen die Farbe, außen ein Regenbogenring */
+.paint-swatch.is-custom {
+  border: 4px solid transparent;
+  background:
+    linear-gradient(var(--swatch), var(--swatch)) padding-box,
+    conic-gradient(#ff4d5e, #ffd43b, #2fbf62, #14b0d4, #2f6bff, #8a6bff, #ff6fae, #ff4d5e) border-box;
+  box-shadow: none;
+}
+
+.paint-swatch.is-custom input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.paint-stamp {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 12px;
+  background: var(--cloud);
+  cursor: pointer;
+}
+
+.paint-stamp.is-active {
+  background: var(--fox-light);
+  box-shadow: inset 0 0 0 3px var(--fox);
+}
+
+.paint-sizes {
+  flex: none;
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+  padding-left: 14px;
+  border-left: 2px solid var(--line);
+}
+
+.paint-size {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 12px;
+  background: var(--cloud);
+  cursor: pointer;
+}
+
+.paint-size > span {
+  display: block;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px rgb(35 38 59 / 35%);
+}
+
+.paint-size.is-active {
+  background: #fff;
+  box-shadow: inset 0 0 0 3px var(--ink);
+}
+
+/* Dialoge im Fenster */
+
+.paint-dialog-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgb(20 24 60 / 35%);
+  animation: fade-in 0.15s ease-out;
+}
+
+.paint-dialog {
+  width: min(500px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  padding: 16px 20px 20px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: var(--shadow-3);
+  animation: pop-in 0.25s var(--ease-bounce);
+}
+
+.paint-dialog.is-wide {
+  width: min(920px, 100%);
+}
+
+.paint-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.paint-dialog-sub {
+  margin: 4px 0 8px;
+  font-size: 1.05rem;
+}
+
+.paint-dialog-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.paint-dialog-error {
+  margin-top: 8px;
+  font-weight: 800;
+  color: var(--danger-dark);
+}
+
+.paint-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.paint-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.paint-grid.is-small {
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+}
+
+.paint-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  padding: 8px;
+  border: none;
+  border-radius: 18px;
+  background: var(--cloud);
+  font: 800 0.95rem var(--font-ui);
+  color: var(--ink);
+  text-align: center;
+  cursor: pointer;
+}
+
+.paint-card > span:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.paint-card:hover {
+  background: var(--sky-light);
+  box-shadow: inset 0 0 0 3px var(--sky);
+}
+
+.paint-thumb {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.paint-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.paint-thumb.is-blank {
+  color: var(--ink-faint);
+  box-shadow: inset 0 0 0 3px var(--line);
+}
+
+.paint-thumb.is-emoji {
+  aspect-ratio: 1;
+}
+
+.paint-thumb-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 12;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.paint-save input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 4px solid var(--line);
+  border-radius: 16px;
+  outline: none;
+  font: 600 1.3rem var(--font-display);
+}
+
+.paint-save input:focus {
+  border-color: var(--sky);
+}
+
+.paint-ask {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+/* Kleine Kinder: alles ein Stück größer */
+
+.paint.group-klein .paint-tool {
+  font-size: 0.85rem;
+}
+
+.paint.group-klein .paint-swatch {
+  width: 42px;
+  height: 42px;
+}
+
+.paint.group-klein .paint-btn {
+  height: 50px;
+  font-size: 1.02rem;
+}
+
+/* Schmale Fenster: Aufgaben schweben über dem Blatt, Beschriftungen fallen weg */
+
+@container paint (width < 1000px) {
+  .paint-missions {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    z-index: 20;
+    width: 240px;
+    max-height: calc(100% - 20px);
+    border: none;
+    border-radius: 20px;
+    box-shadow: var(--shadow-2);
+  }
+}
+
+@container paint (width < 1120px) {
+  .paint-btn.is-secondary span {
+    display: none;
+  }
+}
+
+@container paint (width < 820px) {
+  .paint-btn span {
+    display: none;
+  }
+
+  .paint-tools {
+    grid-template-columns: 56px;
+  }
+
+  .paint-tool span {
+    display: none;
+  }
+}

@@ -3,7 +3,7 @@ import type { CSSProperties, ReactNode } from 'react';
 export type IconName =
   | 'close' | 'minimize' | 'maximize' | 'restore' | 'speaker' | 'speaker-off' | 'fullscreen' | 'fullscreen-exit'
   | 'power' | 'back' | 'next' | 'up' | 'lock' | 'check' | 'plus' | 'upload' | 'download' | 'logout' | 'replay' | 'grid'
-  | 'trash' | 'info' | 'play' | 'stop' | 'user';
+  | 'trash' | 'info' | 'play' | 'stop' | 'user' | 'undo' | 'redo';
 
 const PATHS: Record<IconName, ReactNode> = {
   close: <path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" />,
@@ -62,6 +62,8 @@ const PATHS: Record<IconName, ReactNode> = {
   ),
   play: <path d="M8 5.5 18 12 8 18.5z" fill="currentColor" />,
   stop: <rect x="6.5" y="6.5" width="11" height="11" rx="2" fill="currentColor" />,
+  undo: <path d="M9 14.5 4.5 10 9 5.5M4.5 10H14a5.5 5.5 0 0 1 0 11h-3.5" />,
+  redo: <path d="M15 14.5 19.5 10 15 5.5M19.5 10H10a5.5 5.5 0 0 0 0 11h3.5" />,
   user: (
     <>
       <circle cx="12" cy="8.5" r="3.8" />
