@@ -10,7 +10,8 @@
  * Spielt alle 8 Maus-Level, Rechnen, Einstellungen, Spielstand-Datei, Neuladen,
  * ein zweites Profil, alle 7 Tastatur-Level, die Dateien-Aufgaben, den App-Laden,
  * Sticker, ein Lied, den Geheimcode, alle 15 Stufen von „Was ist das Internet?“, den
- * Kiosk-Modus und einen Neustart ohne Internet durch und meldet Konsolenfehler.
+ * Malkasten mit gemalten Hintergründen, den Kiosk-Modus und einen Neustart ohne
+ * Internet durch und meldet Konsolenfehler.
  */
 import { chromium } from 'playwright-core';
 import fs from 'node:fs';
@@ -1337,6 +1338,142 @@ await step('Internet 5: Das Schloss (Schatzkiste, Geheimschrift, Passwort)', asy
     ),
   );
   if (stars.length !== 5 || stars.some((s) => s !== 3)) throw new Error(`Sterne im Internet-Kurs: ${stars.join(', ')}`);
+  await closeWindows();
+});
+
+// --- Malkasten ---
+
+/** Farbe eines Pixels auf dem Zeichenblatt, Stelle in Bruchteilen von Breite und Höhe */
+const paintPixel = (fx, fy) =>
+  page.evaluate(([x, y]) => {
+    const c = document.querySelector('.paint-canvas');
+    const d = c.getContext('2d').getImageData(Math.floor(c.width * x), Math.floor(c.height * y), 1, 1).data;
+    return `${d[0]},${d[1]},${d[2]}`;
+  }, [fx, fy]);
+async function paperPoint(fx, fy) {
+  const b = await page.locator('.paint-paper').boundingBox();
+  return { x: b.x + b.width * fx, y: b.y + b.height * fy };
+}
+async function paintStroke(points) {
+  const pts = [];
+  for (const [fx, fy] of points) pts.push(await paperPoint(fx, fy));
+  await page.mouse.move(pts[0].x, pts[0].y);
+  await page.mouse.down();
+  for (const p of pts.slice(1)) await page.mouse.move(p.x, p.y, { steps: 8 });
+  await page.mouse.up();
+  await wait(200);
+}
+async function paperClick(fx, fy) {
+  const p = await paperPoint(fx, fy);
+  await page.mouse.click(p.x, p.y);
+  await wait(250);
+}
+const savedProfile = (name) =>
+  page.evaluate((n) => JSON.parse(localStorage.getItem('computerfuchs.save')).profiles.find((p) => p.name === n), name);
+const RED = '255,77,94';
+const LILA = '138,107,255';
+
+await step('Malkasten: malen, ausmalen, rückgängig, stempeln, speichern, Hintergrund', async () => {
+  await dismissNotices();
+  await closeWindows();
+  await openDesk('malkasten');
+  await page.waitForSelector('.paint-canvas');
+  await wait(600);
+  // Aufgabe 1 und 2: ein Strich, dann eine andere Farbe
+  await paintStroke([[0.2, 0.3], [0.4, 0.5], [0.6, 0.3]]);
+  await page.click('.paint-swatch[aria-label="Blau"]');
+  await paintStroke([[0.2, 0.7], [0.8, 0.7]]);
+  if ((await paintPixel(0.5, 0.7)) !== '47,107,255') throw new Error('Blauer Strich fehlt');
+  await shot('malkasten-gemalt');
+  // Ein Ausmalbild – vorher fragt Flinn, ob das Bild gespeichert werden soll.
+  await page.click('.paint-btn >> text=Neu');
+  await page.click('.paint-dialog >> text=Nicht speichern');
+  await page.click('.paint-card >> text=Rakete im Weltall');
+  await wait(400);
+  if ((await paintPixel(0.5, 0.7)) !== '255,255,255') throw new Error('Altes Bild nicht weg');
+  // Aufgabe 3: Farbeimer (ist nach dem Ausmalbild schon gewählt)
+  await page.click('.paint-swatch[aria-label="Lila"]');
+  await paperClick(0.05, 0.95);
+  await page.click('.paint-swatch[aria-label="Rot"]');
+  await paperClick(0.5, 0.44);
+  if ((await paintPixel(0.05, 0.95)) !== LILA || (await paintPixel(0.5, 0.44)) !== RED) throw new Error('Farbeimer füllt nicht');
+  // Aufgabe 4: rückgängig – und wiederholen
+  await page.click('.paint-btn >> text=Rückgängig');
+  await wait(250);
+  if ((await paintPixel(0.5, 0.44)) !== '255,255,255') throw new Error('Rückgängig geht nicht');
+  await page.keyboard.press('Control+y');
+  await wait(250);
+  if ((await paintPixel(0.5, 0.44)) !== RED) throw new Error('Wiederholen (Strg+Y) geht nicht');
+  // Ein Stempel ins Weltall
+  await page.click('.paint-tool >> text=Stempel');
+  await page.click('.paint-stamp >> nth=0');
+  await paperClick(0.25, 0.64);
+  if ((await paintPixel(0.25, 0.64)) === LILA) throw new Error('Stempel fehlt');
+  // Aufgabe 5: speichern, mit eigenem Namen
+  await page.click('.paint-btn >> text="Speichern"');
+  await page.fill('.paint-save input', 'Meine Rakete');
+  await page.click('.paint-save button[type=submit]');
+  await page.waitForSelector('.paint-hint >> text=Gespeichert', { timeout: 6000 });
+  await shot('malkasten-rakete');
+  // Aufgabe 6: als Hintergrund
+  await page.click('.paint-btn >> text=Als Hintergrund');
+  await wait(800);
+  const me = await savedProfile('Jonas');
+  const file = me.files.find((f) => f.content?.type === 'gemalt' && f.name === 'Meine Rakete');
+  if (!file || file.parent !== 'bilder') throw new Error('Bild nicht in „Bilder“ gespeichert');
+  if (me.settings.wallpaperFile !== file.id) throw new Error('Bild ist nicht der Hintergrund');
+  const done = Object.keys(me.progress.malkasten ?? {});
+  if (done.length !== 6) throw new Error(`Aufgaben: ${done.join(', ')}`);
+  // Zu und wieder auf: Das Bild ist noch da.
+  await closeWindows();
+  await page.waitForFunction(() => (document.querySelector('.desktop > .wallpaper-picture')?.naturalWidth ?? 0) > 0, null, { timeout: 5000 });
+  await shot('malkasten-hintergrund');
+  await openDesk('malkasten');
+  await page.waitForSelector('.paint-canvas');
+  await page.waitForFunction(() => document.querySelector('.win-name')?.textContent?.includes('Meine Rakete'), null, { timeout: 5000 });
+  await wait(300);
+  if ((await paintPixel(0.5, 0.44)) !== RED) throw new Error('Bild nach dem Öffnen weg');
+  await closeWindows();
+});
+
+await step('Gemalte Bilder: Dateien, Anzeige, Einstellungen, Spielstand-Datei', async () => {
+  await openDesk('dateien');
+  await page.waitForSelector('.files');
+  await page.locator('.files-place', { hasText: 'Bilder' }).click();
+  const item = page.locator('.files-grid .file-item', { hasText: 'Meine Rakete' });
+  await item.waitFor({ timeout: 5000 });
+  await page.waitForFunction(
+    () => [...document.querySelectorAll('.file-icon.is-painting img')].some((i) => i.complete && i.naturalWidth > 0),
+    null,
+    { timeout: 5000 },
+  );
+  await item.dblclick();
+  await page.waitForSelector('.viewer-painting img', { timeout: 5000 });
+  await shot('anzeige-gemalt');
+  await closeWindows();
+  // Ein eingebauter Hintergrund löst das gemalte Bild ab – und umgekehrt.
+  await openDesk('einstellungen');
+  await page.waitForSelector('.settings');
+  await page.waitForSelector('text=Selbst gemalt');
+  await page.locator('.wall-pick', { hasText: 'Weltall' }).click();
+  await wait(300);
+  if (await page.$('.desktop > .wallpaper-picture')) throw new Error('Gemaltes Bild noch Hintergrund');
+  await page.locator('.wall-pick', { hasText: 'Meine Rakete' }).click();
+  await page.waitForSelector('.desktop > .wallpaper-picture', { timeout: 5000 });
+  await shot('einstellungen-gemalt');
+  // Die Spielstand-Datei nimmt das Bild mit.
+  await page.click('.settings-tab >> text=Für Erwachsene');
+  await page.waitForSelector('.parent-gate');
+  const [a, b] = (await page.textContent('.parent-gate-task span')).match(/\d+/g).map(Number);
+  await page.fill('.parent-gate-task input', String(a * b));
+  await page.click('.parent-gate .btn');
+  const [download] = await Promise.all([page.waitForEvent('download'), page.click('text=Alle Profile als Datei sichern')]);
+  const saved = path.join(OUT, `mit-bildern-${download.suggestedFilename()}`);
+  await download.saveAs(saved);
+  const data = JSON.parse(fs.readFileSync(saved, 'utf8'));
+  const pictures = Object.values(data.pictures ?? {});
+  if (pictures.length < 1 || !pictures.every((p) => p.startsWith('data:image/png;base64,'))) throw new Error('Bilder fehlen in der Datei');
+  results.push(`     Datei mit ${pictures.length} Bild(ern): ${Math.round(fs.statSync(saved).size / 1024)} KB`);
   await closeWindows();
 });
 
