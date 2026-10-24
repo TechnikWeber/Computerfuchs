@@ -1,6 +1,7 @@
 import { useRef, useState, type DragEvent } from 'react';
 import { useNow } from '../core/hooks';
-import { rankFor } from '../core/profile';
+import { storeImportedPictures } from '../core/pictures';
+import { rankFor, wallpaperPicture } from '../core/profile';
 import { useSave } from '../core/saveContext';
 import { sfx } from '../core/sound';
 import { parseSaveFile } from '../core/storage';
@@ -8,7 +9,7 @@ import { Avatar } from './Avatar';
 import { Icon } from './Icon';
 import { PinPrompt } from './PinPad';
 import { ProfileWizard } from './ProfileWizard';
-import { Wallpaper } from './Wallpaper';
+import { PictureWallpaper, Wallpaper } from './Wallpaper';
 
 const timeFmt = new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '2-digit' });
 const dateFmt = new Intl.DateTimeFormat('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -26,6 +27,7 @@ export function Login({ onLogin, onShutdown }: { onLogin: (id: string) => void; 
   const now = useNow();
 
   const last = profiles.find((p) => p.id === save.data.lastProfileId) ?? profiles[0];
+  const lastPicture = last ? wallpaperPicture(last) : null;
 
   const loadFile = async (file: File) => {
     const result = parseSaveFile(await file.text());
@@ -34,6 +36,7 @@ export function Login({ onLogin, onShutdown }: { onLogin: (id: string) => void; 
       setMessage({ text: result.reason, ok: false });
       return;
     }
+    await storeImportedPictures(result.pictures);
     const { added, replaced } = save.importSave(result.data);
     const count = added + replaced;
     sfx.success();
@@ -63,6 +66,7 @@ export function Login({ onLogin, onShutdown }: { onLogin: (id: string) => void; 
       onDrop={onDrop}
     >
       <Wallpaper id={last?.settings.wallpaper ?? 'wiese'} className="login-wallpaper" />
+      {lastPicture && <PictureWallpaper picture={lastPicture} className="login-wallpaper" />}
       <div className="login-shade" />
 
       <div className="login-clock" aria-hidden="true">

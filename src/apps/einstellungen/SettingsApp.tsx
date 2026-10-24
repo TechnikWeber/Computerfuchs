@@ -3,16 +3,18 @@ import { AVATARS, WALLPAPERS } from '../../core/catalog';
 import { formatBytes } from '../../core/bytes';
 import { createDoubleClick } from '../../core/dblclick';
 import { downloadText } from '../../core/download';
+import { isInside, TRASH } from '../../core/files';
 import { promptInstall, useInstallState } from '../../core/install';
+import { picturesForExport, storeImportedPictures } from '../../core/pictures';
 import type { EmojiName } from '../../core/emoji';
 import {
-  CURSOR_SIZES, FEATURES, MAX_BYTES, MAX_NAME, rankFor, withAge, withAllOpen, withBytes,
+  CURSOR_SIZES, FEATURES, MAX_BYTES, MAX_NAME, rankFor, wallpaperPicture, withAge, withAllOpen, withBytes,
   type CursorSize, type Feature, type ProfileSettings,
 } from '../../core/profile';
 import { useSave } from '../../core/saveContext';
 import { sfx } from '../../core/sound';
 import { speak, speechAvailable } from '../../core/speech';
-import { exportSave, parseSaveFile } from '../../core/storage';
+import { exportSave, parseSaveFile, picturesInSave } from '../../core/storage';
 import { Avatar } from '../../os/Avatar';
 import { CURSOR_SKINS, cursorPreview } from '../../os/cursors';
 import { Emoji } from '../../os/Emoji';
@@ -21,7 +23,7 @@ import { Icon } from '../../os/Icon';
 import { useOs, useWindow } from '../../os/osContext';
 import { ParentGate } from '../../os/ParentGate';
 import { PinSetup } from '../../os/PinPad';
-import { Wallpaper } from '../../os/Wallpaper';
+import { PictureWallpaper, Wallpaper } from '../../os/Wallpaper';
 
 type Tab = 'hintergrund' | 'ton' | 'maus' | 'ich' | 'info' | 'erwachsene';
 
@@ -83,7 +85,12 @@ export default function SettingsApp() {
         ))}
       </nav>
       <div className="settings-page">
-        {tab === 'hintergrund' && <WallpaperPage onPick={(wallpaper) => set({ wallpaper })} />}
+        {tab === 'hintergrund' && (
+          <WallpaperPage
+            onPick={(wallpaper) => set({ wallpaper, wallpaperFile: undefined })}
+            onPickPainting={(wallpaperFile) => set({ wallpaperFile })}
+          />
+        )}
         {tab === 'ton' && <SoundPage set={set} />}
         {tab === 'maus' && <MousePage set={set} />}
         {tab === 'ich' && <MePage />}
@@ -127,10 +134,20 @@ function Toggle({ label, desc, checked, onChange }: { label: string; desc?: stri
   );
 }
 
-function WallpaperPage({ onPick }: { onPick: (id: ProfileSettings['wallpaper']) => void }) {
+function WallpaperPage({
+  onPick,
+  onPickPainting,
+}: {
+  onPick: (id: ProfileSettings['wallpaper']) => void;
+  onPickPainting: (fileId: string) => void;
+}) {
   const { profile, openApp } = useOs();
   const mine = WALLPAPERS.filter((w) => !w.shop || profile.owned.includes(`hg-${w.id}`));
   const more = WALLPAPERS.length - mine.length;
+  const painted = wallpaperPicture(profile) !== null;
+  const paintings = profile.files.filter(
+    (n) => n.content?.type === 'gemalt' && n.parent !== TRASH && !isInside(profile.files, n.id, TRASH),
+  );
   return (
     <Page title="Hintergrund" intro="Such dir ein Bild für deinen Desktop aus.">
       {more > 0 && (
@@ -146,7 +163,7 @@ function WallpaperPage({ onPick }: { onPick: (id: ProfileSettings['wallpaper']) 
           <button
             key={w.id}
             type="button"
-            className={profile.settings.wallpaper === w.id ? 'wall-pick is-active' : 'wall-pick'}
+            className={!painted && profile.settings.wallpaper === w.id ? 'wall-pick is-active' : 'wall-pick'}
             onClick={() => {
               sfx.tap();
               onPick(w.id);
@@ -159,6 +176,34 @@ function WallpaperPage({ onPick }: { onPick: (id: ProfileSettings['wallpaper']) 
           </button>
         ))}
       </div>
+      <h3>Selbst gemalt</h3>
+      {paintings.length === 0 ? (
+        <button type="button" className="shop-teaser" onClick={() => openApp('malkasten')}>
+          <Emoji name="artist-palette" size={40} />
+          <span>
+            <strong>Mal dir deinen eigenen Hintergrund</strong> – im Malkasten.
+          </span>
+        </button>
+      ) : (
+        <div className="wall-grid">
+          {paintings.map((n) => (
+            <button
+              key={n.id}
+              type="button"
+              className={profile.settings.wallpaperFile === n.id ? 'wall-pick is-active' : 'wall-pick'}
+              onClick={() => {
+                sfx.tap();
+                onPickPainting(n.id);
+              }}
+            >
+              <span className="wall-preview">
+                {n.content?.type === 'gemalt' && <PictureWallpaper picture={n.content.picture} />}
+              </span>
+              <span className="wall-name">{n.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
     </Page>
   );
 }
@@ -477,6 +522,7 @@ function GrownUpPage() {
       setMessage(result.reason);
       return;
     }
+    await storeImportedPictures(result.pictures);
     const { added, replaced } = save.importSave(result.data);
     setMessage(`Geladen: ${added} neue und ${replaced} aktualisierte Profile.`);
   };
@@ -492,8 +538,10 @@ function GrownUpPage() {
         <button
           type="button"
           className="btn btn-sky"
-          onClick={() => {
-            const file = exportSave(save.data, new Date());
+          onClick={async () => {
+            // Gemalte Bilder reisen in der Datei mit.
+            const pictures = await picturesForExport(picturesInSave(save.data));
+            const file = exportSave(save.data, new Date(), pictures);
             downloadText(file.filename, file.text);
           }}
         >

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { WALLPAPERS } from '../../core/catalog';
 import { displayName, isInside, nodeById, TRASH, TYPE_NAME, type FileContent, type FileNode } from '../../core/files';
+import { usePictureUrl } from '../../core/pictures';
+import { wallpaperPicture } from '../../core/profile';
 import { playMelody, sfx } from '../../core/sound';
 import { noteFrequency, songDuration, SONGS } from '../../core/songs';
 import { speak, stopSpeaking } from '../../core/speech';
@@ -78,6 +80,8 @@ function Content({ node, content }: { node: FileNode; content: FileContent }) {
           </span>
         </div>
       );
+    case 'gemalt':
+      return <PaintingView node={node} picture={content.picture} />;
     case 'hintergrund':
       return <WallpaperView wallpaper={content.wallpaper} />;
     case 'zeiger':
@@ -101,7 +105,7 @@ function Done({ text }: { text: string }) {
 
 function WallpaperView({ wallpaper }: { wallpaper: Extract<FileContent, { type: 'hintergrund' }>['wallpaper'] }) {
   const os = useOs();
-  const active = os.profile.settings.wallpaper === wallpaper;
+  const active = os.profile.settings.wallpaper === wallpaper && !wallpaperPicture(os.profile);
   const title = WALLPAPERS.find((w) => w.id === wallpaper)?.name ?? 'Hintergrund';
   return (
     <div className="viewer-stage viewer-wallpaper">
@@ -117,11 +121,43 @@ function WallpaperView({ wallpaper }: { wallpaper: Extract<FileContent, { type: 
             className="btn btn-leaf"
             onClick={() => {
               sfx.success();
-              os.update((p) => ({ ...p, settings: { ...p.settings, wallpaper } }));
+              os.update((p) => ({ ...p, settings: { ...p.settings, wallpaper, wallpaperFile: undefined } }));
               os.toast({ title: 'Neuer Hintergrund', text: title, icon: 'artist-palette' });
             }}
           >
             <Emoji name="artist-palette" size={28} /> Als Hintergrund festlegen
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** Ein im Malkasten gemaltes Bild: ansehen, weitermalen, als Hintergrund festlegen. */
+function PaintingView({ node, picture }: { node: FileNode; picture: string }) {
+  const os = useOs();
+  const url = usePictureUrl(picture);
+  const active = os.profile.settings.wallpaperFile === node.id;
+  return (
+    <div className="viewer-stage viewer-painting">
+      <div className="viewer-painting-frame">{url && <img src={url} alt={node.name} draggable={false} />}</div>
+      <div className="viewer-actions is-row">
+        <button type="button" className="btn btn-sky" onClick={() => os.openApp('malkasten', { file: node.id })}>
+          <Emoji name="artist-palette" size={28} /> Im Malkasten weitermalen
+        </button>
+        {active ? (
+          <Done text="Das ist dein Hintergrund." />
+        ) : (
+          <button
+            type="button"
+            className="btn btn-leaf"
+            onClick={() => {
+              sfx.success();
+              os.update((p) => ({ ...p, settings: { ...p.settings, wallpaperFile: node.id } }));
+              os.toast({ title: 'Neuer Hintergrund', text: node.name, icon: 'artist-palette' });
+            }}
+          >
+            <Emoji name="desktop-computer" size={28} /> Als Hintergrund festlegen
           </button>
         )}
       </div>

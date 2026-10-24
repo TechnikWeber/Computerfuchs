@@ -23,6 +23,20 @@
   box-shadow: 0 0 0 3px #fff, 0 3px 10px rgb(20 24 60 / 18%);
 }
 
+.file-icon.is-painting {
+  overflow: hidden;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 0 0 3px #fff, 0 3px 10px rgb(20 24 60 / 18%);
+}
+
+.file-icon.is-painting img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .file-badge {
   position: absolute;
   right: -4%;
@@ -581,6 +595,29 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
+}
+
+.viewer-actions.is-row {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.viewer-painting-frame {
+  position: relative;
+  width: min(88cqw, calc(62cqh * 1.6));
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: var(--shadow-2);
+}
+
+.viewer-painting-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .viewer-done {

@@ -564,6 +564,18 @@
   height: 100%;
 }
 
+/* Ein gemaltes Bild als Hintergrund */
+.wallpaper-picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
 .desk-area {
   position: absolute;
   top: 0;
@@ -637,6 +649,16 @@
 .desk-icon.is-selected .desk-label {
   background: var(--sky);
   text-shadow: none;
+}
+
+/* Gemalte Hintergründe sind oft hell – dann bekommen die Namen ein dunkles Schild. */
+.desktop.has-painting .desk-label {
+  background: rgb(35 38 59 / 62%);
+  text-shadow: none;
+}
+
+.desktop.has-painting .desk-icon.is-selected .desk-label {
+  background: var(--sky);
 }
 
 .desk-icon.is-highlight .app-tile {

@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import type { WallpaperId } from '../core/catalog';
+import { usePictureUrl } from '../core/pictures';
 import { seeded } from '../core/random';
 
 /*
@@ -36,6 +37,13 @@ const FIREFLIES = (() => {
   const r = seeded(5);
   return Array.from({ length: 14 }, () => ({ x: r() * 1600, y: 760 + r() * 200, s: 2 + r() * 3 }));
 })();
+
+/** Ein gemaltes Bild als Hintergrund. Liegt über dem eingebauten – bis es geladen ist, sieht man den. */
+export function PictureWallpaper({ picture, className }: { picture: string; className?: string }) {
+  const url = usePictureUrl(picture);
+  if (!url) return null;
+  return <img className={className ? `wallpaper-picture ${className}` : 'wallpaper-picture'} src={url} alt="" draggable={false} />;
+}
 
 export function Wallpaper({ id, className }: { id: WallpaperId; className?: string }) {
   const u = `wp${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;

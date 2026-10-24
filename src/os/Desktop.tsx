@@ -4,7 +4,7 @@ import { formatBytes } from '../core/bytes';
 import { isKiosk } from '../core/fullscreen';
 import { prefersReducedMotion, useElementSize, useLatest } from '../core/hooks';
 import {
-  ageGroup, applyLevelResult, hasFeature, markSeen, nextRank, withFeature,
+  ageGroup, applyLevelResult, hasFeature, markSeen, nextRank, wallpaperPicture, withFeature,
   type Feature, type Profile, type Stars,
 } from '../core/profile';
 import { useSave } from '../core/saveContext';
@@ -24,7 +24,7 @@ import { OsContext, type AppParams, type CompleteResult, type OsApi, type ToastI
 import { StartMenu } from './StartMenu';
 import { Taskbar } from './Taskbar';
 import { Toasts, type Toast } from './Toasts';
-import { Wallpaper } from './Wallpaper';
+import { PictureWallpaper, Wallpaper } from './Wallpaper';
 import { WindowFrame } from './WindowFrame';
 import { clampRect, initialWm, wmReducer, type Win } from './windows';
 
@@ -183,6 +183,7 @@ export function Desktop({ profile, onLogout, onShutdown }: Props) {
   };
 
   const desktopApps = APPS.filter((a) => a.desktop);
+  const paintedWallpaper = wallpaperPicture(profile);
   const notice = notices[0];
 
   const desktopMenu: MenuItem[] = [
@@ -199,9 +200,10 @@ export function Desktop({ profile, onLogout, onShutdown }: Props) {
 
   return (
     <OsContext.Provider value={api}>
-      <div className={`desktop group-${group}`}>
+      <div className={`desktop group-${group}${paintedWallpaper ? ' has-painting' : ''}`}>
         <style>{cursorCss(profile.settings.cursor, profile.settings.cursorSkin)}</style>
         <Wallpaper id={profile.settings.wallpaper} />
+        {paintedWallpaper && <PictureWallpaper picture={paintedWallpaper} />}
 
         <div
           ref={areaRef}
