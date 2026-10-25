@@ -32,7 +32,7 @@ const TABS: { id: Tab; name: string; icon: EmojiName }[] = [
   { id: 'ton', name: 'Ton und Stimme', icon: 'speaker-high-volume' },
   { id: 'maus', name: 'Maus', icon: 'computer-mouse' },
   { id: 'ich', name: 'Ich', icon: 'waving-hand' },
-  { id: 'info', name: 'Über', icon: 'light-bulb' },
+  { id: 'info', name: 'System', icon: 'light-bulb' },
   { id: 'erwachsene', name: 'Für Erwachsene', icon: 'locked' },
 ];
 
@@ -47,6 +47,16 @@ const FEATURE_LABEL: Record<Feature, string> = {
 };
 const AGES = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 const REPO = 'https://github.com/TechnikWeber/Computerfuchs';
+
+/** „0.2.0 · Stand 1a2b3c4 vom 25.10.2026, 14:03" – daran sieht man, ob ein Update schon da ist. */
+function buildLabel(): string {
+  const built = new Date(__APP_BUILT__);
+  const when = Number.isNaN(built.getTime())
+    ? ''
+    : built.toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' });
+  const stand = [__APP_COMMIT__ && `Stand ${__APP_COMMIT__}`, when && `vom ${when}`].filter(Boolean).join(' ');
+  return stand ? `${__APP_VERSION__} · ${stand}` : __APP_VERSION__;
+}
 
 export default function SettingsApp() {
   const os = useOs();
@@ -422,6 +432,9 @@ function InfoPage() {
         </div>
       </div>
       <ul className="info-list">
+        <li>
+          <strong>Version:</strong> <span className="info-version">{buildLabel()}</span>
+        </li>
         <li>
           <strong>Mitmachen und Quelltext:</strong>{' '}
           {kiosk ? (
