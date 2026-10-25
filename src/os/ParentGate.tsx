@@ -2,12 +2,15 @@ import { useState } from 'react';
 import { Icon } from './Icon';
 
 /**
- * Kleine Hürde vor den Erwachsenen-Einstellungen: eine Rechenaufgabe, die
- * Kindergarten- und Grundschulkinder noch nicht lösen. Ein echter Schutz ist
- * das nicht – nur ein Schild „Bitte nicht aus Versehen".
+ * Kleine Hürde vor den Erwachsenen-Einstellungen: eine Rechenaufgabe mit
+ * großen runden Zahlen wie 10 × 1000. Erwachsene rechnen das im Kopf, kleine
+ * Kinder klicken nicht aus Versehen hinein. Ein echter Schutz ist das nicht –
+ * nur ein Schild „Bitte nicht aus Versehen".
  */
+const pick = (list: number[]) => list[Math.floor(Math.random() * list.length)];
+
 export function ParentGate({ onPass }: { onPass: () => void }) {
-  const [task] = useState(() => ({ a: 12 + Math.floor(Math.random() * 8), b: 3 + Math.floor(Math.random() * 7) }));
+  const [task] = useState(() => ({ a: pick([2, 3, 4, 5, 10, 20]), b: pick([100, 1000]) }));
   const [value, setValue] = useState('');
   const [wrong, setWrong] = useState(false);
 
@@ -37,7 +40,7 @@ export function ParentGate({ onPass }: { onPass: () => void }) {
           value={value}
           onChange={(e) => {
             setWrong(false);
-            setValue(e.target.value.replace(/\D/g, '').slice(0, 4));
+            setValue(e.target.value.replace(/\D/g, '').slice(0, 6));
           }}
           aria-label="Ergebnis"
           autoComplete="off"
