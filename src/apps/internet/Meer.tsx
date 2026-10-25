@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { emojiUrl, type EmojiName } from '../../core/emoji';
-import { useTimeouts } from '../../core/hooks';
+import { useAfterSpeech } from '../../core/hooks';
 import { sfx } from '../../core/sound';
 import { Emoji } from '../../os/Emoji';
 import type { LevelProps } from '../shared/levelTypes';
@@ -73,7 +73,7 @@ function Umweg({ onDone }: { onDone: () => void }) {
   const friend = FRIENDS[r.to.name];
   const [story, setStory] = useState(`Du schickst ${friend.who} ein Foto. Klick auf „Losschicken“ – dann reist das Paket durchs Seekabel.`);
   const travel = useTravel();
-  const later = useTimeouts();
+  const later = useAfterSpeech();
   const accident = ACCIDENT[r.accident];
   const broken = r.routes[0];
   const brokenPts = routePoints(broken);
@@ -190,7 +190,7 @@ function Rennen({ onDone }: { onDone: () => void }) {
     `Zwei Wege nach ${r.to.name}. Licht schafft im Glasfaserkabel 200.000 Kilometer in einer Sekunde. Welches Paket ist zuerst da? Tipp auf einen Weg!`,
   );
   const travel = useTravel();
-  const later = useTimeouts();
+  const later = useAfterSpeech();
   const info = r.routes.map((route) => ({ route, km: routeKm(route), ms: travelMs(routeKm(route)) }));
   const fastest = info[0].km <= info[1].km ? info[0].route.id : info[1].route.id;
   const racing = guess !== null && finished.length < 2;
@@ -315,7 +315,7 @@ function Ping({ onDone }: { onDone: () => void }) {
   const [story, setStory] = useState(
     'Ein Ping ist ein winziges Paket, das zu einem Server fliegt und sofort zurückkommt. Drück auf „Ping senden“ und miss, wie schnell dein Internet ist!',
   );
-  const later = useTimeouts();
+  const later = useAfterSpeech();
   const done = pings.length === 5;
   const good = pings.filter((p): p is number => p !== null);
   const avg = good.length ? good.reduce((a, b) => a + b, 0) / good.length : null;

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
+import { afterSpeech } from './speech';
 
 export interface Size {
   width: number;
@@ -58,6 +59,35 @@ export function useTimeouts(): (fn: () => void, ms: number) => void {
       fn();
     }, ms);
     ids.current.push(id);
+  }, []);
+}
+
+/**
+ * Wie useTimeouts, aber geduldig: Nach `ms` geht es erst weiter, wenn Flinn
+ * ausgeredet hat. So schneidet die nächste Ansage die letzte nicht ab.
+ */
+export function useAfterSpeech(): (fn: () => void, ms?: number) => void {
+  const stops = useRef(new Set<() => void>());
+  useEffect(() => {
+    const all = stops.current;
+    return () => {
+      all.forEach((stop) => stop());
+      all.clear();
+    };
+  }, []);
+  return useCallback((fn: () => void, ms = 0) => {
+    let stopWait = () => {};
+    const stop = () => {
+      window.clearTimeout(id);
+      stopWait();
+    };
+    const id = window.setTimeout(() => {
+      stopWait = afterSpeech(() => {
+        stops.current.delete(stop);
+        fn();
+      });
+    }, ms);
+    stops.current.add(stop);
   }, []);
 }
 

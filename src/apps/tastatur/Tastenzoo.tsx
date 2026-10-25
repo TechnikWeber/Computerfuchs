@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useTimeouts } from '../../core/hooks';
+import { useAfterSpeech } from '../../core/hooks';
 import { defaultRng, pick, sample } from '../../core/random';
 import { sfx } from '../../core/sound';
 import { speak } from '../../core/speech';
@@ -39,7 +39,7 @@ export function Tastenzoo({ tier, onDone }: LevelProps) {
   const [flash, setFlash] = useState<Flash | null>(null);
   const [hint, showHint] = useHint(2600);
   const flashes = useRef(0);
-  const later = useTimeouts();
+  const later = useAfterSpeech();
 
   const item = rounds[round];
   const letter = item.word[0].toLocaleUpperCase('de');

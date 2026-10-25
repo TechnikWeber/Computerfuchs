@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useLatest, useTimeouts } from '../../core/hooks';
+import { useAfterSpeech, useLatest, useTimeouts } from '../../core/hooks';
 import { defaultRng } from '../../core/random';
 import { sfx } from '../../core/sound';
 import { speak, stopSpeaking } from '../../core/speech';
@@ -118,6 +118,7 @@ function Round({ level, onBack, onFinish }: { level: RechnenLevel; onBack: () =>
   const resultsRef = useRef<('ok' | 'miss')[]>([]);
   const [help, setHelp] = useState(level.visual === 'objects');
   const later = useTimeouts();
+  const afterSpeech = useAfterSpeech();
   const task = tasks[index];
   const autoSpeak = os.group !== 'gross';
 
@@ -170,7 +171,8 @@ function Round({ level, onBack, onFinish }: { level: RechnenLevel; onBack: () =>
       record('miss');
       speak(`Das Ergebnis ist ${task.answer}.`);
       if (level.visual !== 'none') setHelp(true);
-      later(next, 2400);
+      // Erst ausreden lassen, dann die nächste Aufgabe.
+      afterSpeech(next, 2400);
     }
   };
 

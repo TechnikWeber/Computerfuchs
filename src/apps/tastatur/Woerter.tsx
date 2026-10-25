@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useTimeouts } from '../../core/hooks';
+import { useAfterSpeech } from '../../core/hooks';
 import { defaultRng, sample } from '../../core/random';
 import { sfx } from '../../core/sound';
 import { speak } from '../../core/speech';
@@ -32,7 +32,7 @@ export function Woerter({ tier, onDone }: LevelProps) {
   const [shiftHelp, setShiftHelp] = useState(false);
   const [hint, showHint] = useHint(2800);
   const flashes = useRef(0);
-  const later = useTimeouts();
+  const later = useAfterSpeech();
   const item = words[index];
   const finished = typing.typed === typing.target;
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTimeouts } from '../../core/hooks';
+import { useAfterSpeech } from '../../core/hooks';
 import { defaultRng, sample, shuffle } from '../../core/random';
 import { sfx } from '../../core/sound';
 import { Emoji } from '../../os/Emoji';
@@ -43,7 +43,7 @@ function Bilderbuch({ onDone }: { onDone: () => void }) {
   const [story, setStory] = useState(
     `Flinn möchte ${target.to}. Computer kennen aber keine Namen, nur Nummern. Such das passende Bild im Telefonbuch und klick es an!`,
   );
-  const later = useTimeouts();
+  const later = useAfterSpeech();
 
   const pick = (site: Site) => {
     if (found) return;
@@ -141,7 +141,7 @@ function Eintippen({ onDone }: { onDone: () => void }) {
   const target = targets[round];
   const [story, setStory] = useState(`Tipp die Adresse ein: ${target.name} – und drück dann die Enter-Taste.`);
   const travel = useTravel();
-  const later = useTimeouts();
+  const later = useAfterSpeech();
 
   const nodes = STRIP_NODES.map((n): MapNode => ({ ...n, tone: lit === n.id ? 'on' : 'plain' }));
   const edges = [cable(nodes, 'du', 'dns', { tone: lit === 'dns' ? 'active' : 'plain' }), cable(nodes, 'dns', 'web', { tone: 'faint' })];
@@ -162,7 +162,7 @@ function Eintippen({ onDone }: { onDone: () => void }) {
       size: 38,
       points: [du, dns],
       ms: 1000,
-      onArrive: () => {
+      onArrive: () => later(() => {
         const site = SITES.find((s) => s.name === typed);
         if (!site) {
           sfx.boing();
@@ -188,7 +188,7 @@ function Eintippen({ onDone }: { onDone: () => void }) {
           size: 38,
           points: [dns, du],
           ms: 1000,
-          onArrive: () => {
+          onArrive: () => later(() => {
             setLit('web');
             setStory(`Jetzt fragt der Computer bei ${site.ip} nach der Seite …`);
             travel.send({
@@ -204,7 +204,7 @@ function Eintippen({ onDone }: { onDone: () => void }) {
                   size: 40,
                   points: [web, { x: 500, y: 40 }, du],
                   ms: 1300,
-                  onArrive: () => {
+                  onArrive: () => later(() => {
                     sfx.success();
                     setLit(null);
                     setBusy(false);
@@ -225,12 +225,12 @@ function Eintippen({ onDone }: { onDone: () => void }) {
                       travel.clear();
                       setStory(`Nächste Adresse: ${next.name}`);
                     }, 3000);
-                  },
+                  }),
                 }),
             });
-          },
+          }),
         });
-      },
+      }),
     });
   };
 
@@ -290,7 +290,7 @@ function WemGehoert({ onDone }: { onDone: () => void }) {
   const [story, setStory] = useState(
     'Fallen im Internet sehen oft echt aus. Entscheidend ist, wem eine Adresse gehört: Das steht ganz hinten im Rechnernamen, direkt vor dem ersten Schrägstrich. Wem gehört diese Adresse?',
   );
-  const later = useTimeouts();
+  const later = useAfterSpeech();
   const r = OWNER_ROUNDS[round];
   const owner = ownerOf(r.url);
 

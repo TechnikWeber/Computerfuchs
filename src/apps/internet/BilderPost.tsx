@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { emojiUrl, type EmojiName } from '../../core/emoji';
-import { useTimeouts } from '../../core/hooks';
+import { useAfterSpeech, useTimeouts } from '../../core/hooks';
 import { sfx } from '../../core/sound';
 import { Emoji } from '../../os/Emoji';
 import type { LevelProps } from '../shared/levelTypes';
@@ -65,7 +65,7 @@ function Puzzle({ onDone }: { onDone: () => void }) {
   const [arrived, setArrived] = useState<number[]>([]);
   const [story, setStory] = useState('Das ist dein Katzenfoto. Für die Reise zerschneidet es der Computer in vier kleine Pakete …');
   const travel = useTravel();
-  const later = useTimeouts();
+  const later = useAfterSpeech();
   const count = useRef(0);
 
   useEffect(() => {
@@ -196,7 +196,7 @@ function Wegweiser({ onDone }: { onDone: () => void }) {
     `Dieses Paket soll zu ${dest.name}: ${dest.ip}. Es steht bei Router A. Schau auf den Wegweiser: Welcher Router ist der nächste?`,
   );
   const travel = useTravel();
-  const later = useTimeouts();
+  const later = useAfterSpeech();
   const finished = results.length === DESTINATIONS.length;
   const moving = travel.moving;
 
@@ -328,7 +328,8 @@ function Reihenfolge({ onDone }: { onDone: () => void }) {
   const [asked, setAsked] = useState(false);
   const [story, setStory] = useState('Deine Nachricht an Oma ist in 8 Pakete verpackt. Jedes Paket bekommt eine Nummer – gleich reisen sie los, auf verschiedenen Wegen.');
   const travel = useTravel();
-  const later = useTimeouts();
+  const later = useAfterSpeech();
+  const tick = useTimeouts();
   const arrivedCount = useRef(0);
   const nextNeeded = placed.length + 1;
   const done = placed.length === LETTERS.length;
@@ -337,7 +338,7 @@ function Reihenfolge({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     PLAN.forEach((way, i) => {
       const n = i + 1;
-      later(() => {
+      tick(() => {
         const lost = n === LOST;
         const ids = way === 'top' ? TOP : BOTTOM;
         send({
@@ -351,7 +352,7 @@ function Reihenfolge({ onDone }: { onDone: () => void }) {
             if (lost) {
               sfx.boing();
               setJam(true);
-              later(() => setJam(false), 1800);
+              tick(() => setJam(false), 1800);
               return;
             }
             sfx.pop();
@@ -364,7 +365,7 @@ function Reihenfolge({ onDone }: { onDone: () => void }) {
         });
       }, 900 + i * 380);
     });
-  }, [later, send]);
+  }, [tick, send]);
 
   const place = (n: number) => {
     if (n !== nextNeeded) {

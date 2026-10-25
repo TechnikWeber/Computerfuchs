@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { emojiUrl, type EmojiName } from '../../core/emoji';
-import { useTimeouts } from '../../core/hooks';
+import { useAfterSpeech, useTimeouts } from '../../core/hooks';
 import { sfx } from '../../core/sound';
 import type { LevelProps } from '../shared/levelTypes';
 import { GERMAN_CITIES, GERMANY } from './content';
@@ -36,7 +36,7 @@ function Zuhause({ onDone }: { onDone: () => void }) {
     'Hier stehen dein Laptop, ein Computer, ein Handy und ein Fernseher. Drück auf ein Gerät, halte die Maustaste fest und zieh ein Kabel zum Router in der Mitte.',
   );
   const travel = useTravel();
-  const later = useTimeouts();
+  const later = useAfterSpeech();
 
   const nodes: MapNode[] = [
     { id: 'internet', icon: 'cloud', label: 'Internet', x: 500, y: 62, size: 92, tone: online ? 'on' : 'plain' },
@@ -143,7 +143,7 @@ function ZuOma({ onDone }: { onDone: () => void }) {
     'Schick Oma eine Nachricht! Dafür braucht es einen Weg von deinem Router bis zu Omas Router. Zieh die Kabel: über deinen Internetanbieter, das Internet und Omas Anbieter.',
   );
   const travel = useTravel();
-  const later = useTimeouts();
+  const later = useAfterSpeech();
   const done = links.length === OMA_LINKS.length;
 
   const nodes = OMA_NODES.map((n): MapNode => ({
@@ -250,7 +250,8 @@ function Robust({ onDone }: { onDone: () => void }) {
   const [story, setStory] = useState(
     'Bau ein Netz für sechs Städte, das hält, auch wenn irgendwo ein Kabel reißt. Du hast 7 Kabel. Zieh sie von Stadt zu Stadt – ein Klick auf ein Kabel nimmt es wieder weg.',
   );
-  const later = useTimeouts();
+  const later = useAfterSpeech();
+  const tick = useTimeouts();
   const busy = checking !== null || won;
 
   const nodes: MapNode[] = CITY_NODES.map((c) => ({
@@ -319,7 +320,7 @@ function Robust({ onDone }: { onDone: () => void }) {
       }
       sfx.click();
       setChecking({ cut: id, cutOff: [] });
-      later(() => step(i + 1), 650);
+      tick(() => step(i + 1), 650);
     };
     setStory('Der Traktor gräbt sich durch – Kabel für Kabel. Hält dein Netz?');
     step(0);

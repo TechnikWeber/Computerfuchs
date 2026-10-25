@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { emojiUrl } from '../../core/emoji';
-import { useLatest, useTimeouts } from '../../core/hooks';
+import { useAfterSpeech, useLatest } from '../../core/hooks';
 import { sfx } from '../../core/sound';
 import { Emoji } from '../../os/Emoji';
 import { useWindow } from '../../os/osContext';
@@ -39,7 +39,7 @@ function Schatzkiste({ onDone }: { onDone: () => void }) {
     `Unterwegs sitzt ein neugieriger Waschbär. Er liest alles, was offen ist! Wie schickst du diese Nachricht: „${MESSAGES[0].text}“ – als Postkarte oder in der Schatzkiste mit Schloss?`,
   );
   const travel = useTravel();
-  const later = useTimeouts();
+  const later = useAfterSpeech();
   const msg = MESSAGES[index];
   const finished = results.length === MESSAGES.length;
   const [du, bear, oma] = WAY_NODES;
@@ -181,7 +181,7 @@ function Geheimschrift({ onDone }: { onDone: () => void }) {
   const [story, setStory] = useState(
     `Flinn hat dir eine Geheimnachricht geschickt: ${secret}. Jeder Buchstabe ist um ${CIPHER_SHIFT} Stellen verschoben. Such ihn unten auf dem Streifen – darüber steht der echte Buchstabe. Klick ihn an!`,
   );
-  const later = useTimeouts();
+  const later = useAfterSpeech();
 
   const press = (letter: string) => {
     if (done) return;
@@ -305,7 +305,7 @@ function Passwort({ onDone }: { onDone: () => void }) {
   const [story, setStory] = useState(
     'Achte auf zwei Dinge: Ist das Schloss in der Adressleiste da? Und gehört die Adresse wirklich zu der Seite, die sie sein will? Würdest du hier dein Passwort eingeben?',
   );
-  const later = useTimeouts();
+  const later = useAfterSpeech();
   const r = LOGIN_ROUNDS[round];
 
   const choose = (yes: boolean) => {
