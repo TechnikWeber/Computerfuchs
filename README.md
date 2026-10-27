@@ -1,5 +1,13 @@
 # Computerfuchs
 
+<p>
+  <img alt="Status: beta 0.2" src="https://img.shields.io/badge/status-beta%200.2-yellow">
+  <a href="https://github.com/TechnikWeber/Computerfuchs/actions/workflows/deploy.yml"><img alt="build" src="https://img.shields.io/github/actions/workflow/status/TechnikWeber/Computerfuchs/deploy.yml?branch=main&label=build"></a>
+  <img alt="Platform: browser · offline · kiosk" src="https://img.shields.io/badge/platform-browser%20%C2%B7%20offline%20%C2%B7%20kiosk-blue">
+  <img alt="UI: Deutsch" src="https://img.shields.io/badge/UI-Deutsch-informational">
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green"></a>
+</p>
+
 A learning computer for children aged about 5 to 15 that runs in the browser.
 Computerfuchs ("computer fox") simulates a friendly desktop with windows, a
 taskbar and a start menu, and the desktop grows with the child. A five-year-old
