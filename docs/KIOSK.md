@@ -1,5 +1,3 @@
-**English** · [Deutsch](KIOSK.de.md)
-
 # Computerfuchs as a kiosk – three ways
 
 A kiosk is a device that does one thing. Here that means: the computer starts,

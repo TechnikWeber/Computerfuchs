@@ -1,5 +1,3 @@
-**English** · [Deutsch](TESTING.de.md)
-
 # Testing with children
 
 Computerfuchs is made for children, and only children can show whether it

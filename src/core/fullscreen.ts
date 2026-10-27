@@ -3,7 +3,7 @@
  *
  * Eine Webseite kann einen Laptop nicht abschließen – Alt+Tab oder
  * Strg+Alt+Entf gehören dem Betriebssystem. Dafür gibt es den Kiosk des
- * Systems (siehe docs/CONCEPT.de.md). Mit ?kiosk in der Adresse verhält sich
+ * Systems (siehe docs/CONCEPT.md). Mit ?kiosk in der Adresse verhält sich
  * die Seite passend dazu: kein Knopf zum Verlassen des Vollbilds, Ausschalten
  * führt zurück zum Startbildschirm.
  */

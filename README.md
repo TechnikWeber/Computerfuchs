@@ -1,5 +1,3 @@
-**English** · [Deutsch](README.de.md)
-
 # Computerfuchs
 
 A learning computer for children aged about 5 to 15 that runs in the browser.

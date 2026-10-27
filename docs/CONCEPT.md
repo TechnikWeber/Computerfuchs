@@ -1,5 +1,3 @@
-**English** · [Deutsch](CONCEPT.de.md)
-
 # Computerfuchs – Concept
 
 As of 23 October 2026 · version 0.2

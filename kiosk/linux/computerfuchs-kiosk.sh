@@ -13,7 +13,7 @@
 # NOCH NICHT AUF ECHTER HARDWARE GETESTET – Rückmeldungen bitte an
 # https://github.com/TechnikWeber/Computerfuchs/issues
 #
-# Anleitung: docs/KIOSK.de.md
+# Anleitung: docs/KIOSK.md
 
 set -euo pipefail
 
@@ -67,7 +67,7 @@ Optionen:
   --force          Auch auf nicht unterstützten Systemen weitermachen
   -h, --help       Diese Hilfe
 
-Anleitung: https://github.com/TechnikWeber/Computerfuchs/blob/main/docs/KIOSK.de.md
+Anleitung: https://github.com/TechnikWeber/Computerfuchs/blob/main/docs/KIOSK.md
 EOF
 }
 

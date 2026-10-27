@@ -16,7 +16,7 @@
     Raus kommt man immer mit Strg+Alt+Entf -> Abmelden.
 
     NOCH NICHT AUF ECHTER HARDWARE GETESTET. Zuerst mit -WhatIf ansehen, was
-    passieren würde. Anleitung: docs/KIOSK.de.md im Projekt Computerfuchs.
+    passieren würde. Anleitung: docs/KIOSK.md im Projekt Computerfuchs.
 
 .PARAMETER User
     Name des Kinderkontos. Gibt es das Konto schon, wird es verwendet (darf aber

@@ -690,7 +690,7 @@ function GrownUpPage() {
       <p className="settings-intro">
         {os.kiosk
           ? 'Der Kiosk-Modus ist aktiv: kein Knopf zum Verlassen des Vollbilds, Ausschalten führt zurück zum Startbildschirm.'
-          : 'Für einen Lerncomputer ohne Ausweg die Seite mit ?kiosk am Ende der Adresse öffnen und das Gerät im Kiosk-Modus des Betriebssystems betreiben. Die Anleitung für Linux, Raspberry Pi und Windows steht im Projekt unter docs/KIOSK.de.md.'}
+          : 'Für einen Lerncomputer ohne Ausweg die Seite mit ?kiosk am Ende der Adresse öffnen und das Gerät im Kiosk-Modus des Betriebssystems betreiben. Die Anleitung für Linux, Raspberry Pi und Windows steht im Projekt unter docs/KIOSK.md.'}
       </p>
 
       <h3>Profil löschen</h3>
