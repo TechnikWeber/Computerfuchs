@@ -162,6 +162,15 @@ The interface is in German.
 - German first. No sign-up, no ads, no cookies, no analytics, no external
   requests: fonts and images are served from the same origin.
 
+## Safety & limits
+
+Computerfuchs comes **"as is", without any warranty**; the author accepts **no
+liability**. The app itself sends nothing anywhere. The kiosk set-ups make it hard
+to leave Computerfuchs, but they are **not a parental control** and do not replace
+an adult nearby: the Windows "Autostart" mode is not locked down at all, and no
+kiosk is proof against every trick. Keep the system's updates switched on. See
+[`LICENSE`](LICENSE).
+
 ## Try it with children
 
 Feedback from real children is the most valuable thing for Computerfuchs. The
