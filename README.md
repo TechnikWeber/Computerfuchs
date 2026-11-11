@@ -8,6 +8,13 @@
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green"></a>
 </p>
 
+<p>
+  <a href="https://technikweber.github.io/Computerfuchs/"><b>Open in your browser</b></a> &nbsp;·&nbsp;
+  <a href="docs/CONCEPT.md"><b>Concept</b></a> &nbsp;·&nbsp;
+  <a href="docs/KIOSK.md"><b>Kiosk mode</b></a> &nbsp;·&nbsp;
+  <a href="https://technikweber.github.io/2026/computerfuchs-lerncomputer-fuer-kinder/"><b>Blog post (German)</b></a>
+</p>
+
 A learning computer for children aged about 5 to 15 that runs in the browser.
 Computerfuchs ("computer fox") simulates a friendly desktop with windows, a
 taskbar and a start menu, and the desktop grows with the child. A five-year-old
@@ -16,8 +23,6 @@ unlock what a real computer does: double-clicking, dragging windows, right-click
 menus and window buttons. Older children get the full desktop right away. The
 goal is the one the toy learning laptops have, on any old laptop: learn how to
 use a computer, and learn maths, reading and more on it.
-
-**→ [technikweber.github.io/Computerfuchs](https://technikweber.github.io/Computerfuchs/)**
 
 ![The Computerfuchs desktop with icons, stickers, the taskbar and the mouse course](docs/images/hero-desktop.jpg)
 
